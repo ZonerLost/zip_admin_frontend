@@ -1,0 +1,29 @@
+import dotenv from "dotenv";
+dotenv.config();
+
+export const ENV = {
+  NODE_ENV: process.env.NODE_ENV || "development",
+  PORT: parseInt(process.env.PORT || "3000", 10),
+  API_VERSION: process.env.API_VERSION || "v1",
+  MONGODB_URI: process.env.MONGODB_URI || "",
+  JWT_ACCESS_SECRET: process.env.JWT_ACCESS_SECRET || "access_secret",
+  JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET || "refresh_secret",
+  JWT_ACCESS_EXPIRES_IN: process.env.JWT_ACCESS_EXPIRES_IN || "15m",
+  JWT_REFRESH_EXPIRES_IN: process.env.JWT_REFRESH_EXPIRES_IN || "30d",
+  SMTP_HOST: process.env.SMTP_HOST || "smtp.gmail.com",
+  SMTP_PORT: parseInt(process.env.SMTP_PORT || "587", 10),
+  SMTP_USER: process.env.SMTP_USER || "",
+  SMTP_PASS: process.env.SMTP_PASS || "",
+  EMAIL_FROM: process.env.EMAIL_FROM || "noreply@zonerlost.com",
+  AWS_ACCESS_KEY_ID: process.env.AWS_ACCESS_KEY_ID || "",
+  AWS_SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY || "",
+  AWS_REGION: process.env.AWS_REGION || "ca-central-1",
+  AWS_S3_BUCKET: process.env.AWS_S3_BUCKET || "zonerlost-media",
+  GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID || "",
+  FACEBOOK_APP_ID: process.env.FACEBOOK_APP_ID || "",
+  FACEBOOK_APP_SECRET: process.env.FACEBOOK_APP_SECRET || "",
+  OTP_EXPIRES_IN_MINUTES: parseInt(process.env.OTP_EXPIRES_IN_MINUTES || "10", 10),
+  RATE_LIMIT_WINDOW_MS: parseInt(process.env.RATE_LIMIT_WINDOW_MS || "900000", 10),
+  RATE_LIMIT_MAX: parseInt(process.env.RATE_LIMIT_MAX || "100", 10),
+  REVENUECAT_API_KEY: process.env.REVENUECAT_API_KEY || "",
+};

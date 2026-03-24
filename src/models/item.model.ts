@@ -1,0 +1,50 @@
+import mongoose, { Schema } from "mongoose";
+import { IItem } from "../types";
+
+const ItemSchema = new Schema<IItem>(
+  {
+    owner: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    title: { type: String, required: true, trim: true },
+    description: { type: String, required: true, trim: true },
+    category: { type: String, required: true },
+    subCategory: { type: String },
+    photos: [{ type: String }],
+    dailyRate: { type: Number, required: true, min: 0 },
+    currency: { type: String, default: "CAD" },
+    location: {
+      address: { type: String },
+      city: { type: String, required: true },
+      province: { type: String, required: true },
+      country: { type: String, default: "Canada" },
+      coordinates: {
+        lat: { type: Number },
+        lng: { type: Number },
+      },
+    },
+    availability: {
+      isAvailable: { type: Boolean, default: true },
+      blockedDates: [{ type: Date }],
+    },
+    condition: {
+      type: String,
+      enum: ["new", "like_new", "good", "fair"],
+      required: true,
+    },
+    isFeatured: { type: Boolean, default: false },
+    featuredUntil: { type: Date },
+    averageRating: { type: Number, default: 0 },
+    totalReviews: { type: Number, default: 0 },
+    totalRentals: { type: Number, default: 0 },
+    isActive: { type: Boolean, default: true },
+    tags: [{ type: String }],
+  },
+  { timestamps: true }
+);
+
+ItemSchema.index({ owner: 1 });
+ItemSchema.index({ category: 1 });
+ItemSchema.index({ "location.city": 1 });
+ItemSchema.index({ isFeatured: 1, isActive: 1 });
+ItemSchema.index({ title: "text", description: "text", tags: "text" });
+
+export const ItemModel = mongoose.model<IItem>("Item", ItemSchema);

@@ -1,0 +1,72 @@
+import express from "express";
+import cors from "cors";
+import helmet from "helmet";
+import morgan from "morgan";
+import rateLimit from "express-rate-limit";
+import swaggerUi from "swagger-ui-express";
+import "express-async-errors";
+import { ENV } from "./config/env";
+import { logger } from "./config/logger";
+import { swaggerSpec } from "./config/swagger";
+import routes from "./routes/index";
+import { errorHandler, notFound } from "./middleware/error.middleware";
+
+const app = express();
+
+// ─── Core Middleware ───────────────────────────────────────
+app.use(helmet({ contentSecurityPolicy: false }));
+app.use(
+  cors({
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ extended: true }));
+app.use(
+  morgan("combined", {
+    stream: { write: (msg) => logger.info(msg.trim()) },
+  })
+);
+
+// ─── Rate Limiting ─────────────────────────────────────────
+const limiter = rateLimit({
+  windowMs: ENV.RATE_LIMIT_WINDOW_MS,
+  max: ENV.RATE_LIMIT_MAX,
+  message: {
+    success: false,
+    message: "Too many requests, please try again later",
+  },
+});
+app.use("/api", limiter);
+
+// ─── Swagger Docs ──────────────────────────────────────────
+app.use(
+  "/api-docs",
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerSpec, {
+    customSiteTitle: "Larissa API Docs",
+    customCss: `.swagger-ui .topbar { background-color: #00b4a6; }`,
+    swaggerOptions: {
+      persistAuthorization: true,
+      displayRequestDuration: true,
+      filter: true,
+      tryItOutEnabled: true,
+    },
+  })
+);
+
+app.get("/api-docs.json", (_, res) => {
+  res.setHeader("Content-Type", "application/json");
+  res.send(swaggerSpec);
+});
+
+// ─── API Routes ────────────────────────────────────────────
+app.use(`/api/${ENV.API_VERSION}`, routes);
+
+// ─── Error Handling ────────────────────────────────────────
+app.use(notFound);
+app.use(errorHandler);
+
+export default app;
