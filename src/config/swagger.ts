@@ -20,7 +20,7 @@ const options: swaggerJsdoc.Options = {
         description: "Local Development Server",
       },
       {
-        url: `https://your-production-domain.com/api/${ENV.API_VERSION}`,
+        url: `https://au2p3vkiqi.us-east-1.awsapprunner.com/api/${ENV.API_VERSION}`,
         description: "Production Server",
       },
     ],
