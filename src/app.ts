@@ -13,6 +13,8 @@ import { errorHandler, notFound } from "./middleware/error.middleware";
 
 const app = express();
 
+// Trust proxy for App Runner / load balancer
+app.set('trust proxy', 1);
 // ─── Core Middleware ───────────────────────────────────────
 app.use(helmet({ contentSecurityPolicy: false }));
 app.use(
