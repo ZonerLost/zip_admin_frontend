@@ -215,7 +215,7 @@ const options: swaggerJsdoc.Options = {
       { name: "Items", description: "Item listing management" },
     ],
   },
-  apis: ["./src/docs/*.ts"],
+  apis: ["./src/docs/*.ts", "./dist/docs/*.js"],
 };
 
 export const swaggerSpec = swaggerJsdoc(options);
