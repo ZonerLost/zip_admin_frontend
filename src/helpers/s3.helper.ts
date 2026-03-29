@@ -6,12 +6,10 @@ import {
 import { v4 as uuidv4 } from "uuid";
 import { ENV } from "../config/env";
 
+// When running on App Runner with IAM role, credentials are auto-provided
+// No need to pass accessKeyId/secretAccessKey manually
 const s3Client = new S3Client({
   region: ENV.AWS_REGION,
-  credentials: {
-    accessKeyId: ENV.AWS_ACCESS_KEY_ID,
-    secretAccessKey: ENV.AWS_SECRET_ACCESS_KEY,
-  },
 });
 
 export const uploadToS3 = async (
