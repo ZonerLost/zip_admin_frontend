@@ -213,6 +213,10 @@ const options: swaggerJsdoc.Options = {
       { name: "Auth", description: "Authentication endpoints" },
       { name: "Users", description: "User profile management" },
       { name: "Items", description: "Item listing management" },
+      { name: "Bookings", description: "Booking management" },
+      { name: "Reviews", description: "Reviews and ratings" },
+      { name: "Chat", description: "In-app messaging" },
+      { name: "Eco Impact", description: "Environmental impact tracking and leaderboards" }
     ],
   },
   apis: ["./src/docs/*.ts", "./dist/docs/*.js"],

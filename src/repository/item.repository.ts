@@ -48,4 +48,8 @@ export class ItemRepository {
   async deleteById(id: string): Promise<void> {
     await ItemModel.findByIdAndUpdate(id, { isActive: false });
   }
+
+  async incrementRentals(id: string): Promise<void> {
+    await ItemModel.findByIdAndUpdate(id, { $inc: { totalRentals: 1 } });
+  }
 }

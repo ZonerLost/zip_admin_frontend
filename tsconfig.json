@@ -19,10 +19,7 @@
     "noUnusedParameters": false,
     "noImplicitAny": true,
     "strictNullChecks": true,
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["src/*"]
-    }
+    "ignoreDeprecations": "5.0"
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]
