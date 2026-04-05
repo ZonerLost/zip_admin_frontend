@@ -35,6 +35,8 @@ const UserSchema = new Schema<IUser>(
     isActive: { type: Boolean, default: true },
     isBanned: { type: Boolean, default: false },
     lastLoginAt: { type: Date },
+    fcmToken: { type: String },
+    
   },
   { timestamps: true }
 );

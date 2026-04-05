@@ -216,7 +216,11 @@ const options: swaggerJsdoc.Options = {
       { name: "Bookings", description: "Booking management" },
       { name: "Reviews", description: "Reviews and ratings" },
       { name: "Chat", description: "In-app messaging" },
-      { name: "Eco Impact", description: "Environmental impact tracking and leaderboards" }
+      { name: "Eco Impact", description: "Environmental impact tracking and leaderboards" },
+      { name: "Notifications", description: "In-app notifications" },
+      { name: "Disputes", description: "Trust and safety - dispute management" },
+      { name: "Payments", description: "Payment records and payment methods" },
+      { name: "Dashboard", description: "User dashboard and stats" },
     ],
   },
   apis: ["./src/docs/*.ts", "./dist/docs/*.js"],

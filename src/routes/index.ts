@@ -6,6 +6,10 @@ import bookingRoutes from "./booking.routes";
 import reviewRoutes from "./review.routes";
 import chatRoutes from "./chat.routes";
 import ecoRoutes from "./eco.routes";
+import notificationRoutes from "./notification.routes";
+import disputeRoutes from "./dispute.routes";
+import paymentRoutes from "./payment.routes";
+import dashboardRoutes from "./dashboard.routes";
 
 const router = Router();
 
@@ -25,4 +29,8 @@ router.use("/bookings", bookingRoutes);
 router.use("/reviews", reviewRoutes);
 router.use("/chats", chatRoutes);
 router.use("/eco", ecoRoutes);
+router.use("/notifications", notificationRoutes);
+router.use("/disputes", disputeRoutes);
+router.use("/payments", paymentRoutes);
+router.use("/dashboard", dashboardRoutes);
 export default router;
