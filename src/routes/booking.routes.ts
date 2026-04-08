@@ -13,10 +13,10 @@ import {
 const router = Router();
 const ctrl = new BookingController();
 
+router.post("/quote", ctrl.getQuote.bind(ctrl));
 router.use(authenticate);
 
 router.post("/", validate(createBookingSchema), ctrl.createBooking.bind(ctrl));
-router.post("/quote", ctrl.getQuote.bind(ctrl));
 router.get("/sent", validate(bookingQuerySchema, "query"), ctrl.getSentBookings.bind(ctrl));
 router.get("/received", validate(bookingQuerySchema, "query"), ctrl.getReceivedBookings.bind(ctrl));
 router.get("/:id", ctrl.getBookingById.bind(ctrl));
