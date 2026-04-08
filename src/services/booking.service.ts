@@ -24,6 +24,10 @@ const SECURITY_DEPOSIT = 100;
 const DELIVERY_RATE_PER_KM = 5;
 const MIN_DELIVERY_FEE = 10;
 
+function getBookingPartyId(party: any): string {
+  return party._id ? party._id.toString() : party.toString();
+}
+
 function calculateDeliveryFee(distanceKm?: number): number {
   if (!distanceKm) return MIN_DELIVERY_FEE;
   return Math.max(MIN_DELIVERY_FEE, Math.round(distanceKm * DELIVERY_RATE_PER_KM));
@@ -69,7 +73,11 @@ export class BookingService {
     if (!item.isActive || !item.availability.isAvailable) {
       throw new AppError("Item is not available for booking", HTTP_STATUS.BAD_REQUEST);
     }
-    if (item.owner.toString() === renterId) {
+
+    const itemOwnerId = (item.owner as any)._id
+      ? (item.owner as any)._id.toString()
+      : item.owner.toString();
+    if (itemOwnerId === renterId) {
       throw new AppError("You cannot book your own item", HTTP_STATUS.BAD_REQUEST);
     }
 
@@ -115,11 +123,11 @@ export class BookingService {
       status: "pending",
     });
 
-    // Notify owner about new booking request
+    // Notify owner
     const renter = await UserModel.findById(renterId).select("firstName lastName");
     const renterName = renter ? `${renter.firstName} ${renter.lastName}` : "Someone";
     notifyBookingRequest(
-      item.owner.toString(),
+      itemOwnerId,
       renterName,
       item.title,
       booking._id.toString()
@@ -143,8 +151,8 @@ export class BookingService {
     if (!booking) throw new AppError("Booking not found", HTTP_STATUS.NOT_FOUND);
 
     const isParty =
-      booking.renter._id.toString() === userId ||
-      booking.owner._id.toString() === userId;
+      getBookingPartyId(booking.renter) === userId ||
+      getBookingPartyId(booking.owner) === userId;
     if (!isParty) throw new AppError("Access denied", HTTP_STATUS.FORBIDDEN);
 
     return booking;
@@ -153,7 +161,7 @@ export class BookingService {
   async acceptBooking(bookingId: string, ownerId: string) {
     const booking = await bookingRepo.findById(bookingId);
     if (!booking) throw new AppError("Booking not found", HTTP_STATUS.NOT_FOUND);
-    if (booking.owner._id.toString() !== ownerId) {
+    if (getBookingPartyId(booking.owner) !== ownerId) {
       throw new AppError("Access denied", HTTP_STATUS.FORBIDDEN);
     }
     if (booking.status !== "pending") {
@@ -164,10 +172,9 @@ export class BookingService {
       acceptedAt: new Date(),
     });
 
-    // Notify renter
     const item = await itemRepo.findById(booking.item.toString());
     notifyBookingAccepted(
-      booking.renter._id.toString(),
+      getBookingPartyId(booking.renter),
       item?.title ?? "your item",
       bookingId
     ).catch(() => {});
@@ -178,7 +185,7 @@ export class BookingService {
   async declineBooking(bookingId: string, ownerId: string, reason?: string) {
     const booking = await bookingRepo.findById(bookingId);
     if (!booking) throw new AppError("Booking not found", HTTP_STATUS.NOT_FOUND);
-    if (booking.owner._id.toString() !== ownerId) {
+    if (getBookingPartyId(booking.owner) !== ownerId) {
       throw new AppError("Access denied", HTTP_STATUS.FORBIDDEN);
     }
     if (booking.status !== "pending") {
@@ -189,10 +196,9 @@ export class BookingService {
       declineReason: reason,
     } as any);
 
-    // Notify renter
     const item = await itemRepo.findById(booking.item.toString());
     notifyBookingDeclined(
-      booking.renter._id.toString(),
+      getBookingPartyId(booking.renter),
       item?.title ?? "your item",
       bookingId
     ).catch(() => {});
@@ -203,7 +209,7 @@ export class BookingService {
   async cancelBooking(bookingId: string, renterId: string, reason?: string) {
     const booking = await bookingRepo.findById(bookingId);
     if (!booking) throw new AppError("Booking not found", HTTP_STATUS.NOT_FOUND);
-    if (booking.renter._id.toString() !== renterId) {
+    if (getBookingPartyId(booking.renter) !== renterId) {
       throw new AppError("Access denied", HTTP_STATUS.FORBIDDEN);
     }
     if (!["pending", "accepted"].includes(booking.status)) {
@@ -215,12 +221,11 @@ export class BookingService {
       cancelledAt: new Date(),
     } as any);
 
-    // Notify owner
     const item = await itemRepo.findById(booking.item.toString());
     const renter = await UserModel.findById(renterId).select("firstName lastName");
     const renterName = renter ? `${renter.firstName} ${renter.lastName}` : "Someone";
     notifyBookingCancelled(
-      booking.owner._id.toString(),
+      getBookingPartyId(booking.owner),
       renterName,
       item?.title ?? "your item",
       bookingId
@@ -232,7 +237,7 @@ export class BookingService {
   async completeBooking(bookingId: string, ownerId: string) {
     const booking = await bookingRepo.findById(bookingId);
     if (!booking) throw new AppError("Booking not found", HTTP_STATUS.NOT_FOUND);
-    if (booking.owner._id.toString() !== ownerId) {
+    if (getBookingPartyId(booking.owner) !== ownerId) {
       throw new AppError("Access denied", HTTP_STATUS.FORBIDDEN);
     }
     if (!["active", "accepted"].includes(booking.status)) {
@@ -243,12 +248,11 @@ export class BookingService {
       completedAt: new Date(),
     } as any);
 
-    // Fire and forget — don't block response
     const item = await itemRepo.findById(booking.item.toString());
     itemRepo.incrementRentals(booking.item.toString());
     ecoService.recordEcoImpact(bookingId).catch(() => {});
     notifyBookingCompleted(
-      booking.renter._id.toString(),
+      getBookingPartyId(booking.renter),
       item?.title ?? "your item",
       bookingId
     ).catch(() => {});
@@ -264,7 +268,7 @@ export class BookingService {
   ) {
     const booking = await bookingRepo.findById(bookingId);
     if (!booking) throw new AppError("Booking not found", HTTP_STATUS.NOT_FOUND);
-    if (booking.owner._id.toString() !== userId) {
+    if (getBookingPartyId(booking.owner) !== userId) {
       throw new AppError("Only the owner can upload rental photos", HTTP_STATUS.FORBIDDEN);
     }
     if (type === "pre" && booking.status !== "accepted") {

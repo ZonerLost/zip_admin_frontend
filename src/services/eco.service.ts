@@ -12,7 +12,6 @@ import mongoose from "mongoose";
 
 const ecoRepo = new EcoRepository();
 
-// Badge thresholds in kg CO2
 const BADGES = [
   { id: "eco_starter", label: "Eco Starter", minCO2: 0 },
   { id: "green_achiever", label: "Green Achiever", minCO2: 50 },
@@ -25,15 +24,17 @@ function getBadge(totalCO2: number) {
 }
 
 export class EcoService {
-  // Called internally when a booking is completed
   async recordEcoImpact(bookingId: string): Promise<void> {
     const already = await ecoRepo.existsByBooking(bookingId);
     if (already) return;
 
-    const booking = await BookingModel.findById(bookingId).populate("item");
+    // Fetch booking WITHOUT populating item — keep it as raw ObjectId
+    const booking = await BookingModel.findById(bookingId);
     if (!booking) return;
 
-    const item = await ItemModel.findById(booking.item);
+    // Now fetch item separately using the raw ObjectId
+    const itemId = booking.item.toString();
+    const item = await ItemModel.findById(itemId);
     if (!item) return;
 
     const co2SavedKg = calculateCO2Saved(item.category);
