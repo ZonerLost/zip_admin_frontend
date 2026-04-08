@@ -4,10 +4,14 @@ import { AppError } from "../middleware/error.middleware";
 import { HTTP_STATUS, CONSTANTS } from "../config/constants";
 import { IItem, PaginationMeta } from "../types";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type FilterQuery = Record<string, any>;
 
 const itemRepo = new ItemRepository();
+
+function getOwnerId(item: IItem): string {
+  const owner = item.owner as any;
+  return owner._id ? owner._id.toString() : owner.toString();
+}
 
 export class ItemService {
   async createItem(ownerId: string, data: Partial<IItem>): Promise<IItem> {
@@ -37,8 +41,8 @@ export class ItemService {
     if (condition) filter.condition = condition;
     if (minPrice || maxPrice) {
       filter.dailyRate = {};
-      if (minPrice) filter.dailyRate.$gte = minPrice;
-      if (maxPrice) filter.dailyRate.$lte = maxPrice;
+      if (minPrice) filter.dailyRate.$gte = Number(minPrice);
+      if (maxPrice) filter.dailyRate.$lte = Number(maxPrice);
     }
     if (search) filter.$text = { $search: search as string };
 
@@ -75,8 +79,8 @@ export class ItemService {
   async updateItem(itemId: string, ownerId: string, data: Partial<IItem>): Promise<IItem> {
     const item = await itemRepo.findById(itemId);
     if (!item) throw new AppError("Item not found", HTTP_STATUS.NOT_FOUND);
-    if (item.owner.toString() !== ownerId)
-      throw new AppError("Unauthorized", HTTP_STATUS.FORBIDDEN);
+    if (getOwnerId(item) !== ownerId)
+      throw new AppError("Forbidden", HTTP_STATUS.FORBIDDEN);
     const updated = await itemRepo.updateById(itemId, data);
     return updated!;
   }
@@ -84,8 +88,8 @@ export class ItemService {
   async deleteItem(itemId: string, ownerId: string): Promise<void> {
     const item = await itemRepo.findById(itemId);
     if (!item) throw new AppError("Item not found", HTTP_STATUS.NOT_FOUND);
-    if (item.owner.toString() !== ownerId)
-      throw new AppError("Unauthorized", HTTP_STATUS.FORBIDDEN);
+    if (getOwnerId(item) !== ownerId)
+      throw new AppError("Forbidden", HTTP_STATUS.FORBIDDEN);
     await itemRepo.deleteById(itemId);
   }
 
@@ -96,8 +100,8 @@ export class ItemService {
   ): Promise<IItem> {
     const item = await itemRepo.findById(itemId);
     if (!item) throw new AppError("Item not found", HTTP_STATUS.NOT_FOUND);
-    if (item.owner.toString() !== ownerId)
-      throw new AppError("Unauthorized", HTTP_STATUS.FORBIDDEN);
+    if (getOwnerId(item) !== ownerId)
+      throw new AppError("Forbidden", HTTP_STATUS.FORBIDDEN);
     if (item.photos.length + files.length > CONSTANTS.MAX_ITEM_PHOTOS) {
       throw new AppError(
         `Maximum ${CONSTANTS.MAX_ITEM_PHOTOS} photos allowed`,
@@ -120,8 +124,8 @@ export class ItemService {
   ): Promise<IItem> {
     const item = await itemRepo.findById(itemId);
     if (!item) throw new AppError("Item not found", HTTP_STATUS.NOT_FOUND);
-    if (item.owner.toString() !== ownerId)
-      throw new AppError("Unauthorized", HTTP_STATUS.FORBIDDEN);
+    if (getOwnerId(item) !== ownerId)
+      throw new AppError("Forbidden", HTTP_STATUS.FORBIDDEN);
     await deleteFromS3(photoUrl).catch(() => {});
     const updated = await itemRepo.updateById(itemId, {
       $pull: { photos: photoUrl },
@@ -136,8 +140,8 @@ export class ItemService {
   ): Promise<IItem> {
     const item = await itemRepo.findById(itemId);
     if (!item) throw new AppError("Item not found", HTTP_STATUS.NOT_FOUND);
-    if (item.owner.toString() !== ownerId)
-      throw new AppError("Unauthorized", HTTP_STATUS.FORBIDDEN);
+    if (getOwnerId(item) !== ownerId)
+      throw new AppError("Forbidden", HTTP_STATUS.FORBIDDEN);
     const updated = await itemRepo.updateById(itemId, {
       availability: {
         isAvailable: data.isAvailable ?? item.availability.isAvailable,
