@@ -1,4 +1,5 @@
 import { EcoImpactModel, IEcoImpact } from "../models/eco.model";
+import mongoose from "mongoose";
 
 export class EcoRepository {
   async create(data: Partial<IEcoImpact>): Promise<IEcoImpact> {
@@ -15,7 +16,9 @@ export class EcoRepository {
   }
 
   async getUserImpact(userId: string, period?: "month" | "year") {
-    const match: Record<string, any> = { user: userId };
+    const match: Record<string, any> = {
+      user: new mongoose.Types.ObjectId(userId),
+    };
 
     if (period) {
       const now = new Date();

@@ -24,17 +24,17 @@ function getBadge(totalCO2: number) {
 }
 
 export class EcoService {
-  async recordEcoImpact(bookingId: string): Promise<void> {
+  // itemId passed explicitly to avoid populated object issue
+  async recordEcoImpact(bookingId: string, itemId?: string): Promise<void> {
     const already = await ecoRepo.existsByBooking(bookingId);
     if (already) return;
 
-    // Fetch booking WITHOUT populating item — keep it as raw ObjectId
     const booking = await BookingModel.findById(bookingId);
     if (!booking) return;
 
-    // Now fetch item separately using the raw ObjectId
-    const itemId = booking.item.toString();
-    const item = await ItemModel.findById(itemId);
+    // Use passed itemId or fallback to raw booking.item
+    const resolvedItemId = itemId ?? booking.item.toString();
+    const item = await ItemModel.findById(resolvedItemId);
     if (!item) return;
 
     const co2SavedKg = calculateCO2Saved(item.category);
