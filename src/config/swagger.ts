@@ -221,6 +221,7 @@ const options: swaggerJsdoc.Options = {
       { name: "Disputes", description: "Trust and safety - dispute management" },
       { name: "Payments", description: "Payment records and payment methods" },
       { name: "Dashboard", description: "User dashboard and stats" },
+      { name: "Admin", description: "Admin panel endpoints (admin role required)" },
     ],
   },
   apis: ["./src/docs/*.ts", "./dist/docs/*.js"],

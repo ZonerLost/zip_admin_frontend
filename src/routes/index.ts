@@ -10,6 +10,7 @@ import notificationRoutes from "./notification.routes";
 import disputeRoutes from "./dispute.routes";
 import paymentRoutes from "./payment.routes";
 import dashboardRoutes from "./dashboard.routes";
+import adminRoutes from "./admin.routes";
 
 const router = Router();
 
@@ -33,4 +34,5 @@ router.use("/notifications", notificationRoutes);
 router.use("/disputes", disputeRoutes);
 router.use("/payments", paymentRoutes);
 router.use("/dashboard", dashboardRoutes);
+router.use("/admin", adminRoutes);
 export default router;
