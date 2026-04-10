@@ -10,6 +10,12 @@ import mongoose from "mongoose";
 const paymentRepo = new PaymentRepository();
 const bookingRepo = new BookingRepository();
 
+function getId(value: any): string {
+  if (!value) return "";
+  if (typeof value === "object" && value._id) return value._id.toString();
+  return value.toString();
+}
+
 export class PaymentService {
   async recordPayment(
     payerId: string,
@@ -17,24 +23,22 @@ export class PaymentService {
       bookingId: string;
       method: PaymentMethod;
       externalReference?: string;
-      // TODO: stripePaymentIntentId when Stripe integrated
     }
   ) {
     const booking = await bookingRepo.findById(data.bookingId);
     if (!booking) throw new AppError("Booking not found", HTTP_STATUS.NOT_FOUND);
 
-    if (booking.renter._id.toString() !== payerId) {
+    if (getId(booking.renter) !== payerId) {
       throw new AppError("Only the renter can record a payment", HTTP_STATUS.FORBIDDEN);
     }
 
-    if (!["accepted", "active"].includes(booking.status)) {
+    if (!["accepted", "active", "completed"].includes(booking.status)) {
       throw new AppError(
-        "Payment can only be recorded for accepted or active bookings",
+        "Payment can only be recorded for accepted, active or completed bookings",
         HTTP_STATUS.BAD_REQUEST
       );
     }
 
-    // Check if payment already exists for this booking
     const existing = await paymentRepo.findByBooking(data.bookingId);
     if (existing && existing.status === "completed") {
       throw new AppError("Payment already recorded for this booking", HTTP_STATUS.CONFLICT);
@@ -43,17 +47,16 @@ export class PaymentService {
     const payment = await paymentRepo.create({
       booking: new mongoose.Types.ObjectId(data.bookingId),
       payer: new mongoose.Types.ObjectId(payerId),
-      payee: booking.owner._id,
+      payee: new mongoose.Types.ObjectId(getId(booking.owner)),
       amount: booking.pricing.totalAmount,
       currency: "CAD",
       method: data.method,
-      status: "completed", // Mobile app confirms payment before calling this
+      status: "completed",
       externalReference: data.externalReference,
     });
 
-    // Notify owner of payment
     notificationService.send({
-      userId: booking.owner._id.toString(),
+      userId: getId(booking.owner),
       type: "payment_received",
       title: "Payment Received",
       body: `You received $${booking.pricing.totalAmount} CAD for your rental`,
@@ -73,14 +76,12 @@ export class PaymentService {
     if (!payment) throw new AppError("Payment not found", HTTP_STATUS.NOT_FOUND);
 
     const isParty =
-      payment.payer._id.toString() === userId ||
-      payment.payee._id.toString() === userId;
+      getId(payment.payer) === userId ||
+      getId(payment.payee) === userId;
     if (!isParty) throw new AppError("Access denied", HTTP_STATUS.FORBIDDEN);
 
     return payment;
   }
-
-  // ── Payment Methods ──────────────────────────────────────
 
   async savePaymentMethod(
     userId: string,
