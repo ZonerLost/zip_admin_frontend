@@ -5,7 +5,7 @@ const options: swaggerJsdoc.Options = {
   definition: {
     openapi: "3.0.0",
     info: {
-        title: "Larissa API",
+        title: "Seqouia API",
         version: "1.0.0",
         description:
             "Peer-to-peer rental marketplace API for the Quebec market. Built with Node.js, TypeScript, and MongoDB.",
