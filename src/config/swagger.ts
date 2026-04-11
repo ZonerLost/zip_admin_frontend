@@ -10,8 +10,8 @@ const options: swaggerJsdoc.Options = {
         description:
             "Peer-to-peer rental marketplace API for the Quebec market. Built with Node.js, TypeScript, and MongoDB.",
         contact: {
-            name: "Larissa Support",
-            email: "larissalognay@gmail.com",
+            name: "Seqouia Support",
+            email: "seqouia@gmail.com",
         },
     },
     servers: [
