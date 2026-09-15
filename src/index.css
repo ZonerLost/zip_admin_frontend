@@ -1,0 +1,45 @@
+@import "tailwindcss";
+
+:root {
+
+  --brand: 71 95 88;          /* #475F58 */
+  --mint: 223 238 234;        /* soft mint background */
+  --bg: 244 244 244;          /* light grey page bg */
+  --text: 17 24 39;           /* near-black */
+  --muted: 107 114 128;       /* muted text */
+  --border: 229 231 235;      /* light border */
+}
+
+/* Ensure Tailwind's `border` utility uses our design token color everywhere */
+.border {
+  border-color: rgb(var(--border)) !important;
+}
+
+/* Also ensure directional border utilities use the same token */
+.border-b,
+.border-t,
+.border-l,
+.border-r,
+.border-x,
+.border-y {
+  border-color: rgb(var(--border)) !important;
+}
+
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background: rgb(var(--bg));
+  color: rgb(var(--text));
+}
+
+@keyframes cardIn {
+  0% { opacity: 0; transform: translateY(14px) scale(0.98); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.animate-card-in {
+  animation: cardIn 420ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
