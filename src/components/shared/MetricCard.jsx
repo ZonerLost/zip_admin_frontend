@@ -51,6 +51,7 @@ export default function MetricCard({
   decimals = 0,
   duration = 900,
   onClick,
+  displayValue,
 }) {
   const display = useCountUp(value, duration);
 
@@ -89,9 +90,13 @@ export default function MetricCard({
             {title}
           </p>
           <p className="mt-1 max-w-full text-lg font-semibold leading-tight text-slate-900 [overflow-wrap:anywhere] sm:text-2xl">
-            {prefix}
-            {formatted}
-            {suffix}
+            {displayValue ?? (
+              <>
+                {prefix}
+                {formatted}
+                {suffix}
+              </>
+            )}
           </p>
           {helperText ? (
             <p className="mt-1 text-xs leading-snug text-slate-500 [overflow-wrap:anywhere]">

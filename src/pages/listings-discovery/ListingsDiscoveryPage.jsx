@@ -262,6 +262,20 @@ function ListingsDiscoveryPageContent() {
         <ListingsMetrics stats={stats} />
       )}
 
+      <div
+        key={`${rangeStart ?? "na"}-${rangeEnd ?? "na"}-${
+          comparePreviousYear ? "compare" : "single"
+        }-${previousRange?.start ?? "na"}-${previousRange?.end ?? "na"}`}
+      >
+        <ListingsCharts
+          start={rangeStart}
+          end={rangeEnd}
+          comparePrev={comparePreviousYear}
+          prevStart={previousRange?.start}
+          prevEnd={previousRange?.end}
+        />
+      </div>
+
       {loading ? (
         <Card className="mt-4 p-6">
           <p className="text-sm text-slate-500">Loading listings...</p>
@@ -289,20 +303,6 @@ function ListingsDiscoveryPageContent() {
           </div>
         </div>
       )}
-
-      <div
-        key={`${rangeStart ?? "na"}-${rangeEnd ?? "na"}-${
-          comparePreviousYear ? "compare" : "single"
-        }-${previousRange?.start ?? "na"}-${previousRange?.end ?? "na"}`}
-      >
-        <ListingsCharts
-          start={rangeStart}
-          end={rangeEnd}
-          comparePrev={comparePreviousYear}
-          prevStart={previousRange?.start}
-          prevEnd={previousRange?.end}
-        />
-      </div>
 
       <ListingDetailsDrawer
         open={drawerOpen}

@@ -214,6 +214,8 @@ function UsersPageContent() {
         }}
       />
 
+      <UsersCharts />
+
       <div className="mt-4 space-y-3 sm:mt-6">
         {loading ? (
           <Card className="p-6">
@@ -241,8 +243,6 @@ function UsersPageContent() {
           </>
         )}
       </div>
-
-      <UsersCharts />
 
       <UserDetailsDrawer
         open={drawerOpen}

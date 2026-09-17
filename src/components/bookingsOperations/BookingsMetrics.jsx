@@ -1,7 +1,14 @@
 import React from "react";
 import MetricCard from "../shared/MetricCard.jsx";
 import MetricsGrid from "../shared/MetricsGrid.jsx";
-import { FiCalendar, FiClock, FiCheckCircle, FiXCircle } from "react-icons/fi";
+import {
+  FiCalendar,
+  FiClock,
+  FiCheckCircle,
+  FiXCircle,
+  FiTruck,
+  FiZap,
+} from "react-icons/fi";
 import TotalBookings from "./TotalBookings.jsx";
 import AmountOfRequests from "./AmountOfRequests.jsx";
 import AvgResponseTime from "./AvgResponseTime.jsx";
@@ -12,7 +19,23 @@ import AvgBookingPerListingNonBoosted from "./AvgBookingPerListingNonBoosted.jsx
 import AvgBookingPerBoosted from "./AvgBookingPerBoosted.jsx";
 import PctDiffBoostedVsNonBoosted from "./PctDiffBoostedVsNonBoosted.jsx";
 
-export default function BookingsMetrics({ stats }) {
+// Two-way split as whole percentages that always add up to 100.
+function splitCard(splits, a, b) {
+  if (!splits) return { displayValue: "—", helperText: "Loading…" };
+  if (splits.error) return { displayValue: "—", helperText: "Unavailable" };
+  const x = splits[a] || 0;
+  const y = splits[b] || 0;
+  if (!x && !y) {
+    return { displayValue: "—", helperText: "No bookings in selected range" };
+  }
+  const xPct = Math.round((x / (x + y)) * 100);
+  return {
+    displayValue: `${xPct}% / ${100 - xPct}%`,
+    helperText: `${x} ${a} · ${y} ${b} (selected range)`,
+  };
+}
+
+export default function BookingsMetrics({ stats, splits }) {
   return (
     <MetricsGrid>
       <MetricCard
@@ -27,6 +50,16 @@ export default function BookingsMetrics({ stats }) {
         icon={FiCheckCircle}
       />
       <MetricCard title="Cancelled" value={stats.cancelled} icon={FiXCircle} />
+      <MetricCard
+        title="Delivery vs Pickup"
+        icon={FiTruck}
+        {...splitCard(splits, "delivery", "pickup")}
+      />
+      <MetricCard
+        title="Instant vs Request"
+        icon={FiZap}
+        {...splitCard(splits, "instant", "request")}
+      />
     </MetricsGrid>
   );
 }

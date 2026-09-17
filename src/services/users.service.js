@@ -55,15 +55,21 @@ export async function getActiveRentersSeries(startIso, endIso) {
   return buildEmptySeries("renters", startIso, endIso);
 }
 
-export async function getUsersMetrics(_startIso, _endIso) {
-  const res = await api.get("/admin/stats");
+export async function getUsersMetrics(startIso, endIso) {
+  const params = new URLSearchParams();
+  const start = startIso ? new Date(startIso) : null;
+  const end = endIso ? new Date(endIso) : null;
+  if (start && !Number.isNaN(start.getTime())) params.set("start", start.toISOString());
+  if (end && !Number.isNaN(end.getTime())) params.set("end", end.toISOString());
+  const qs = params.toString();
+  const res = await api.get(`/admin/stats${qs ? `?${qs}` : ""}`);
   const d = res.data;
   return {
     total: d.users?.total ?? 0,
     activeUsers: d.users?.active ?? 0,
     activeOwners: 0,
     activeRenters: 0,
-    newUsers: 0,
+    newUsers: d.users?.new ?? 0,
   };
 }
 

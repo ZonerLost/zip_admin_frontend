@@ -179,6 +179,23 @@ export default function BookingsOperationsPage() {
     };
   }, [analyticsRows]);
 
+  const [splits, setSplits] = useState(null);
+
+  useEffect(() => {
+    let alive = true;
+    svc
+      .getBookingSplits(rangeStart, rangeEnd)
+      .then((data) => {
+        if (alive) setSplits(data);
+      })
+      .catch(() => {
+        if (alive) setSplits({ error: true });
+      });
+    return () => {
+      alive = false;
+    };
+  }, [rangeStart, rangeEnd]);
+
   function view(booking) {
     setSelected(booking);
     setDrawerOpen(true);
@@ -344,8 +361,19 @@ export default function BookingsOperationsPage() {
           <p className="text-sm text-slate-500">Loading booking metrics...</p>
         </Card>
       ) : (
-        <BookingsMetrics stats={stats} />
+        <BookingsMetrics stats={stats} splits={splits} />
       )}
+
+      <div
+        key={`${rangeStart}-${rangeEnd}-${comparePrevYear ? "compare" : "single"}`}
+      >
+        <BookingsCharts
+          start={Date.parse(rangeStart)}
+          end={Date.parse(rangeEnd)}
+          comparePrev={comparePrevYear}
+          {...(comparePrevYear ? computePrevRange() : {})}
+        />
+      </div>
 
       {tableLoading ? (
         <Card className="mt-4 min-h-105 p-6">
@@ -385,17 +413,6 @@ export default function BookingsOperationsPage() {
           ) : null}
         </div>
       )}
-
-      <div
-        key={`${rangeStart}-${rangeEnd}-${comparePrevYear ? "compare" : "single"}`}
-      >
-        <BookingsCharts
-          start={Date.parse(rangeStart)}
-          end={Date.parse(rangeEnd)}
-          comparePrev={comparePrevYear}
-          {...(comparePrevYear ? computePrevRange() : {})}
-        />
-      </div>
 
       <BookingDetailsDrawer
         open={drawerOpen}

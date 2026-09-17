@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import MetricCard from "../shared/MetricCard.jsx";
 import MetricsGrid from "../shared/MetricsGrid.jsx";
-import { FiUsers } from "react-icons/fi";
+import { FiUsers, FiUserPlus } from "react-icons/fi";
 import NumberOfUsers from "./NumberOfUsers.jsx";
 import ActiveUsers from "./ActiveUsers.jsx";
 import ActiveOwners from "./ActiveOwners.jsx";
@@ -30,6 +30,7 @@ export default function UsersMetrics({ stats, prevStats, pageStats }) {
   const activeUsers = s.activeUsers ?? 0;
   const activeOwners = s.activeOwners ?? 0;
   const activeRenters = s.activeRenters ?? 0;
+  const newUsers = s.newUsers ?? 0;
 
   const [unverifiedCount, setUnverifiedCount] = useState(0);
   const [unverifiedOpen, setUnverifiedOpen] = useState(false);
@@ -118,6 +119,12 @@ export default function UsersMetrics({ stats, prevStats, pageStats }) {
           helperText={formatDelta(total, prevTotal)}
         />
         <MetricCard
+          title="New Users"
+          value={newUsers}
+          icon={FiUserPlus}
+          helperText={formatDelta(newUsers, prevNew)}
+        />
+        <MetricCard
           title="Active Users"
           value={activeUsers}
           helperText={formatDelta(activeUsers, prevActive)}
@@ -135,7 +142,6 @@ export default function UsersMetrics({ stats, prevStats, pageStats }) {
         <MetricCard
           title="Unverified Users"
           value={unverifiedCount}
-          helperText={formatDelta(unverifiedCount, prevNew)}
           onClick={openUnverified}
         />
       </MetricsGrid>

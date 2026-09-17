@@ -154,3 +154,21 @@ export async function getPickupDeliverySettings() {
 export async function savePickupDeliverySettings(next) {
   return next;
 }
+
+// Delivery/pickup and instant/request counts for bookings created in the range.
+// startYmd/endYmd are "YYYY-MM-DD" in the admin's local time.
+export async function getBookingSplits(startYmd, endYmd) {
+  const params = new URLSearchParams();
+  const start = new Date(`${startYmd}T00:00:00`);
+  const end = new Date(`${endYmd}T23:59:59.999`);
+  if (!Number.isNaN(start.getTime())) params.set("start", start.toISOString());
+  if (!Number.isNaN(end.getTime())) params.set("end", end.toISOString());
+  const res = await api.get(`/admin/stats?${params.toString()}`);
+  const b = res.data?.bookings || {};
+  return {
+    delivery: b.byDeliveryType?.delivery ?? 0,
+    pickup: b.byDeliveryType?.pickup ?? 0,
+    instant: b.byBookingType?.instant ?? 0,
+    request: b.byBookingType?.request ?? 0,
+  };
+}

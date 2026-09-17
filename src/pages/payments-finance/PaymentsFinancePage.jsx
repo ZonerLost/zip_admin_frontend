@@ -226,6 +226,52 @@ function PaymentsFinancePageContent() {
       </div>
 
       <div className="mt-4 space-y-3">
+        <div className="grid gap-3" key={analyticsRenderKey}>
+          {analyticsLoading ? (
+            <Card className="p-6">
+              <p className="text-sm text-slate-500">Loading analytics...</p>
+            </Card>
+          ) : (
+            <>
+              <RevenueTotal
+                start={rangeStart}
+                end={rangeEnd}
+                comparePrev={comparePreviousYear}
+                prevStart={previousRange?.start}
+                prevEnd={previousRange?.end}
+              />
+              <RevenueBoosted
+                start={rangeStart}
+                end={rangeEnd}
+                comparePrev={comparePreviousYear}
+                prevStart={previousRange?.start}
+                prevEnd={previousRange?.end}
+              />
+              <RevenueInsurance
+                start={rangeStart}
+                end={rangeEnd}
+                comparePrev={comparePreviousYear}
+                prevStart={previousRange?.start}
+                prevEnd={previousRange?.end}
+              />
+              <RevenueFees
+                start={rangeStart}
+                end={rangeEnd}
+                comparePrev={comparePreviousYear}
+                prevStart={previousRange?.start}
+                prevEnd={previousRange?.end}
+              />
+              <RefundsChart
+                start={rangeStart}
+                end={rangeEnd}
+                comparePrev={comparePreviousYear}
+                prevStart={previousRange?.start}
+                prevEnd={previousRange?.end}
+              />
+            </>
+          )}
+        </div>
+
         <div className="grid gap-3 lg:grid-cols-3">
           <div className="space-y-3 lg:col-span-2">
             <div className="relative">
@@ -282,51 +328,6 @@ function PaymentsFinancePageContent() {
           </div>
         </div>
 
-        <div className="grid gap-3" key={analyticsRenderKey}>
-          {analyticsLoading ? (
-            <Card className="p-6">
-              <p className="text-sm text-slate-500">Loading analytics...</p>
-            </Card>
-          ) : (
-            <>
-              <RevenueTotal
-                start={rangeStart}
-                end={rangeEnd}
-                comparePrev={comparePreviousYear}
-                prevStart={previousRange?.start}
-                prevEnd={previousRange?.end}
-              />
-              <RevenueBoosted
-                start={rangeStart}
-                end={rangeEnd}
-                comparePrev={comparePreviousYear}
-                prevStart={previousRange?.start}
-                prevEnd={previousRange?.end}
-              />
-              <RevenueInsurance
-                start={rangeStart}
-                end={rangeEnd}
-                comparePrev={comparePreviousYear}
-                prevStart={previousRange?.start}
-                prevEnd={previousRange?.end}
-              />
-              <RevenueFees
-                start={rangeStart}
-                end={rangeEnd}
-                comparePrev={comparePreviousYear}
-                prevStart={previousRange?.start}
-                prevEnd={previousRange?.end}
-              />
-              <RefundsChart
-                start={rangeStart}
-                end={rangeEnd}
-                comparePrev={comparePreviousYear}
-                prevStart={previousRange?.start}
-                prevEnd={previousRange?.end}
-              />
-            </>
-          )}
-        </div>
       </div>
 
       <RefundModal
