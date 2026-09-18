@@ -21,11 +21,11 @@ export default function BookingDetailsDrawer({
   return (
     <Drawer open={open} title="Booking Details" onClose={onClose}>
       {!booking ? (
-        <p className="text-sm text-slate-500">No booking selected.</p>
+        <p className="text-sm text-neutral-500">No booking selected.</p>
       ) : (
         <div className="space-y-4">
           <div className="rounded-2xl border bg-white p-4">
-            <p className="text-sm font-semibold text-slate-900">
+            <p className="text-sm font-semibold text-neutral-900">
               {booking.listingTitle}
             </p>
             <div className="mt-3 flex flex-wrap items-center gap-2">
@@ -33,58 +33,58 @@ export default function BookingDetailsDrawer({
               <StatusPill value={booking.deliveryMethod} />
             </div>
 
-            <div className="mt-4 space-y-2 text-sm text-slate-700">
+            <div className="mt-4 space-y-2 text-sm text-neutral-700">
               <div className="flex items-center gap-2">
-                <FiCalendar className="text-slate-400" />
-                <span className="text-slate-500">Booking:</span>
+                <FiCalendar className="text-neutral-400" />
+                <span className="text-neutral-500">Booking:</span>
                 <span className="font-medium">
                   {formatDate(booking.createdAt)}
                 </span>
               </div>
               <div className="flex items-center gap-2">
-                <FiUser className="text-slate-400" />
-                <span className="text-slate-500">Owner:</span>
+                <FiUser className="text-neutral-400" />
+                <span className="text-neutral-500">Owner:</span>
                 <span className="font-medium">
                   {booking.ownerName || booking.owner}
                 </span>
               </div>
               {booking.ownerEmail ? (
                 <div className="flex items-center gap-2">
-                  <span className="text-slate-500">Owner email:</span>
-                  <span className="font-medium text-sm text-slate-700">
+                  <span className="text-neutral-500">Owner email:</span>
+                  <span className="font-medium text-sm text-neutral-700">
                     {booking.ownerEmail}
                   </span>
                 </div>
               ) : null}
 
               <div className="flex items-center gap-2">
-                <FiUser className="text-slate-400" />
-                <span className="text-slate-500">Renter:</span>
+                <FiUser className="text-neutral-400" />
+                <span className="text-neutral-500">Renter:</span>
                 <span className="font-medium">{booking.renterName}</span>
               </div>
               <div className="flex items-center gap-2">
-                <FiCalendar className="text-slate-400" />
-                <span className="text-slate-500">Item rental:</span>
+                <FiCalendar className="text-neutral-400" />
+                <span className="text-neutral-500">Item rental:</span>
                 <span className="font-medium">
                   {formatDate(booking.startDate)} —{" "}
                   {formatDate(booking.endDate)}
                 </span>
               </div>
               <div className="flex items-center gap-2">
-                <FiCalendar className="text-slate-400" />
-                <span className="text-slate-500">End:</span>
+                <FiCalendar className="text-neutral-400" />
+                <span className="text-neutral-500">End:</span>
                 <span className="font-medium">
                   {formatDate(booking.endDate)}
                 </span>
               </div>
               <div className="flex items-center gap-2">
-                <FiTruck className="text-slate-400" />
-                <span className="text-slate-500">Distance:</span>
+                <FiTruck className="text-neutral-400" />
+                <span className="text-neutral-500">Distance:</span>
                 <span className="font-medium">{booking.distanceKm} km</span>
               </div>
               <div className="flex items-center gap-2">
-                <FiMapPin className="text-slate-400" />
-                <span className="text-slate-500">Amount:</span>
+                <FiMapPin className="text-neutral-400" />
+                <span className="text-neutral-500">Amount:</span>
                 <span className="font-medium">
                   ${Number(booking.amount || 0).toFixed(2)}
                 </span>
@@ -94,7 +94,7 @@ export default function BookingDetailsDrawer({
                 {booking.renterEmail ? (
                   <a
                     href={`mailto:${booking.renterEmail}`}
-                    className="rounded-full border px-3 py-2 text-sm text-slate-700 hover:bg-slate-50"
+                    className="rounded-full border px-3 py-2 text-sm text-neutral-700 hover:bg-neutral-50"
                   >
                     <FiMail className="inline mr-2" /> Contact renter
                   </a>
@@ -103,7 +103,7 @@ export default function BookingDetailsDrawer({
                 {booking.ownerEmail ? (
                   <a
                     href={`mailto:${booking.ownerEmail}`}
-                    className="rounded-full border px-3 py-2 text-sm text-slate-700 hover:bg-slate-50"
+                    className="rounded-full border px-3 py-2 text-sm text-neutral-700 hover:bg-neutral-50"
                   >
                     <FiMail className="inline mr-2" /> Contact owner
                   </a>
@@ -121,8 +121,8 @@ export default function BookingDetailsDrawer({
                 </div>
               </div>
               {booking.cancelReason ? (
-                <div className="rounded-2xl bg-slate-50 p-3 text-sm text-slate-700">
-                  <span className="text-slate-500">Cancel reason:</span>{" "}
+                <div className="rounded-2xl bg-neutral-50 p-3 text-sm text-neutral-700">
+                  <span className="text-neutral-500">Cancel reason:</span>{" "}
                   <span className="font-medium">{booking.cancelReason}</span>
                 </div>
               ) : null}

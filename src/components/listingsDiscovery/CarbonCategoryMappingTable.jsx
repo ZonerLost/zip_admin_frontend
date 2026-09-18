@@ -44,14 +44,14 @@ export default function CarbonCategoryMappingTable({
         render: (r) => (
           <div className="flex items-center gap-2">
             <button
-              className="rounded-xl p-2 hover:bg-slate-100"
+              className="rounded-xl p-2 hover:bg-neutral-100"
               onClick={() => openEdit(r)}
               aria-label="Edit"
             >
               <FiEdit2 />
             </button>
             <button
-              className="rounded-xl p-2 hover:bg-slate-100"
+              className="rounded-xl p-2 hover:bg-neutral-100"
               onClick={() => onDelete(r)}
               aria-label="Delete"
             >
@@ -71,10 +71,10 @@ export default function CarbonCategoryMappingTable({
   return (
     <Card className="p-0">
       <div className="border-b p-4">
-        <p className="text-sm font-semibold text-slate-900">
+        <p className="text-sm font-semibold text-neutral-900">
           Category → CO₂ Mapping
         </p>
-        <p className="text-xs text-slate-500">
+        <p className="text-xs text-neutral-500">
           CRUD mapping factors for sustainability calculations.
         </p>
       </div>
@@ -113,11 +113,11 @@ export default function CarbonCategoryMappingTable({
       >
         <div className="space-y-3">
           <div>
-            <label className="text-xs font-medium text-slate-600">
+            <label className="text-xs font-medium text-neutral-600">
               Category
             </label>
             <select
-              className="mt-1 w-full rounded-2xl border px-4 py-3 text-sm outline-none focus:border-[rgb(var(--brand))] focus:ring-4 focus:ring-[rgba(71,95,88,0.12)]"
+              className="mt-1 w-full rounded-2xl border px-4 py-3 text-sm outline-none focus:border-brand focus:ring-4 focus:ring-brand/12"
               value={categoryId}
               onChange={(e) => setCategoryId(e.target.value)}
             >
@@ -130,13 +130,13 @@ export default function CarbonCategoryMappingTable({
           </div>
 
           <div>
-            <label className="text-xs font-medium text-slate-600">
+            <label className="text-xs font-medium text-neutral-600">
               Factor (kg CO₂)
             </label>
             <input
               type="number"
               step="0.01"
-              className="mt-1 w-full rounded-2xl border px-4 py-3 text-sm outline-none focus:border-[rgb(var(--brand))] focus:ring-4 focus:ring-[rgba(71,95,88,0.12)]"
+              className="mt-1 w-full rounded-2xl border px-4 py-3 text-sm outline-none focus:border-brand focus:ring-4 focus:ring-brand/12"
               value={factorKg}
               onChange={(e) => setFactorKg(e.target.value)}
             />

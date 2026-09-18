@@ -14,25 +14,25 @@ export default function SustainabilityConfigForm({ value, onSave }) {
     <Card className="p-5">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <p className="text-sm font-semibold text-slate-900">
+          <p className="text-sm font-semibold text-neutral-900">
             Sustainability Config
           </p>
-          <p className="mt-1 text-sm text-slate-500">
+          <p className="mt-1 text-sm text-neutral-500">
             Carbon source + mapping controls.
           </p>
         </div>
-        <div className="rounded-2xl bg-[rgba(71,95,88,0.10)] p-2 text-[rgb(var(--brand))]">
+        <div className="rounded-2xl bg-brand-soft p-2 text-brand">
           <FiGlobe className="h-5 w-5" />
         </div>
       </div>
 
       <div className="mt-4 space-y-3">
         <div>
-          <label className="text-xs font-medium text-slate-600">
+          <label className="text-xs font-medium text-neutral-600">
             Data Source
           </label>
           <select
-            className="mt-1 w-full rounded-2xl border px-4 py-3 text-sm outline-none focus:border-[rgb(var(--brand))] focus:ring-4 focus:ring-[rgba(71,95,88,0.12)]"
+            className="mt-1 w-full rounded-2xl border px-4 py-3 text-sm outline-none focus:border-brand focus:ring-4 focus:ring-brand/12"
             value={local.dataSource}
             onChange={(e) => update({ dataSource: e.target.value })}
           >
@@ -43,16 +43,16 @@ export default function SustainabilityConfigForm({ value, onSave }) {
 
         {local.dataSource === "api" ? (
           <div>
-            <label className="text-xs font-medium text-slate-600">
+            <label className="text-xs font-medium text-neutral-600">
               API URL
             </label>
             <input
-              className="mt-1 w-full rounded-2xl border px-4 py-3 text-sm outline-none focus:border-[rgb(var(--brand))] focus:ring-4 focus:ring-[rgba(71,95,88,0.12)]"
+              className="mt-1 w-full rounded-2xl border px-4 py-3 text-sm outline-none focus:border-brand focus:ring-4 focus:ring-brand/12"
               value={local.apiUrl || ""}
               onChange={(e) => update({ apiUrl: e.target.value })}
               placeholder="https://..."
             />
-            <p className="mt-1 text-xs text-slate-500">
+            <p className="mt-1 text-xs text-neutral-500">
               Store keys securely later via environment variables.
             </p>
           </div>
@@ -63,13 +63,13 @@ export default function SustainabilityConfigForm({ value, onSave }) {
             type="checkbox"
             checked={local.mappingEnabled}
             onChange={(e) => update({ mappingEnabled: e.target.checked })}
-            className="h-4 w-4 accent-[rgb(var(--brand))]"
+            className="h-4 w-4 accent-brand"
           />
           <div>
-            <p className="text-sm font-medium text-slate-900">
+            <p className="text-sm font-medium text-neutral-900">
               Enable Category → CO₂ Mapping
             </p>
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-neutral-500">
               Use mapping table for item footprint factors.
             </p>
           </div>

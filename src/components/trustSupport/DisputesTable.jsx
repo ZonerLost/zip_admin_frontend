@@ -98,21 +98,21 @@ export default function DisputesTable({
         render: (r) => (
           <div className="flex items-center gap-2">
             <button
-              className="rounded-xl p-2 hover:bg-slate-100"
+              className="rounded-xl p-2 hover:bg-neutral-100"
               onClick={() => onView(r)}
               aria-label="View"
             >
               <FiEye />
             </button>
             <button
-              className="rounded-xl p-2 hover:bg-slate-100"
+              className="rounded-xl p-2 hover:bg-neutral-100"
               onClick={() => openEdit(r)}
               aria-label="Edit"
             >
               <FiEdit2 />
             </button>
             <button
-              className="rounded-xl p-2 hover:bg-slate-100"
+              className="rounded-xl p-2 hover:bg-neutral-100"
               onClick={() => onDelete(r)}
               aria-label="Delete"
             >
@@ -128,8 +128,8 @@ export default function DisputesTable({
     <Card className="p-0">
       <div className="flex flex-col gap-3 border-b p-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p className="text-sm font-semibold text-slate-900">Disputes</p>
-          <p className="text-xs text-slate-500">
+          <p className="text-sm font-semibold text-neutral-900">Disputes</p>
+          <p className="text-xs text-neutral-500">
             CRUD disputes + evidence and message moderation.
           </p>
         </div>
@@ -165,9 +165,9 @@ export default function DisputesTable({
       >
         <div className="space-y-3">
           <div>
-            <label className="text-xs font-medium text-slate-600">Title</label>
+            <label className="text-xs font-medium text-neutral-600">Title</label>
             <input
-              className="mt-1 w-full rounded-2xl border px-4 py-3 text-sm outline-none focus:border-[rgb(var(--brand))] focus:ring-4 focus:ring-[rgba(71,95,88,0.12)]"
+              className="mt-1 w-full rounded-2xl border px-4 py-3 text-sm outline-none focus:border-brand focus:ring-4 focus:ring-brand/12"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="e.g. Damage claim after return"
@@ -176,7 +176,7 @@ export default function DisputesTable({
 
           <div className="grid gap-3 sm:grid-cols-2">
             <div>
-              <label className="text-xs font-medium text-slate-600">
+              <label className="text-xs font-medium text-neutral-600">
                 Booking ID
               </label>
               <input
@@ -187,7 +187,7 @@ export default function DisputesTable({
               />
             </div>
             <div>
-              <label className="text-xs font-medium text-slate-600">
+              <label className="text-xs font-medium text-neutral-600">
                 Listing
               </label>
               <input
@@ -201,7 +201,7 @@ export default function DisputesTable({
 
           <div className="grid gap-3 sm:grid-cols-2">
             <div>
-              <label className="text-xs font-medium text-slate-600">
+              <label className="text-xs font-medium text-neutral-600">
                 Reporter
               </label>
               <select
@@ -215,7 +215,7 @@ export default function DisputesTable({
               </select>
             </div>
             <div>
-              <label className="text-xs font-medium text-slate-600">
+              <label className="text-xs font-medium text-neutral-600">
                 Reported User
               </label>
               <input
@@ -229,7 +229,7 @@ export default function DisputesTable({
 
           <div className="grid gap-3 sm:grid-cols-2">
             <div>
-              <label className="text-xs font-medium text-slate-600">
+              <label className="text-xs font-medium text-neutral-600">
                 Status
               </label>
               <select
@@ -243,7 +243,7 @@ export default function DisputesTable({
               </select>
             </div>
             <div>
-              <label className="text-xs font-medium text-slate-600">
+              <label className="text-xs font-medium text-neutral-600">
                 Priority
               </label>
               <select
@@ -259,7 +259,7 @@ export default function DisputesTable({
           </div>
 
           <div>
-            <label className="text-xs font-medium text-slate-600">Notes</label>
+            <label className="text-xs font-medium text-neutral-600">Notes</label>
             <textarea
               rows={3}
               className="mt-1 w-full rounded-2xl border px-4 py-3 text-sm outline-none"

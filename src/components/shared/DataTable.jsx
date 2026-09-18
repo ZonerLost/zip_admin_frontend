@@ -58,10 +58,10 @@ export default function DataTable({
                   key={c.key}
                   className="flex items-start justify-between gap-3 py-1"
                 >
-                  <p className="text-xs font-medium text-slate-500">
+                  <p className="text-xs font-medium text-neutral-500">
                     {c.header}
                   </p>
-                  <div className="text-sm text-slate-900 text-right">
+                  <div className="text-sm text-neutral-900 text-right">
                     {c.render ? c.render(r) : String(r[c.key] ?? "-")}
                   </div>
                 </div>
@@ -85,7 +85,7 @@ export default function DataTable({
                   <th
                     key={c.key}
                     className={
-                      "border-b bg-white px-4 py-3 text-xs font-semibold wrap-break-word whitespace-normal text-slate-600 " +
+                      "border-b bg-white px-4 py-3 text-xs font-semibold wrap-break-word whitespace-normal text-neutral-600 " +
                       (c.key === "actions" ? "text-right w-36" : "text-left")
                     }
                     style={c.width ? { width: c.width } : undefined}
@@ -97,12 +97,12 @@ export default function DataTable({
             </thead>
             <tbody>
               {visibleRows.map((r, idx) => (
-                <tr key={r.id || idx} className="hover:bg-slate-50">
+                <tr key={r.id || idx} className="hover:bg-neutral-50">
                   {columns.map((c) => (
                     <td
                       key={c.key}
                       className={
-                        "border-b px-4 py-3 align-top text-sm wrap-break-word whitespace-normal text-slate-900 " +
+                        "border-b px-4 py-3 align-top text-sm wrap-break-word whitespace-normal text-neutral-900 " +
                         (c.key === "actions" ? "text-right" : "text-left")
                       }
                       style={c.width ? { width: c.width } : undefined}

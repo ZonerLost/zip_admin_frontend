@@ -38,20 +38,20 @@ export default function RefundModal({ open, onClose, onSubmit }) {
     >
       <div className="space-y-3">
         <div>
-          <label className="text-xs font-medium text-slate-600">
+          <label className="text-xs font-medium text-neutral-600">
             Booking ID
           </label>
           <input
-            className="mt-1 w-full rounded-2xl border px-4 py-3 text-sm outline-none focus:border-[rgb(var(--brand))] focus:ring-4 focus:ring-[rgba(71,95,88,0.12)]"
+            className="mt-1 w-full rounded-2xl border px-4 py-3 text-sm outline-none focus:border-brand focus:ring-4 focus:ring-brand/12"
             value={bookingId}
             onChange={(e) => setBookingId(e.target.value)}
             placeholder="bk_123"
           />
         </div>
         <div>
-          <label className="text-xs font-medium text-slate-600">User</label>
+          <label className="text-xs font-medium text-neutral-600">User</label>
           <input
-            className="mt-1 w-full rounded-2xl border px-4 py-3 text-sm outline-none focus:border-[rgb(var(--brand))] focus:ring-4 focus:ring-[rgba(71,95,88,0.12)]"
+            className="mt-1 w-full rounded-2xl border px-4 py-3 text-sm outline-none focus:border-brand focus:ring-4 focus:ring-brand/12"
             value={user}
             onChange={(e) => setUser(e.target.value)}
             placeholder="User name"
@@ -59,19 +59,19 @@ export default function RefundModal({ open, onClose, onSubmit }) {
         </div>
         <div className="grid gap-3 sm:grid-cols-2">
           <div>
-            <label className="text-xs font-medium text-slate-600">
+            <label className="text-xs font-medium text-neutral-600">
               Amount ($)
             </label>
             <input
               type="number"
               step="0.01"
-              className="mt-1 w-full rounded-2xl border px-4 py-3 text-sm outline-none focus:border-[rgb(var(--brand))] focus:ring-4 focus:ring-[rgba(71,95,88,0.12)]"
+              className="mt-1 w-full rounded-2xl border px-4 py-3 text-sm outline-none focus:border-brand focus:ring-4 focus:ring-brand/12"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
             />
           </div>
           <div>
-            <label className="text-xs font-medium text-slate-600">Reason</label>
+            <label className="text-xs font-medium text-neutral-600">Reason</label>
             <input
               className="mt-1 w-full rounded-2xl border px-4 py-3 text-sm outline-none"
               value={reason}

@@ -18,8 +18,8 @@ function UsageTableCard({ title, subtitle, rows, columns, defaultSort }) {
   return (
     <Card className="p-0">
       <div className="border-b p-4">
-        <p className="text-sm font-semibold text-slate-900">{title}</p>
-        <p className="mt-1 text-xs text-slate-500">{subtitle}</p>
+        <p className="text-sm font-semibold text-neutral-900">{title}</p>
+        <p className="mt-1 text-xs text-neutral-500">{subtitle}</p>
       </div>
       <div className="p-4">
         <SortableAnalyticsTable

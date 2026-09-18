@@ -37,7 +37,7 @@ function ListingsActionsMenu({
     <div className="relative inline-block" ref={ref}>
       <button
         type="button"
-        className="rounded-xl p-2 hover:bg-slate-100"
+        className="rounded-xl p-2 hover:bg-neutral-100"
         onClick={(e) => {
           e.preventDefault();
           e.stopPropagation();
@@ -51,7 +51,7 @@ function ListingsActionsMenu({
         <div className="absolute right-0 z-50 mt-1 w-44 rounded-2xl border bg-white shadow-lg py-1">
           <button
             type="button"
-            className="flex w-full items-center gap-2 px-4 py-2 text-sm hover:bg-slate-50"
+            className="flex w-full items-center gap-2 px-4 py-2 text-sm hover:bg-neutral-50"
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
@@ -63,7 +63,7 @@ function ListingsActionsMenu({
           </button>
           <button
             type="button"
-            className="flex w-full items-center gap-2 px-4 py-2 text-sm hover:bg-slate-50"
+            className="flex w-full items-center gap-2 px-4 py-2 text-sm hover:bg-neutral-50"
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
@@ -75,7 +75,7 @@ function ListingsActionsMenu({
           </button>
           <button
             type="button"
-            className="flex w-full items-center gap-2 px-4 py-2 text-sm hover:bg-slate-50"
+            className="flex w-full items-center gap-2 px-4 py-2 text-sm hover:bg-neutral-50"
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
@@ -85,7 +85,7 @@ function ListingsActionsMenu({
           >
             {row.featured ? (
               <>
-                <AiFillStar className="h-4 w-4 text-[rgb(var(--brand))]" />{" "}
+                <AiFillStar className="h-4 w-4 text-brand" />{" "}
                 Unfeature
               </>
             ) : (
@@ -234,8 +234,8 @@ export default function ListingsTable({
     <Card className="p-0">
       <div className="flex flex-col gap-3 border-b p-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p className="text-sm font-semibold text-slate-900">Listings</p>
-          <p className="text-xs text-slate-500">
+          <p className="text-sm font-semibold text-neutral-900">Listings</p>
+          <p className="text-xs text-neutral-500">
             CRUD + moderation-friendly actions.
           </p>
         </div>
@@ -249,7 +249,7 @@ export default function ListingsTable({
 
       <div className="p-2 sm:p-4">
         {loading ? (
-          <div className="rounded-2xl border bg-white px-4 py-6 text-sm text-slate-500">
+          <div className="rounded-2xl border bg-white px-4 py-6 text-sm text-neutral-500">
             Updating listings...
           </div>
         ) : (
@@ -274,9 +274,9 @@ export default function ListingsTable({
       >
         <div className="space-y-3">
           <div>
-            <label className="text-xs font-medium text-slate-600">Title</label>
+            <label className="text-xs font-medium text-neutral-600">Title</label>
             <input
-              className="mt-1 w-full rounded-2xl border px-4 py-3 text-sm outline-none focus:border-[rgb(var(--brand))] focus:ring-4 focus:ring-[rgba(71,95,88,0.12)]"
+              className="mt-1 w-full rounded-2xl border px-4 py-3 text-sm outline-none focus:border-brand focus:ring-4 focus:ring-brand/12"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Listing title"
@@ -285,20 +285,20 @@ export default function ListingsTable({
 
           <div className="grid gap-3 sm:grid-cols-2">
             <div>
-              <label className="text-xs font-medium text-slate-600">
+              <label className="text-xs font-medium text-neutral-600">
                 Owner
               </label>
               <input
-                className="mt-1 w-full rounded-2xl border px-4 py-3 text-sm outline-none focus:border-[rgb(var(--brand))] focus:ring-4 focus:ring-[rgba(71,95,88,0.12)]"
+                className="mt-1 w-full rounded-2xl border px-4 py-3 text-sm outline-none focus:border-brand focus:ring-4 focus:ring-brand/12"
                 value={owner}
                 onChange={(e) => setOwner(e.target.value)}
                 placeholder="Owner name"
               />
             </div>
             <div>
-              <label className="text-xs font-medium text-slate-600">City</label>
+              <label className="text-xs font-medium text-neutral-600">City</label>
               <input
-                className="mt-1 w-full rounded-2xl border px-4 py-3 text-sm outline-none focus:border-[rgb(var(--brand))] focus:ring-4 focus:ring-[rgba(71,95,88,0.12)]"
+                className="mt-1 w-full rounded-2xl border px-4 py-3 text-sm outline-none focus:border-brand focus:ring-4 focus:ring-brand/12"
                 value={city}
                 onChange={(e) => setCity(e.target.value)}
                 placeholder="City"
@@ -308,11 +308,11 @@ export default function ListingsTable({
 
           <div className="grid gap-3 sm:grid-cols-2">
             <div>
-              <label className="text-xs font-medium text-slate-600">
+              <label className="text-xs font-medium text-neutral-600">
                 Category
               </label>
               <select
-                className="mt-1 w-full rounded-2xl border px-4 py-3 text-sm outline-none focus:border-[rgb(var(--brand))] focus:ring-4 focus:ring-[rgba(71,95,88,0.12)]"
+                className="mt-1 w-full rounded-2xl border px-4 py-3 text-sm outline-none focus:border-brand focus:ring-4 focus:ring-brand/12"
                 value={categoryId}
                 onChange={(e) => setCategoryId(e.target.value)}
               >
@@ -324,11 +324,11 @@ export default function ListingsTable({
               </select>
             </div>
             <div>
-              <label className="text-xs font-medium text-slate-600">
+              <label className="text-xs font-medium text-neutral-600">
                 Status
               </label>
               <select
-                className="mt-1 w-full rounded-2xl border px-4 py-3 text-sm outline-none focus:border-[rgb(var(--brand))] focus:ring-4 focus:ring-[rgba(71,95,88,0.12)]"
+                className="mt-1 w-full rounded-2xl border px-4 py-3 text-sm outline-none focus:border-brand focus:ring-4 focus:ring-brand/12"
                 value={status}
                 onChange={(e) => setStatus(e.target.value)}
               >
@@ -345,24 +345,24 @@ export default function ListingsTable({
                 type="checkbox"
                 checked={featured}
                 onChange={(e) => setFeatured(e.target.checked)}
-                className="h-4 w-4 accent-[rgb(var(--brand))]"
+                className="h-4 w-4 accent-brand"
               />
               <div>
-                <p className="text-sm font-medium text-slate-900">Featured</p>
-                <p className="text-xs text-slate-500">
+                <p className="text-sm font-medium text-neutral-900">Featured</p>
+                <p className="text-xs text-neutral-500">
                   Boost listing visibility.
                 </p>
               </div>
             </label>
 
             <div>
-              <label className="text-xs font-medium text-slate-600">
+              <label className="text-xs font-medium text-neutral-600">
                 CO₂ (kg)
               </label>
               <input
                 type="number"
                 step="0.1"
-                className="mt-1 w-full rounded-2xl border px-4 py-3 text-sm outline-none focus:border-[rgb(var(--brand))] focus:ring-4 focus:ring-[rgba(71,95,88,0.12)]"
+                className="mt-1 w-full rounded-2xl border px-4 py-3 text-sm outline-none focus:border-brand focus:ring-4 focus:ring-brand/12"
                 value={co2Kg}
                 onChange={(e) => setCo2Kg(e.target.value)}
                 placeholder="0.0"

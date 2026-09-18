@@ -63,11 +63,11 @@ function NotificationItem({ notification, onClick, compact = false }) {
   return (
     <button
       className={cn(
-        "w-full rounded-2xl text-left transition hover:bg-slate-50",
+        "w-full rounded-2xl text-left transition hover:bg-neutral-50",
         compact
           ? "border bg-white px-3 py-3"
           : "p-3",
-        unread && "bg-[rgba(71,95,88,0.06)]",
+        unread && "bg-brand-soft/60",
       )}
       onClick={onClick}
     >
@@ -75,20 +75,20 @@ function NotificationItem({ notification, onClick, compact = false }) {
         <span
           className={cn(
             "mt-1 h-2.5 w-2.5 shrink-0 rounded-full",
-            unread ? "bg-[rgb(var(--brand))]" : "bg-slate-200",
+            unread ? "bg-brand" : "bg-neutral-200",
           )}
         />
 
         <div className="min-w-0 flex-1">
           <div className="flex items-start justify-between gap-2">
-            <p className="pr-2 text-sm font-semibold text-slate-900">
+            <p className="pr-2 text-sm font-semibold text-neutral-900">
               {title}
             </p>
-            <p className="shrink-0 text-xs text-slate-500">{time}</p>
+            <p className="shrink-0 text-xs text-neutral-500">{time}</p>
           </div>
           <p
             className={cn(
-              "mt-1 text-sm text-slate-600",
+              "mt-1 text-sm text-neutral-600",
               compact ? "line-clamp-3" : "line-clamp-2",
             )}
           >
@@ -176,19 +176,19 @@ export default function Topbar({
               onClick={() => setMobilePanel(false)}
             />
             <div className="absolute bottom-0 left-0 right-0 rounded-t-3xl border bg-white shadow-2xl">
-              <div className="mt-3 mx-auto h-1.5 w-14 rounded-full bg-slate-200" />
+              <div className="mt-3 mx-auto h-1.5 w-14 rounded-full bg-neutral-200" />
 
               <div className="flex items-center justify-between px-4 py-4">
                 <div>
-                  <p className="text-sm font-semibold text-slate-900">
+                  <p className="text-sm font-semibold text-neutral-900">
                     Notifications
                   </p>
-                  <p className="text-xs text-slate-500">
+                  <p className="text-xs text-neutral-500">
                     {unreadCount ? `${unreadCount} unread` : "All caught up"}
                   </p>
                 </div>
                 <button
-                  className="rounded-xl p-2 hover:bg-slate-100"
+                  className="rounded-xl p-2 hover:bg-neutral-100"
                   onClick={() => setMobilePanel(false)}
                   aria-label="Close"
                 >
@@ -199,10 +199,10 @@ export default function Topbar({
               <div className="max-h-[60vh] overflow-auto px-3 pb-3">
                 {list.length === 0 ? (
                   <div className="rounded-2xl border bg-white p-6 text-center">
-                    <p className="text-sm font-semibold text-slate-900">
+                    <p className="text-sm font-semibold text-neutral-900">
                       No notifications
                     </p>
-                    <p className="mt-1 text-sm text-slate-500">
+                    <p className="mt-1 text-sm text-neutral-500">
                       Alerts will appear here (reminders, case updates,
                       moderation).
                     </p>
@@ -245,7 +245,7 @@ export default function Topbar({
         <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-3 px-3 py-3 sm:px-6">
           <div className="flex items-center gap-3">
             <button
-              className="inline-flex items-center justify-center rounded-2xl p-2 hover:bg-slate-100 lg:hidden"
+              className="inline-flex items-center justify-center rounded-2xl p-2 hover:bg-neutral-100 lg:hidden"
               onClick={onMenuClick}
               aria-label="Open menu"
             >
@@ -253,11 +253,11 @@ export default function Topbar({
             </button>
 
             <div className="min-w-0">
-              <p className="truncate text-sm font-semibold text-slate-900 sm:text-base">
+              <p className="truncate text-sm font-semibold text-neutral-900 sm:text-base">
                 {title}
               </p>
               {subtitle ? (
-                <p className="truncate text-xs text-slate-500 sm:text-sm">
+                <p className="truncate text-xs text-neutral-500 sm:text-sm">
                   {subtitle}
                 </p>
               ) : null}
@@ -269,15 +269,15 @@ export default function Topbar({
               <button
                 className={cn(
                   "relative inline-flex items-center justify-center rounded-2xl p-2 transition",
-                  "hover:bg-slate-100",
+                  "hover:bg-neutral-100",
                 )}
                 onClick={toggleNotifications}
                 aria-label="Notifications"
                 aria-expanded={isPhoneViewport() ? mobilePanel : notifOpen}
               >
-                <FiBell className="h-5 w-5 text-slate-700" />
+                <FiBell className="h-5 w-5 text-neutral-700" />
                 {unreadCount > 0 ? (
-                  <span className="absolute right-1 top-1 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-[rgb(var(--brand))] px-1 text-[10px] font-semibold text-white">
+                  <span className="absolute right-1 top-1 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-brand px-1 text-[10px] font-semibold text-white">
                     {unreadCount > 9 ? "9+" : unreadCount}
                   </span>
                 ) : null}
@@ -287,17 +287,17 @@ export default function Topbar({
                 <div className="absolute right-0 mt-2 hidden w-90 max-w-[90vw] rounded-2xl border bg-white shadow-xl sm:block">
                   <div className="flex items-center justify-between gap-2 border-b px-4 py-3">
                     <div>
-                      <p className="text-sm font-semibold text-slate-900">
+                      <p className="text-sm font-semibold text-neutral-900">
                         Notifications
                       </p>
-                      <p className="text-xs text-slate-500">
+                      <p className="text-xs text-neutral-500">
                         {unreadCount
                           ? `${unreadCount} unread`
                           : "All caught up"}
                       </p>
                     </div>
                     <button
-                      className="rounded-xl p-2 hover:bg-slate-100"
+                      className="rounded-xl p-2 hover:bg-neutral-100"
                       onClick={() => setNotifOpen(false)}
                       aria-label="Close notifications"
                     >
@@ -308,10 +308,10 @@ export default function Topbar({
                   <div className="max-h-85 overflow-auto p-2">
                     {list.length === 0 ? (
                       <div className="p-6 text-center">
-                        <p className="text-sm font-semibold text-slate-900">
+                        <p className="text-sm font-semibold text-neutral-900">
                           No notifications
                         </p>
-                        <p className="mt-1 text-sm text-slate-500">
+                        <p className="mt-1 text-sm text-neutral-500">
                           Alerts will appear here (reminders, case updates,
                           moderation).
                         </p>
@@ -343,10 +343,10 @@ export default function Topbar({
             </div>
 
             <button
-              className="hidden items-center gap-2 rounded-2xl border bg-white px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 sm:inline-flex"
+              className="hidden items-center gap-2 rounded-2xl border bg-white px-3 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-50 sm:inline-flex"
               onClick={() => navigate("/settings")}
             >
-              <span className="h-7 w-7 rounded-full bg-[rgba(71,95,88,0.12)]" />
+              <span className="h-7 w-7 rounded-full bg-brand-soft" />
               <span className="max-w-35 truncate">{user?.name || "Admin"}</span>
             </button>
           </div>

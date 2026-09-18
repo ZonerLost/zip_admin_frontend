@@ -22,7 +22,7 @@ export default function DashboardLayout() {
   }, [location.pathname]);
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-neutral-50">
       <div className="flex">
         <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 

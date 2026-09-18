@@ -312,7 +312,7 @@ export default function TrustSupportPage() {
                 setDq(e.target.value);
               }}
               placeholder="Search disputes..."
-              className="w-full rounded-full border bg-white px-4 py-3 text-sm outline-none focus:border-[rgb(var(--brand))] focus:ring-4 focus:ring-[rgba(71,95,88,0.12)] sm:w-70"
+              className="w-full rounded-full border bg-white px-4 py-3 text-sm outline-none focus:border-brand focus:ring-4 focus:ring-brand/12 sm:w-70"
             />
             <select
               value={dStatus}
@@ -334,7 +334,7 @@ export default function TrustSupportPage() {
 
       {metricsLoading ? (
         <Card className="mt-4 p-6">
-          <p className="text-sm text-slate-500">Loading dispute metrics...</p>
+          <p className="text-sm text-neutral-500">Loading dispute metrics...</p>
         </Card>
       ) : (
         <DisputesMetrics stats={stats} />
@@ -345,7 +345,7 @@ export default function TrustSupportPage() {
           <div className="relative">
             {disputesLoading ? (
               <Card className="p-6">
-                <p className="text-sm text-slate-500">Loading disputes...</p>
+                <p className="text-sm text-neutral-500">Loading disputes...</p>
               </Card>
             ) : (
               <div
@@ -367,7 +367,7 @@ export default function TrustSupportPage() {
 
             {disputesRefreshing ? (
               <div className="absolute inset-0 z-10 flex items-center justify-center rounded-3xl bg-white/40 backdrop-blur-[1px]">
-                <div className="rounded-full border bg-white px-4 py-2 text-sm text-slate-600 shadow-sm">
+                <div className="rounded-full border bg-white px-4 py-2 text-sm text-neutral-600 shadow-sm">
                   Updating disputes...
                 </div>
               </div>
@@ -413,7 +413,7 @@ export default function TrustSupportPage() {
           <div className="relative">
             {reviewsLoading ? (
               <Card className="p-6">
-                <p className="text-sm text-slate-500">Loading reviews...</p>
+                <p className="text-sm text-neutral-500">Loading reviews...</p>
               </Card>
             ) : (
               <div
@@ -434,7 +434,7 @@ export default function TrustSupportPage() {
 
             {reviewsRefreshing ? (
               <div className="absolute inset-0 z-10 flex items-center justify-center rounded-3xl bg-white/40 backdrop-blur-[1px]">
-                <div className="rounded-full border bg-white px-4 py-2 text-sm text-slate-600 shadow-sm">
+                <div className="rounded-full border bg-white px-4 py-2 text-sm text-neutral-600 shadow-sm">
                   Updating reviews...
                 </div>
               </div>
@@ -453,15 +453,15 @@ export default function TrustSupportPage() {
 
         <div className="space-y-3">
           <Card className="p-5">
-            <p className="text-sm font-semibold text-slate-900">
+            <p className="text-sm font-semibold text-neutral-900">
               Notifications
             </p>
-            <p className="mt-1 text-sm text-slate-500">
+            <p className="mt-1 text-sm text-neutral-500">
               Control automated reminders & case updates.
             </p>
             <div className="mt-4">
               <a
-                className="inline-flex items-center justify-center rounded-full bg-[rgb(var(--brand))] px-5 py-3 text-sm font-medium text-white hover:opacity-95"
+                className="inline-flex items-center justify-center rounded-full bg-brand px-5 py-3 text-sm font-medium text-white hover:opacity-95"
                 href="/trust-support/notifications"
               >
                 Open Notifications
@@ -470,8 +470,8 @@ export default function TrustSupportPage() {
           </Card>
 
           <Card className="p-5">
-            <p className="text-sm font-semibold text-slate-900">Guidelines</p>
-            <p className="mt-1 text-sm text-slate-500">
+            <p className="text-sm font-semibold text-neutral-900">Guidelines</p>
+            <p className="mt-1 text-sm text-neutral-500">
               Keep moderation decisions consistent and well-documented.
             </p>
           </Card>
@@ -518,7 +518,7 @@ export default function TrustSupportPage() {
           </div>
         }
       >
-        <p className="text-sm text-slate-600">
+        <p className="text-sm text-neutral-600">
           Delete <span className="font-semibold">{toDelete?.title}</span>?
         </p>
       </Modal>

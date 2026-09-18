@@ -32,8 +32,8 @@ export default function TransactionsTable({ rows, onRefund }) {
     <Card className="p-0">
       <div className="flex items-center justify-between gap-3 border-b p-4">
         <div>
-          <p className="text-sm font-semibold text-slate-900">Transactions</p>
-          <p className="text-xs text-slate-500">
+          <p className="text-sm font-semibold text-neutral-900">Transactions</p>
+          <p className="text-xs text-neutral-500">
             Charges, fees, payouts and refunds.
           </p>
         </div>

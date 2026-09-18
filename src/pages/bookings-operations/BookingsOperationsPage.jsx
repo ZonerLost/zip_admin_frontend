@@ -282,7 +282,7 @@ export default function BookingsOperationsPage() {
                   setQ(e.target.value);
                 }}
                 placeholder="Search bookings..."
-                className="w-full rounded-full border bg-white px-4 py-3 text-sm outline-none focus:border-[rgb(var(--brand))] focus:ring-4 focus:ring-[rgba(71,95,88,0.12)] sm:w-60"
+                className="w-full rounded-full border bg-white px-4 py-3 text-sm outline-none focus:border-brand focus:ring-4 focus:ring-brand/12 sm:w-60"
               />
 
               <select
@@ -328,7 +328,7 @@ export default function BookingsOperationsPage() {
                     }}
                     className="rounded-full border bg-white px-3 py-2 text-sm outline-none"
                   />
-                  <span className="text-sm text-slate-400">—</span>
+                  <span className="text-sm text-neutral-400">—</span>
                   <input
                     type="date"
                     value={rangeEnd}
@@ -358,7 +358,7 @@ export default function BookingsOperationsPage() {
 
       {analyticsLoading ? (
         <Card className="mt-4 p-6">
-          <p className="text-sm text-slate-500">Loading booking metrics...</p>
+          <p className="text-sm text-neutral-500">Loading booking metrics...</p>
         </Card>
       ) : (
         <BookingsMetrics stats={stats} splits={splits} />
@@ -377,7 +377,7 @@ export default function BookingsOperationsPage() {
 
       {tableLoading ? (
         <Card className="mt-4 min-h-105 p-6">
-          <p className="text-sm text-slate-500">Loading bookings...</p>
+          <p className="text-sm text-neutral-500">Loading bookings...</p>
         </Card>
       ) : (
         <div className="relative mt-4 space-y-3">
@@ -406,7 +406,7 @@ export default function BookingsOperationsPage() {
 
           {tableRefreshing ? (
             <div className="absolute inset-0 z-10 flex items-center justify-center rounded-3xl bg-white/40 backdrop-blur-[1px]">
-              <div className="rounded-full border bg-white px-4 py-2 text-sm text-slate-600 shadow-sm">
+              <div className="rounded-full border bg-white px-4 py-2 text-sm text-neutral-600 shadow-sm">
                 Updating bookings...
               </div>
             </div>
@@ -448,7 +448,7 @@ export default function BookingsOperationsPage() {
           </div>
         }
       >
-        <p className="text-sm text-slate-600">
+        <p className="text-sm text-neutral-600">
           Cancel{" "}
           <span className="font-semibold">
             {toCancel?.booking?.listingTitle}
@@ -456,7 +456,7 @@ export default function BookingsOperationsPage() {
         </p>
 
         <div className="mt-4">
-          <label className="text-xs font-medium text-slate-600">Reason</label>
+          <label className="text-xs font-medium text-neutral-600">Reason</label>
           <select
             className="mt-1 w-full rounded-2xl border px-4 py-3 text-sm outline-none"
             value={cancelReason}
@@ -471,7 +471,7 @@ export default function BookingsOperationsPage() {
         </div>
 
         <div className="mt-4">
-          <label className="text-xs font-medium text-slate-600">
+          <label className="text-xs font-medium text-neutral-600">
             Internal notes
           </label>
           <textarea

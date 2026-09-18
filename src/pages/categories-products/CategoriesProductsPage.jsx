@@ -426,8 +426,8 @@ function CategoriesProductsPageContent() {
                   [
                     "rounded-full px-4 py-2 text-sm font-medium transition",
                     isActive
-                      ? "bg-[rgba(71,95,88,0.12)] text-[rgb(var(--brand))]"
-                      : "bg-slate-100 text-slate-600 hover:bg-slate-200",
+                      ? "bg-brand-soft text-brand"
+                      : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200",
                   ].join(" ")
                 }
               >
@@ -436,7 +436,7 @@ function CategoriesProductsPageContent() {
             ))}
           </div>
 
-          <div className="rounded-full bg-slate-100 px-4 py-2 text-xs font-medium text-slate-600">
+          <div className="rounded-full bg-neutral-100 px-4 py-2 text-xs font-medium text-neutral-600">
             Showing: {resolvedRange?.label || "Last 7 days"}
           </div>
         </div>
@@ -464,10 +464,10 @@ function CategoriesProductsPageContent() {
 
       <Card className="mt-4 p-0">
         <div className="border-b p-4">
-          <p className="text-sm font-semibold text-slate-900">
+          <p className="text-sm font-semibold text-neutral-900">
             {currentSection.label}
           </p>
-          <p className="mt-1 text-xs text-slate-500">
+          <p className="mt-1 text-xs text-neutral-500">
             {currentSection.subtitle} Click any column header to sort ascending
             or descending.
           </p>
@@ -475,7 +475,7 @@ function CategoriesProductsPageContent() {
 
         <div className="p-4">
           {loading ? (
-            <div className="rounded-2xl border bg-white px-4 py-8 text-sm text-slate-500">
+            <div className="rounded-2xl border bg-white px-4 py-8 text-sm text-neutral-500">
               Loading analytics...
             </div>
           ) : (

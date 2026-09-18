@@ -7,15 +7,15 @@ export default function UserDetailsDrawer({ open, user, onClose }) {
   return (
     <Drawer open={open} title="User Details" onClose={onClose}>
       {!user ? (
-        <p className="text-sm text-slate-500">No user selected.</p>
+        <p className="text-sm text-neutral-500">No user selected.</p>
       ) : (
         <div className="space-y-4">
           <div className="rounded-2xl border bg-white p-4">
-            <p className="text-xs text-slate-500">Name</p>
-            <p className="text-sm font-semibold text-slate-900">{user.name}</p>
+            <p className="text-xs text-neutral-500">Name</p>
+            <p className="text-sm font-semibold text-neutral-900">{user.name}</p>
 
-            <p className="mt-3 text-xs text-slate-500">Email</p>
-            <p className="text-sm text-slate-800">{user.email}</p>
+            <p className="mt-3 text-xs text-neutral-500">Email</p>
+            <p className="text-sm text-neutral-800">{user.email}</p>
 
             <div className="mt-3 flex flex-wrap items-center gap-2">
               <StatusPill value={user.status} />
@@ -24,29 +24,29 @@ export default function UserDetailsDrawer({ open, user, onClose }) {
 
             <div className="mt-3 grid grid-cols-2 gap-3">
               <div>
-                <p className="text-xs text-slate-500">Role</p>
-                <p className="text-sm text-slate-800">
+                <p className="text-xs text-neutral-500">Role</p>
+                <p className="text-sm text-neutral-800">
                   {user.isOwner ? "Owner" : "Renter"}
                 </p>
               </div>
 
               <div>
-                <p className="text-xs text-slate-500">Last active</p>
-                <p className="text-sm text-slate-800">
+                <p className="text-xs text-neutral-500">Last active</p>
+                <p className="text-sm text-neutral-800">
                   {formatDate(user.lastActive)}
                 </p>
               </div>
 
               <div>
-                <p className="text-xs text-slate-500">Listings</p>
-                <p className="text-sm text-slate-800">
+                <p className="text-xs text-neutral-500">Listings</p>
+                <p className="text-sm text-neutral-800">
                   {user.listingsCount ?? 0}
                 </p>
               </div>
 
               <div>
-                <p className="text-xs text-slate-500">Bookings</p>
-                <p className="text-sm text-slate-800">
+                <p className="text-xs text-neutral-500">Bookings</p>
+                <p className="text-sm text-neutral-800">
                   {user.bookingsCount ?? 0}
                 </p>
               </div>

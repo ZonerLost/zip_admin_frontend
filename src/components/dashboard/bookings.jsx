@@ -13,6 +13,7 @@ import {
   CartesianGrid,
   Legend,
 } from "recharts";
+import { chart } from "../../theme/palette.js";
 
 export default function DisputesTrendChart({ loading = false }) {
   const { resolvedRange, comparePreviousYear, resolvePreviousYear } =
@@ -87,14 +88,14 @@ export default function DisputesTrendChart({ loading = false }) {
   return (
     <ChartCard title="Bookings" subtitle="Amount of bookings made over time">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-        <div className="text-xs sm:text-sm text-slate-500">
+        <div className="text-xs sm:text-sm text-neutral-500">
           Showing: {resolvedRange?.label}
         </div>
         <div className="flex items-center flex-wrap gap-2"></div>
       </div>
 
       {loading ? (
-        <div className="h-55 animate-pulse rounded-2xl bg-slate-100 mt-4" />
+        <div className="h-55 animate-pulse rounded-2xl bg-neutral-100 mt-4" />
       ) : !rows.length ? (
         <EmptyState
           title="No bookings yet"
@@ -104,25 +105,25 @@ export default function DisputesTrendChart({ loading = false }) {
         <div className="w-full mt-4">
           <div className="mb-3 grid grid-cols-1 gap-2 sm:grid-cols-3">
             <div className="rounded-2xl border bg-white p-3">
-              <p className="text-xs text-slate-500">Total Bookings</p>
-              <p className="mt-1 text-sm font-semibold text-slate-900">
+              <p className="text-xs text-neutral-500">Total Bookings</p>
+              <p className="mt-1 text-sm font-semibold text-neutral-900">
                 {summary.total}
               </p>
             </div>
             <div className="rounded-2xl border bg-white p-3">
-              <p className="text-xs text-slate-500">Avg / period</p>
-              <p className="mt-1 text-sm font-semibold text-slate-900">
+              <p className="text-xs text-neutral-500">Avg / period</p>
+              <p className="mt-1 text-sm font-semibold text-neutral-900">
                 {summary.avg}
               </p>
             </div>
             <div className="rounded-2xl border bg-white p-3">
               <div className="flex items-center justify-between gap-2">
                 <div>
-                  <p className="text-xs text-slate-500">Peak</p>
-                  <p className="mt-1 text-sm font-semibold text-slate-900">
+                  <p className="text-xs text-neutral-500">Peak</p>
+                  <p className="mt-1 text-sm font-semibold text-neutral-900">
                     {summary.peak.bookings}
                   </p>
-                  <p className="mt-1 text-xs text-slate-500">
+                  <p className="mt-1 text-xs text-neutral-500">
                     {summary.peak.label}
                   </p>
                 </div>
@@ -140,8 +141,8 @@ export default function DisputesTrendChart({ loading = false }) {
                   <Legend verticalAlign="top" align="right" />
                   <defs>
                     <linearGradient id="bookFill" x1="0" x2="0" y1="0" y2="1">
-                      <stop offset="0%" stopColor="rgba(71,95,88,0.22)" />
-                      <stop offset="100%" stopColor="rgba(71,95,88,0.05)" />
+                      <stop offset="0%" stopColor={chart.current} stopOpacity={0.22} />
+                      <stop offset="100%" stopColor={chart.current} stopOpacity={0.05} />
                     </linearGradient>
                     <linearGradient
                       id="prevBookFill"
@@ -150,11 +151,11 @@ export default function DisputesTrendChart({ loading = false }) {
                       y1="0"
                       y2="1"
                     >
-                      <stop offset="0%" stopColor="rgba(71,95,88,0.14)" />
-                      <stop offset="100%" stopColor="rgba(71,95,88,0.02)" />
+                      <stop offset="0%" stopColor={chart.previous} stopOpacity={0.14} />
+                      <stop offset="100%" stopColor={chart.previous} stopOpacity={0.02} />
                     </linearGradient>
                   </defs>
-                  <CartesianGrid stroke="#E9ECEB" vertical={false} />
+                  <CartesianGrid stroke={chart.grid} vertical={false} />
                   <XAxis dataKey="label" tick={{ fontSize: 12 }} />
                   <YAxis />
                   <Tooltip />
@@ -162,7 +163,7 @@ export default function DisputesTrendChart({ loading = false }) {
                     type="monotone"
                     dataKey="bookings"
                     name="Current"
-                    stroke="#475F58"
+                    stroke={chart.current}
                     strokeWidth={3}
                     fill="url(#bookFill)"
                     dot={{ r: 4 }}
@@ -172,7 +173,7 @@ export default function DisputesTrendChart({ loading = false }) {
                       type="monotone"
                       dataKey="prevBookings"
                       name="Prev year"
-                      stroke="rgba(71,95,88,0.75)"
+                      stroke={chart.previous}
                       strokeWidth={2}
                       dot={false}
                       strokeDasharray="4 4"
@@ -185,16 +186,16 @@ export default function DisputesTrendChart({ loading = false }) {
             </div>
           </div>
 
-          <div className="mt-3 flex items-center gap-3 text-xs text-slate-600">
+          <div className="mt-3 flex items-center gap-3 text-xs text-neutral-600">
             <div className="flex items-center gap-2">
-              <span className="h-2 w-2 rounded-full bg-[rgb(71,95,88)]" />
+              <span className="h-2 w-2 rounded-full" style={{ backgroundColor: chart.current }} />
               Current
             </div>
             {prevRows ? (
               <div className="flex items-center gap-2">
                 <span
                   className="h-2 w-2 rounded-full"
-                  style={{ backgroundColor: "rgba(71,95,88,0.75)" }}
+                  style={{ backgroundColor: chart.previous }}
                 />
                 Prev year
               </div>

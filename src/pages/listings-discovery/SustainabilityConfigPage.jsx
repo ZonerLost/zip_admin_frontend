@@ -75,7 +75,7 @@ export default function SustainabilityConfigPage() {
 
       {loading ? (
         <Card className="p-6">
-          <p className="text-sm text-slate-500">Loading...</p>
+          <p className="text-sm text-neutral-500">Loading...</p>
         </Card>
       ) : (
         <div className="grid gap-3 lg:grid-cols-2">
@@ -90,10 +90,10 @@ export default function SustainabilityConfigPage() {
             />
           ) : (
             <Card className="p-6">
-              <p className="text-sm font-semibold text-slate-900">
+              <p className="text-sm font-semibold text-neutral-900">
                 Mapping Disabled
               </p>
-              <p className="mt-1 text-sm text-slate-500">
+              <p className="mt-1 text-sm text-neutral-500">
                 Enable mapping in Sustainability Config to manage category
                 factors.
               </p>
@@ -118,7 +118,7 @@ export default function SustainabilityConfigPage() {
           </div>
         }
       >
-        <p className="text-sm text-slate-600">Delete this mapping?</p>
+        <p className="text-sm text-neutral-600">Delete this mapping?</p>
       </Modal>
     </PageContainer>
   );

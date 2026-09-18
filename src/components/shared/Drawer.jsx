@@ -37,10 +37,10 @@ export default function Drawer({ open, title, onClose, children }) {
         )}
       >
         <div className="flex items-center justify-between gap-3 border-b px-5 py-4">
-          <p className="text-sm font-semibold text-slate-900">{title}</p>
+          <p className="text-sm font-semibold text-neutral-900">{title}</p>
           <button
             type="button"
-            className="rounded-xl p-2 hover:bg-slate-100"
+            className="rounded-xl p-2 hover:bg-neutral-100"
             onClick={onClose}
             aria-label="Close"
           >

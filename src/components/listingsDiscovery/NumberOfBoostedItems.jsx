@@ -13,6 +13,7 @@ import {
   CartesianGrid,
   Legend,
 } from "recharts";
+import { chart } from "../../theme/palette.js";
 
 export default function NumberOfBoostedItems() {
   const { resolvedRange, comparePreviousYear, resolvePreviousYear } =
@@ -92,23 +93,23 @@ export default function NumberOfBoostedItems() {
         <div className="w-full mt-4">
           <div className="mb-3 grid grid-cols-1 gap-2 sm:grid-cols-3">
             <div className="rounded-2xl border bg-white p-3">
-              <p className="text-xs text-slate-500">Total</p>
-              <p className="mt-1 text-sm font-semibold text-slate-900">
+              <p className="text-xs text-neutral-500">Total</p>
+              <p className="mt-1 text-sm font-semibold text-neutral-900">
                 {summary.total}
               </p>
             </div>
             <div className="rounded-2xl border bg-white p-3">
-              <p className="text-xs text-slate-500">Avg / period</p>
-              <p className="mt-1 text-sm font-semibold text-slate-900">
+              <p className="text-xs text-neutral-500">Avg / period</p>
+              <p className="mt-1 text-sm font-semibold text-neutral-900">
                 {summary.avg}
               </p>
             </div>
             <div className="rounded-2xl border bg-white p-3">
-              <p className="text-xs text-slate-500">Peak</p>
-              <p className="mt-1 text-sm font-semibold text-slate-900">
+              <p className="text-xs text-neutral-500">Peak</p>
+              <p className="mt-1 text-sm font-semibold text-neutral-900">
                 {summary.peak.boostedCount}
               </p>
-              <p className="mt-1 text-xs text-slate-500">
+              <p className="mt-1 text-xs text-neutral-500">
                 {summary.peak.label}
               </p>
             </div>
@@ -122,7 +123,7 @@ export default function NumberOfBoostedItems() {
                   margin={{ top: 8, right: 8, left: 8, bottom: 8 }}
                 >
                   <Legend verticalAlign="top" align="right" />
-                  <CartesianGrid stroke="#E9ECEB" vertical={false} />
+                  <CartesianGrid stroke={chart.grid} vertical={false} />
                   <XAxis dataKey="label" tick={{ fontSize: 12 }} />
                   <YAxis />
                   <Tooltip />
@@ -130,16 +131,16 @@ export default function NumberOfBoostedItems() {
                     type="monotone"
                     dataKey="boostedCount"
                     name="Current"
-                    stroke="#0EA5A4"
+                    stroke={chart.current}
                     strokeWidth={3}
-                    fill="rgba(14,165,164,0.08)"
+                    fill={chart.current} fillOpacity={0.08}
                     dot={{ r: 4 }}
                   />
                   <Area
                     type="monotone"
                     dataKey="prevBoostedCount"
                     name="Prev year"
-                    stroke="rgba(14,165,164,0.7)"
+                    stroke={chart.previous}
                     strokeWidth={2}
                     dot={false}
                     strokeDasharray="4 4"

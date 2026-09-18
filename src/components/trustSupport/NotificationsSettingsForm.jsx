@@ -24,14 +24,14 @@ export default function NotificationsSettingsForm({ value, onSave }) {
     <Card className="p-5">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <p className="text-sm font-semibold text-slate-900">
+          <p className="text-sm font-semibold text-neutral-900">
             Notifications Settings
           </p>
-          <p className="mt-1 text-sm text-slate-500">
+          <p className="mt-1 text-sm text-neutral-500">
             Templates + rules for reminders and case updates.
           </p>
         </div>
-        <div className="rounded-2xl bg-[rgba(71,95,88,0.10)] p-2 text-[rgb(var(--brand))]">
+        <div className="rounded-2xl bg-brand-soft p-2 text-brand">
           <FiBell className="h-5 w-5" />
         </div>
       </div>
@@ -42,13 +42,13 @@ export default function NotificationsSettingsForm({ value, onSave }) {
             type="checkbox"
             checked={Boolean(local.enabled)}
             onChange={(e) => update({ enabled: e.target.checked })}
-            className="h-4 w-4 accent-[rgb(var(--brand))]"
+            className="h-4 w-4 accent-brand"
           />
           <div>
-            <p className="text-sm font-medium text-slate-900">
+            <p className="text-sm font-medium text-neutral-900">
               Enable Notifications
             </p>
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-neutral-500">
               Global notifications switch.
             </p>
           </div>
@@ -68,20 +68,20 @@ export default function NotificationsSettingsForm({ value, onSave }) {
                     channels: { ...local.channels, [k]: e.target.checked },
                   })
                 }
-                className="h-4 w-4 accent-[rgb(var(--brand))]"
+                className="h-4 w-4 accent-brand"
               />
               <div>
-                <p className="text-sm font-medium text-slate-900">
+                <p className="text-sm font-medium text-neutral-900">
                   {k.toUpperCase()}
                 </p>
-                <p className="text-xs text-slate-500">Channel</p>
+                <p className="text-xs text-neutral-500">Channel</p>
               </div>
             </label>
           ))}
         </div>
 
         <div className="rounded-2xl border bg-white p-4">
-          <p className="text-sm font-semibold text-slate-900">
+          <p className="text-sm font-semibold text-neutral-900">
             Template: Photo Upload Reminder
           </p>
           <label className="mt-3 flex items-center gap-3">
@@ -93,13 +93,13 @@ export default function NotificationsSettingsForm({ value, onSave }) {
                   enabled: e.target.checked,
                 })
               }
-              className="h-4 w-4 accent-[rgb(var(--brand))]"
+              className="h-4 w-4 accent-brand"
             />
-            <span className="text-sm text-slate-700">Enabled</span>
+            <span className="text-sm text-neutral-700">Enabled</span>
           </label>
           <div className="mt-3 grid gap-3 sm:grid-cols-2">
             <div>
-              <label className="text-xs font-medium text-slate-600">
+              <label className="text-xs font-medium text-neutral-600">
                 Subject
               </label>
               <input
@@ -113,7 +113,7 @@ export default function NotificationsSettingsForm({ value, onSave }) {
               />
             </div>
             <div>
-              <label className="text-xs font-medium text-slate-600">
+              <label className="text-xs font-medium text-neutral-600">
                 Rule: Hours after booking end
               </label>
               <input
@@ -132,7 +132,7 @@ export default function NotificationsSettingsForm({ value, onSave }) {
             </div>
           </div>
           <div className="mt-3">
-            <label className="text-xs font-medium text-slate-600">Body</label>
+            <label className="text-xs font-medium text-neutral-600">Body</label>
             <textarea
               rows={3}
               className="mt-1 w-full rounded-2xl border px-4 py-3 text-sm outline-none"
@@ -145,7 +145,7 @@ export default function NotificationsSettingsForm({ value, onSave }) {
         </div>
 
         <div className="rounded-2xl border bg-white p-4">
-          <p className="text-sm font-semibold text-slate-900">
+          <p className="text-sm font-semibold text-neutral-900">
             Template: Case Progress Update
           </p>
           <label className="mt-3 flex items-center gap-3">
@@ -157,12 +157,12 @@ export default function NotificationsSettingsForm({ value, onSave }) {
                   enabled: e.target.checked,
                 })
               }
-              className="h-4 w-4 accent-[rgb(var(--brand))]"
+              className="h-4 w-4 accent-brand"
             />
-            <span className="text-sm text-slate-700">Enabled</span>
+            <span className="text-sm text-neutral-700">Enabled</span>
           </label>
 
-          <label className="mt-3 flex items-center gap-3 rounded-2xl bg-slate-50 p-3">
+          <label className="mt-3 flex items-center gap-3 rounded-2xl bg-neutral-50 p-3">
             <input
               type="checkbox"
               checked={Boolean(local.rules?.sendCaseUpdatesOnStatusChange)}
@@ -174,13 +174,13 @@ export default function NotificationsSettingsForm({ value, onSave }) {
                   },
                 })
               }
-              className="h-4 w-4 accent-[rgb(var(--brand))]"
+              className="h-4 w-4 accent-brand"
             />
             <div>
-              <p className="text-sm font-medium text-slate-900">
+              <p className="text-sm font-medium text-neutral-900">
                 Send on status change
               </p>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-neutral-500">
                 Auto notify users when dispute status changes.
               </p>
             </div>
@@ -188,7 +188,7 @@ export default function NotificationsSettingsForm({ value, onSave }) {
 
           <div className="mt-3 grid gap-3 sm:grid-cols-2">
             <div>
-              <label className="text-xs font-medium text-slate-600">
+              <label className="text-xs font-medium text-neutral-600">
                 Subject
               </label>
               <input
@@ -202,7 +202,7 @@ export default function NotificationsSettingsForm({ value, onSave }) {
               />
             </div>
             <div>
-              <label className="text-xs font-medium text-slate-600">Body</label>
+              <label className="text-xs font-medium text-neutral-600">Body</label>
               <input
                 className="mt-1 w-full rounded-2xl border px-4 py-3 text-sm outline-none"
                 value={local.templates?.caseProgressUpdate?.body || ""}

@@ -49,13 +49,13 @@ export default function InsuranceOverrideModal({
     >
       <div className="space-y-4">
         <div>
-          <label className="text-xs font-medium text-slate-600">
+          <label className="text-xs font-medium text-neutral-600">
             Specific item
           </label>
           <select
             value={itemId}
             onChange={(event) => setItemId(event.target.value)}
-            className="mt-1 w-full rounded-2xl border px-4 py-3 text-sm outline-none focus:border-[rgb(var(--brand))]"
+            className="mt-1 w-full rounded-2xl border px-4 py-3 text-sm outline-none focus:border-brand"
           >
             {(items || []).map((item) => (
               <option key={item.id} value={item.id}>
@@ -66,8 +66,8 @@ export default function InsuranceOverrideModal({
         </div>
 
         <div className="rounded-2xl border p-4">
-          <p className="text-sm font-semibold text-slate-900">Applied plans</p>
-          <p className="mt-1 text-xs text-slate-500">
+          <p className="text-sm font-semibold text-neutral-900">Applied plans</p>
+          <p className="mt-1 text-xs text-neutral-500">
             These plans replace the inherited category and sub-category setup.
           </p>
           <div className="mt-3 space-y-2">
@@ -79,11 +79,11 @@ export default function InsuranceOverrideModal({
                   onChange={() =>
                     setPlanIds((current) => toggleId(current, plan.id))
                   }
-                  className="mt-0.5 h-4 w-4 accent-[rgb(var(--brand))]"
+                  className="mt-0.5 h-4 w-4 accent-brand"
                 />
                 <span>
                   {plan.name}
-                  <span className="block text-xs text-slate-500">
+                  <span className="block text-xs text-neutral-500">
                     {plan.description}
                   </span>
                 </span>

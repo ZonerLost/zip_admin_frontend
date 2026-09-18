@@ -17,7 +17,7 @@ export default function VerifyCodeModal({ open, onClose, onGoVerify }) {
         </div>
       }
     >
-      <p className="text-sm text-slate-600">
+      <p className="text-sm text-neutral-600">
         Please verify your email with the 6-digit code.
       </p>
     </Modal>

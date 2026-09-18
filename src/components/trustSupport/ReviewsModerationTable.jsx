@@ -27,7 +27,7 @@ export default function ReviewsModerationTable({
           <div className="flex items-center gap-2">
             {r.status === "Visible" ? (
               <button
-                className="rounded-xl p-2 hover:bg-slate-100"
+                className="rounded-xl p-2 hover:bg-neutral-100"
                 onClick={() => onHide(r)}
                 aria-label="Hide"
               >
@@ -35,7 +35,7 @@ export default function ReviewsModerationTable({
               </button>
             ) : (
               <button
-                className="rounded-xl p-2 hover:bg-slate-100"
+                className="rounded-xl p-2 hover:bg-neutral-100"
                 onClick={() => onShow(r)}
                 aria-label="Show"
               >
@@ -43,7 +43,7 @@ export default function ReviewsModerationTable({
               </button>
             )}
             <button
-              className="rounded-xl p-2 hover:bg-slate-100"
+              className="rounded-xl p-2 hover:bg-neutral-100"
               onClick={() => onRemove(r)}
               aria-label="Remove"
             >
@@ -58,10 +58,10 @@ export default function ReviewsModerationTable({
   return (
     <Card className="p-0">
       <div className="border-b p-4">
-        <p className="text-sm font-semibold text-slate-900">
+        <p className="text-sm font-semibold text-neutral-900">
           Reviews Moderation
         </p>
-        <p className="text-xs text-slate-500">
+        <p className="text-xs text-neutral-500">
           Hide or remove toxic content professionally.
         </p>
       </div>

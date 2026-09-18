@@ -13,6 +13,7 @@ import {
   CartesianGrid,
   Legend,
 } from "recharts";
+import { chart } from "../../theme/palette.js";
 
 export default function ViewsPctDifferenceBoostedVsNonBoosted() {
   const { resolvedRange, comparePreviousYear, resolvePreviousYear } =
@@ -69,23 +70,23 @@ export default function ViewsPctDifferenceBoostedVsNonBoosted() {
         <div className="w-full mt-4">
           <div className="mb-3 grid grid-cols-1 gap-2 sm:grid-cols-3">
             <div className="rounded-2xl border bg-white p-3">
-              <p className="text-xs text-slate-500">Avg % diff</p>
-              <p className="mt-1 text-sm font-semibold text-slate-900">
+              <p className="text-xs text-neutral-500">Avg % diff</p>
+              <p className="mt-1 text-sm font-semibold text-neutral-900">
                 {summary.avgPct ?? summary.avg}
               </p>
             </div>
             <div className="rounded-2xl border bg-white p-3">
-              <p className="text-xs text-slate-500">Peak %</p>
-              <p className="mt-1 text-sm font-semibold text-slate-900">
+              <p className="text-xs text-neutral-500">Peak %</p>
+              <p className="mt-1 text-sm font-semibold text-neutral-900">
                 {summary.peak ? `${summary.peak.pctDiff}%` : "-"}
               </p>
-              <p className="mt-1 text-xs text-slate-500">
+              <p className="mt-1 text-xs text-neutral-500">
                 {summary.peak?.label}
               </p>
             </div>
             <div className="rounded-2xl border bg-white p-3">
-              <p className="text-xs text-slate-500">Points</p>
-              <p className="mt-1 text-sm font-semibold text-slate-900">
+              <p className="text-xs text-neutral-500">Points</p>
+              <p className="mt-1 text-sm font-semibold text-neutral-900">
                 {rows.length}
               </p>
             </div>
@@ -99,7 +100,7 @@ export default function ViewsPctDifferenceBoostedVsNonBoosted() {
                   margin={{ top: 8, right: 8, left: 8, bottom: 8 }}
                 >
                   <Legend verticalAlign="top" align="right" />
-                  <CartesianGrid stroke="#E9ECEB" vertical={false} />
+                  <CartesianGrid stroke={chart.grid} vertical={false} />
                   <XAxis dataKey="label" tick={{ fontSize: 12 }} />
                   <YAxis />
                   <Tooltip />
@@ -107,7 +108,7 @@ export default function ViewsPctDifferenceBoostedVsNonBoosted() {
                     type="monotone"
                     dataKey="pctDiff"
                     name="% diff"
-                    stroke="#7C3AED"
+                    stroke={chart.current}
                     strokeWidth={3}
                     dot={{ r: 4 }}
                   />

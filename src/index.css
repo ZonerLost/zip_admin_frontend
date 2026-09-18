@@ -1,38 +1,67 @@
 @import "tailwindcss";
 
-:root {
+/*
+ * Atussa design tokens — source: Atussa brand guide ("Couleurs et règles d'utilisation").
+ * Every colour in the UI comes from here; use the generated utilities
+ * (bg-brand, text-brand, ring-brand/12, bg-canvas, border-line, text-neutral-500 …)
+ * instead of arbitrary values. Chart series colours live in src/theme/palette.js.
+ */
+@theme {
+  /* Brand palette */
+  --color-brand: #1f4d2e; /* Vert forêt — primary actions, links, focus */
+  --color-brand-soft: #e9efdf; /* sage wash — active nav, selected, icon chips */
+  --color-moss: #6e8b55; /* Vert mousse */
+  --color-sage: #a6be7a; /* Vert sauge */
+  --color-cream: #f5f0e6; /* Crème */
+  --color-ink: #111111; /* Noir — body text */
 
-  --brand: 71 95 88;          /* #475F58 */
-  --mint: 223 238 234;        /* soft mint background */
-  --bg: 244 244 244;          /* light grey page bg */
-  --text: 17 24 39;           /* near-black */
-  --muted: 107 114 128;       /* muted text */
-  --border: 229 231 235;      /* light border */
+  /* Surfaces */
+  --color-canvas: #f4f5ed; /* page background (brand guide panels) */
+  --color-line: #e4e6dc; /* hairline borders and dividers */
+
+  /*
+   * Neutral scale, replacing Tailwind's default `neutral`: same lightness as
+   * Tailwind slate at every step (identical contrast), tinted toward the brand's
+   * sage paper for light steps and toward forest for text. 500 is nudged darker
+   * so muted text clears 4.5:1 on both white cards and the canvas.
+   */
+  --color-neutral-50: oklch(98.4% 0.004 110);
+  --color-neutral-100: oklch(96.8% 0.006 112);
+  --color-neutral-200: oklch(92.9% 0.008 115);
+  --color-neutral-300: oklch(86.9% 0.011 118);
+  --color-neutral-400: oklch(70.4% 0.016 122);
+  --color-neutral-500: oklch(53% 0.019 128);
+  --color-neutral-600: oklch(44.6% 0.019 134);
+  --color-neutral-700: oklch(37.2% 0.018 140);
+  --color-neutral-800: oklch(27.9% 0.016 145);
+  --color-neutral-900: oklch(20.8% 0.014 150);
+  --color-neutral-950: oklch(12.9% 0.011 152);
 }
 
-/* Ensure Tailwind's `border` utility uses our design token color everywhere */
-.border {
-  border-color: rgb(var(--border)) !important;
+@layer base {
+  /* Tailwind v4 borders default to currentColor; give every border the hairline token. */
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-line, currentColor);
+  }
+
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    background-color: var(--color-canvas);
+    color: var(--color-ink);
+  }
 }
 
-/* Also ensure directional border utilities use the same token */
-.border-b,
-.border-t,
-.border-l,
-.border-r,
-.border-x,
-.border-y {
-  border-color: rgb(var(--border)) !important;
-}
-
-
-* {
-  -webkit-tap-highlight-color: transparent;
-}
-
-body {
-  background: rgb(var(--bg));
-  color: rgb(var(--text));
+/* Recharts paints legend labels in the series colour; labels wear text ink,
+   the legend swatch carries series identity. */
+.recharts-legend-item-text {
+  color: var(--color-neutral-600) !important;
 }
 
 @keyframes cardIn {

@@ -20,10 +20,10 @@ export default function BookingsTable({
         width: "40%",
         render: (r) => (
           <div className="min-w-0">
-            <p className="truncate text-sm font-medium text-slate-900">
+            <p className="truncate text-sm font-medium text-neutral-900">
               {r.listingTitle || r.listing || "-"}
             </p>
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-neutral-500">
               {r.listingCity || r.city || r.listingSubtitle || ""}
             </p>
           </div>
@@ -35,7 +35,7 @@ export default function BookingsTable({
         width: "15%",
         render: (r) => (
           <div className="min-w-0">
-            <p className="truncate text-sm text-slate-900">
+            <p className="truncate text-sm text-neutral-900">
               {r.ownerName || r.owner || "-"}
             </p>
           </div>
@@ -57,14 +57,14 @@ export default function BookingsTable({
           if (!initials) initials = (email && email[0]?.toUpperCase()) || "?";
           return (
             <div className="flex items-center gap-3 min-w-0">
-              <div className="h-8 w-8 shrink-0 rounded-full bg-slate-100 flex items-center justify-center text-sm font-semibold text-slate-700">
+              <div className="h-8 w-8 shrink-0 rounded-full bg-neutral-100 flex items-center justify-center text-sm font-semibold text-neutral-700">
                 {initials}
               </div>
               <div className="min-w-0">
-                <p className="truncate text-sm font-medium text-slate-900">
+                <p className="truncate text-sm font-medium text-neutral-900">
                   {name || "-"}
                 </p>
-                <p className="text-xs text-slate-500">{email}</p>
+                <p className="text-xs text-neutral-500">{email}</p>
               </div>
             </div>
           );
@@ -101,7 +101,7 @@ export default function BookingsTable({
             <StatusPill value="Refunded" />
           ) : (
             <button
-              className="rounded-xl p-2 hover:bg-slate-100"
+              className="rounded-xl p-2 hover:bg-neutral-100"
               onClick={() => onRefund?.(r)}
               aria-label="Issue refund"
             >
@@ -115,7 +115,7 @@ export default function BookingsTable({
         render: (r) => (
           <div className="flex items-center gap-2">
             <button
-              className="rounded-xl p-2 hover:bg-slate-100"
+              className="rounded-xl p-2 hover:bg-neutral-100"
               onClick={() => onView(r)}
               aria-label="View"
             >
@@ -124,7 +124,7 @@ export default function BookingsTable({
 
             {r.status === "Pending" ? (
               <button
-                className="rounded-xl p-2 hover:bg-slate-100"
+                className="rounded-xl p-2 hover:bg-neutral-100"
                 onClick={() => onApproveReject(r)}
                 aria-label="Approve/Reject"
               >
@@ -134,7 +134,7 @@ export default function BookingsTable({
 
             {r.status !== "Cancelled" ? (
               <button
-                className="rounded-xl p-2 hover:bg-slate-100"
+                className="rounded-xl p-2 hover:bg-neutral-100"
                 onClick={() => onCancel(r)}
                 aria-label="Cancel"
               >
@@ -151,8 +151,8 @@ export default function BookingsTable({
     <Card className="p-0">
       <div className="flex flex-col gap-2 border-b p-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p className="text-sm font-semibold text-slate-900">Bookings</p>
-          <p className="text-xs text-slate-500">
+          <p className="text-sm font-semibold text-neutral-900">Bookings</p>
+          <p className="text-xs text-neutral-500">
             Approve, reject, cancel — clean operations flow.
           </p>
         </div>

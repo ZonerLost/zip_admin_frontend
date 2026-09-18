@@ -41,7 +41,7 @@ export default function InsuranceOverridesTable({
           <>
             <button
               type="button"
-              className="rounded-xl p-2 hover:bg-slate-100"
+              className="rounded-xl p-2 hover:bg-neutral-100"
               onClick={() => {
                 setEditing(row);
                 setEditorOpen(true);
@@ -52,7 +52,7 @@ export default function InsuranceOverridesTable({
             </button>
             <button
               type="button"
-              className="rounded-xl p-2 hover:bg-slate-100"
+              className="rounded-xl p-2 hover:bg-neutral-100"
               onClick={() => {
                 if (window.confirm(`Delete override for "${row.itemName}"?`)) {
                   onDelete?.(row);
@@ -83,8 +83,8 @@ export default function InsuranceOverridesTable({
     <Card className="p-0">
       <div className="flex flex-col gap-3 border-b p-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p className="text-sm font-semibold text-slate-900">Item Overrides</p>
-          <p className="text-xs text-slate-500">
+          <p className="text-sm font-semibold text-neutral-900">Item Overrides</p>
+          <p className="text-xs text-neutral-500">
             Specific item rules replace inherited category and sub-category
             insurance plans.
           </p>

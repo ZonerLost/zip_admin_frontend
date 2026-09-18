@@ -86,10 +86,10 @@ export default function MetricCard({
     >
       <div className="grid min-w-0 grid-cols-[minmax(0,1fr)_auto] items-start gap-2 sm:gap-3">
         <div className="min-w-0">
-          <p className="text-xs leading-snug text-slate-500 [overflow-wrap:anywhere] sm:text-sm">
+          <p className="text-xs leading-snug text-neutral-500 [overflow-wrap:anywhere] sm:text-sm">
             {title}
           </p>
-          <p className="mt-1 max-w-full text-lg font-semibold leading-tight text-slate-900 [overflow-wrap:anywhere] sm:text-2xl">
+          <p className="mt-1 max-w-full text-lg font-semibold leading-tight text-neutral-900 [overflow-wrap:anywhere] sm:text-2xl">
             {displayValue ?? (
               <>
                 {prefix}
@@ -99,13 +99,13 @@ export default function MetricCard({
             )}
           </p>
           {helperText ? (
-            <p className="mt-1 text-xs leading-snug text-slate-500 [overflow-wrap:anywhere]">
+            <p className="mt-1 text-xs leading-snug text-neutral-500 [overflow-wrap:anywhere]">
               {helperText}
             </p>
           ) : null}
         </div>
         {Icon ? (
-          <div className="shrink-0 rounded-xl bg-[rgba(71,95,88,0.10)] p-1.5 text-[rgb(var(--brand))] sm:p-2">
+          <div className="shrink-0 rounded-xl bg-brand-soft p-1.5 text-brand sm:p-2">
             <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
           </div>
         ) : null}

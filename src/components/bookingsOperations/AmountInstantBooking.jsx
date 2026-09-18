@@ -11,6 +11,7 @@ import {
   CartesianGrid,
 } from "recharts";
 import * as svc from "../../services/bookingsOperations.service.js";
+import { chart } from "../../theme/palette.js";
 
 export default function AmountInstantBooking({
   start,
@@ -82,14 +83,14 @@ export default function AmountInstantBooking({
         <div>
           <div className="mb-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
             <div className="rounded-2xl border bg-white p-3">
-              <p className="text-xs text-slate-500">Total</p>
-              <p className="mt-1 text-sm font-semibold text-slate-900">
+              <p className="text-xs text-neutral-500">Total</p>
+              <p className="mt-1 text-sm font-semibold text-neutral-900">
                 {summary.total}
               </p>
             </div>
             <div className="rounded-2xl border bg-white p-3">
-              <p className="text-xs text-slate-500">Avg / period</p>
-              <p className="mt-1 text-sm font-semibold text-slate-900">
+              <p className="text-xs text-neutral-500">Avg / period</p>
+              <p className="mt-1 text-sm font-semibold text-neutral-900">
                 {summary.avg}
               </p>
             </div>
@@ -101,7 +102,7 @@ export default function AmountInstantBooking({
                   data={merged}
                   margin={{ top: 8, right: 8, left: 8, bottom: 8 }}
                 >
-                  <CartesianGrid stroke="#E9ECEB" vertical={false} />
+                  <CartesianGrid stroke={chart.grid} vertical={false} />
                   <XAxis dataKey="label" tick={{ fontSize: 12 }} />
                   <YAxis />
                   <Tooltip />
@@ -109,9 +110,9 @@ export default function AmountInstantBooking({
                     type="monotone"
                     dataKey="instant"
                     name="Instant"
-                    stroke="#7C3AED"
+                    stroke={chart.current}
                     strokeWidth={3}
-                    fill="rgba(124,58,237,0.08)"
+                    fill={chart.current} fillOpacity={0.08}
                     dot={{ r: 4 }}
                   />
                   {prevRows ? (
@@ -119,11 +120,11 @@ export default function AmountInstantBooking({
                       type="monotone"
                       dataKey="prevInstant"
                       name="Prev year"
-                      stroke="rgba(124,58,237,0.75)"
+                      stroke={chart.previous}
                       strokeWidth={2}
                       dot={false}
                       strokeDasharray="4 4"
-                      fill="rgba(124,58,237,0.02)"
+                      fill={chart.previous} fillOpacity={0.02}
                     />
                   ) : null}
                 </AreaChart>

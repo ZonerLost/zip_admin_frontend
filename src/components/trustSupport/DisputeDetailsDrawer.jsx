@@ -74,16 +74,16 @@ export default function DisputeDetailsDrawer({
   return (
     <Drawer open={open} title="Dispute Details" onClose={onClose}>
       {!dispute ? (
-        <p className="text-sm text-slate-500">No dispute selected.</p>
+        <p className="text-sm text-neutral-500">No dispute selected.</p>
       ) : (
         <div className="space-y-4">
           <div className="rounded-2xl border bg-white p-4">
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0">
-                <p className="truncate text-sm font-semibold text-slate-900">
+                <p className="truncate text-sm font-semibold text-neutral-900">
                   {dispute.title}
                 </p>
-                <p className="mt-1 text-xs text-slate-500">
+                <p className="mt-1 text-xs text-neutral-500">
                   Booking:{" "}
                   <span className="font-medium">{dispute.bookingId}</span> •{" "}
                   {formatDate(dispute.createdAt)}
@@ -96,9 +96,9 @@ export default function DisputeDetailsDrawer({
             </div>
 
             <div className="mt-4 grid gap-3 sm:grid-cols-2">
-              <div className="rounded-2xl bg-slate-50 p-3">
-                <p className="text-xs text-slate-500">Reporter</p>
-                <p className="text-sm font-medium text-slate-900">
+              <div className="rounded-2xl bg-neutral-50 p-3">
+                <p className="text-xs text-neutral-500">Reporter</p>
+                <p className="text-sm font-medium text-neutral-900">
                   {dispute.reporter}
                 </p>
                 <div className="mt-2 flex items-center gap-2">
@@ -116,9 +116,9 @@ export default function DisputeDetailsDrawer({
                   </button>
                 </div>
               </div>
-              <div className="rounded-2xl bg-slate-50 p-3">
-                <p className="text-xs text-slate-500">Reported User</p>
-                <p className="text-sm font-medium text-slate-900">
+              <div className="rounded-2xl bg-neutral-50 p-3">
+                <p className="text-xs text-neutral-500">Reported User</p>
+                <p className="text-sm font-medium text-neutral-900">
                   {dispute.reportedUser}
                 </p>
                 <div className="mt-2 flex items-center gap-2">
@@ -136,32 +136,32 @@ export default function DisputeDetailsDrawer({
                   </button>
                 </div>
               </div>
-              <div className="rounded-2xl bg-slate-50 p-3">
-                <p className="text-xs text-slate-500">Listing</p>
-                <p className="text-sm font-medium text-slate-900">
+              <div className="rounded-2xl bg-neutral-50 p-3">
+                <p className="text-xs text-neutral-500">Listing</p>
+                <p className="text-sm font-medium text-neutral-900">
                   {dispute.listingTitle}
                 </p>
               </div>
-              <div className="rounded-2xl bg-slate-50 p-3">
-                <p className="text-xs text-slate-500">Evidence Pending</p>
-                <p className="text-sm font-medium text-slate-900">
+              <div className="rounded-2xl bg-neutral-50 p-3">
+                <p className="text-xs text-neutral-500">Evidence Pending</p>
+                <p className="text-sm font-medium text-neutral-900">
                   {pendingEvidence}
                 </p>
               </div>
             </div>
 
             {dispute.notes ? (
-              <div className="mt-4 rounded-2xl bg-slate-50 p-3">
-                <p className="text-xs font-medium text-slate-600">Notes</p>
-                <p className="mt-1 text-sm text-slate-700">{dispute.notes}</p>
+              <div className="mt-4 rounded-2xl bg-neutral-50 p-3">
+                <p className="text-xs font-medium text-neutral-600">Notes</p>
+                <p className="mt-1 text-sm text-neutral-700">{dispute.notes}</p>
               </div>
             ) : null}
 
             <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-center gap-2">
-                <FiEdit3 className="text-slate-400" />
+                <FiEdit3 className="text-neutral-400" />
                 <select
-                  className="rounded-full border bg-white px-4 py-2 text-sm outline-none focus:border-[rgb(var(--brand))]"
+                  className="rounded-full border bg-white px-4 py-2 text-sm outline-none focus:border-brand"
                   value={status}
                   onChange={(e) => setStatus(e.target.value)}
                 >
@@ -189,7 +189,7 @@ export default function DisputeDetailsDrawer({
       >
         <div className="p-2">
           {historyLoading ? (
-            <p className="text-sm text-slate-500">Loading...</p>
+            <p className="text-sm text-neutral-500">Loading...</p>
           ) : (
             <DataTable
               columns={[
@@ -221,7 +221,7 @@ export default function DisputeDetailsDrawer({
       >
         <div className="p-2">
           {userDisputesLoading ? (
-            <p className="text-sm text-slate-500">Loading...</p>
+            <p className="text-sm text-neutral-500">Loading...</p>
           ) : (
             <DataTable
               columns={[

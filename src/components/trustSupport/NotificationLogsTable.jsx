@@ -66,7 +66,7 @@ export default function NotificationLogsTable({ rows }) {
             <div className="leading-5">
               <div className="whitespace-nowrap">{parts.date}</div>
               {parts.time ? (
-                <div className="whitespace-nowrap text-xs text-slate-500">
+                <div className="whitespace-nowrap text-xs text-neutral-500">
                   {parts.time}
                 </div>
               ) : null}
@@ -80,10 +80,10 @@ export default function NotificationLogsTable({ rows }) {
   return (
     <Card className="p-0">
       <div className="border-b p-4">
-        <p className="text-sm font-semibold text-slate-900">
+        <p className="text-sm font-semibold text-neutral-900">
           Notification Logs
         </p>
-        <p className="text-xs text-slate-500">
+        <p className="text-xs text-neutral-500">
           Audit trail of reminders and updates.
         </p>
       </div>

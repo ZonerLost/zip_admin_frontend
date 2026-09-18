@@ -19,14 +19,14 @@ export default function VerifyUserModal({ open, user, onClose, onConfirm }) {
         </div>
       }
     >
-      <p className="text-sm text-slate-600">
+      <p className="text-sm text-neutral-600">
         {user?.verified
           ? "This will mark the user as unverified."
           : "This will mark the user as verified."}
       </p>
-      <div className="mt-3 rounded-2xl bg-slate-50 p-3 text-sm">
-        <p className="font-medium text-slate-900">{user?.name}</p>
-        <p className="text-slate-600">{user?.email}</p>
+      <div className="mt-3 rounded-2xl bg-neutral-50 p-3 text-sm">
+        <p className="font-medium text-neutral-900">{user?.name}</p>
+        <p className="text-neutral-600">{user?.email}</p>
       </div>
     </Modal>
   );

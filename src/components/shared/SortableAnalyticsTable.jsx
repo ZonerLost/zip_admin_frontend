@@ -133,7 +133,7 @@ export default function SortableAnalyticsTable({
           <div className="rounded-2xl border bg-white p-3">
             <div className="grid gap-3">
               <label className="grid gap-1">
-                <span className="text-xs font-medium text-slate-500">
+                <span className="text-xs font-medium text-neutral-500">
                   Sort by
                 </span>
                 <select
@@ -143,7 +143,7 @@ export default function SortableAnalyticsTable({
                       event.target.value || sortableColumns[0]?.key || "",
                     )
                   }
-                  className="rounded-xl border bg-white px-3 py-2 text-sm text-slate-700 outline-none focus:border-[rgb(var(--brand))]"
+                  className="rounded-xl border bg-white px-3 py-2 text-sm text-neutral-700 outline-none focus:border-brand"
                 >
                   {sortableColumns.map((column) => (
                     <option key={column.key} value={column.key}>
@@ -160,7 +160,7 @@ export default function SortableAnalyticsTable({
                     ? toggleSort(sortState.key)
                     : toggleSort(sortableColumns[0]?.key)
                 }
-                className="inline-flex items-center justify-center rounded-xl border px-3 py-2 text-sm font-medium text-slate-700"
+                className="inline-flex items-center justify-center rounded-xl border px-3 py-2 text-sm font-medium text-neutral-700"
               >
                 {sortState?.direction === "asc" ? "Ascending" : "Descending"}
               </button>
@@ -178,10 +178,10 @@ export default function SortableAnalyticsTable({
               >
                 {primaryColumn ? (
                   <div className="border-b pb-3">
-                    <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
+                    <p className="text-xs font-medium uppercase tracking-wide text-neutral-500">
                       {primaryColumn.header}
                     </p>
-                    <div className="mt-1 text-sm font-semibold text-slate-900">
+                    <div className="mt-1 text-sm font-semibold text-neutral-900">
                       {renderCell(primaryColumn, row)}
                     </div>
                   </div>
@@ -193,10 +193,10 @@ export default function SortableAnalyticsTable({
                       key={column.key}
                       className="flex items-start justify-between gap-3"
                     >
-                      <p className="min-w-0 text-xs font-medium text-slate-500">
+                      <p className="min-w-0 text-xs font-medium text-neutral-500">
                         {column.header}
                       </p>
-                      <div className="min-w-0 text-right text-sm text-slate-900">
+                      <div className="min-w-0 text-right text-sm text-neutral-900">
                         {renderCell(column, row)}
                       </div>
                     </div>
@@ -236,7 +236,7 @@ export default function SortableAnalyticsTable({
                 return (
                   <th
                     key={column.key}
-                    className={`border-b bg-white px-4 py-3 text-xs font-semibold text-slate-600 ${alignClass}`}
+                    className={`border-b bg-white px-4 py-3 text-xs font-semibold text-neutral-600 ${alignClass}`}
                     style={getColumnStyle(column)}
                   >
                     {column.sortable === false ? (
@@ -255,7 +255,7 @@ export default function SortableAnalyticsTable({
                             <FiChevronDown className="h-4 w-4" />
                           )
                         ) : (
-                          <FiChevronDown className="h-4 w-4 text-slate-300" />
+                          <FiChevronDown className="h-4 w-4 text-neutral-300" />
                         )}
                       </button>
                     )}
@@ -269,7 +269,7 @@ export default function SortableAnalyticsTable({
             {visibleRows.map((row, index) => (
               <tr
                 key={row.id || `${tableKey}_${index}`}
-                className="hover:bg-slate-50"
+                className="hover:bg-neutral-50"
               >
                 {columns.map((column) => {
                   const alignClass =
@@ -278,7 +278,7 @@ export default function SortableAnalyticsTable({
                   return (
                     <td
                       key={column.key}
-                      className={`border-b px-4 py-3 align-top text-sm break-words whitespace-normal text-slate-900 ${alignClass}`}
+                      className={`border-b px-4 py-3 align-top text-sm break-words whitespace-normal text-neutral-900 ${alignClass}`}
                       style={getColumnStyle(column)}
                     >
                       {column.render

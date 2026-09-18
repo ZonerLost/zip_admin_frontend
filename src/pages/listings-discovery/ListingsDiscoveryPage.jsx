@@ -218,7 +218,7 @@ function ListingsDiscoveryPageContent() {
                   setQ(e.target.value);
                 }}
                 placeholder="Search listings..."
-                className="w-full rounded-full border bg-white px-4 py-3 text-sm outline-none focus:border-[rgb(var(--brand))] focus:ring-4 focus:ring-[rgba(71,95,88,0.12)]"
+                className="w-full rounded-full border bg-white px-4 py-3 text-sm outline-none focus:border-brand focus:ring-4 focus:ring-brand/12"
               />
               <select
                 value={status}
@@ -256,7 +256,7 @@ function ListingsDiscoveryPageContent() {
 
       {analyticsLoading ? (
         <Card className="mt-4 p-6">
-          <p className="text-sm text-slate-500">Loading listing metrics...</p>
+          <p className="text-sm text-neutral-500">Loading listing metrics...</p>
         </Card>
       ) : (
         <ListingsMetrics stats={stats} />
@@ -278,7 +278,7 @@ function ListingsDiscoveryPageContent() {
 
       {loading ? (
         <Card className="mt-4 p-6">
-          <p className="text-sm text-slate-500">Loading listings...</p>
+          <p className="text-sm text-neutral-500">Loading listings...</p>
         </Card>
       ) : (
         <div className="mt-4 space-y-3">
@@ -330,7 +330,7 @@ function ListingsDiscoveryPageContent() {
           </div>
         }
       >
-        <p className="text-sm text-slate-600">
+        <p className="text-sm text-neutral-600">
           Delete <span className="font-semibold">{toDelete?.title}</span>?
         </p>
       </Modal>

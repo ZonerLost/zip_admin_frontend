@@ -7,6 +7,7 @@ import ForgotPasswordModal from "../../components/auth/ForgotPasswordModal.jsx";
 // Verify code flow removed — using direct login
 import { useAuth } from "../../context/AuthContext.jsx";
 import { isValidEmail } from "../../utils/validators.js";
+import AtussaLogo from "../../components/brand/AtussaLogo.jsx";
 
 export default function LoginPage() {
   const nav = useNavigate();
@@ -50,18 +51,12 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[rgb(var(--mint))] flex items-center justify-center">
+    <div className="min-h-screen bg-canvas flex items-center justify-center">
       <div className="mx-auto max-w-6xl w-full px-4">
         <div className="w-full max-w-md mx-auto">
           <div className="mb-5 text-center">
-            <div className="mx-auto mb-2 h-50 w-50 flex items-center justify-center p-1">
-              <img
-                src="/logo.png"
-                alt="Zip"
-                className="h-full w-full object-contain"
-              />
-            </div>
-            <h1 className="text-2xl font-semibold text-slate-900">
+            <AtussaLogo variant="vertical" className="mx-auto mb-6 h-36 w-auto" />
+            <h1 className="text-2xl font-semibold text-neutral-900">
               Welcome back
             </h1>
           </div>
@@ -75,11 +70,11 @@ export default function LoginPage() {
 
             <div className="space-y-3">
               <div>
-                <label className="text-xs font-medium text-slate-600">
+                <label className="text-xs font-medium text-neutral-600">
                   Email
                 </label>
-                <div className="mt-1 flex items-center gap-2 rounded-2xl border bg-white px-4 py-3 focus-within:border-[rgb(var(--brand))] focus-within:ring-4 focus-within:ring-[rgba(71,95,88,0.12)]">
-                  <FiMail className="h-4 w-4 text-slate-400" />
+                <div className="mt-1 flex items-center gap-2 rounded-2xl border bg-white px-4 py-3 focus-within:border-brand focus-within:ring-4 focus-within:ring-brand/12">
+                  <FiMail className="h-4 w-4 text-neutral-400" />
                   <input
                     className="w-full bg-transparent text-sm outline-none"
                     value={email}
@@ -91,11 +86,11 @@ export default function LoginPage() {
               </div>
 
               <div>
-                <label className="text-xs font-medium text-slate-600">
+                <label className="text-xs font-medium text-neutral-600">
                   Password
                 </label>
-                <div className="mt-1 flex items-center gap-2 rounded-2xl border bg-white px-4 py-3 focus-within:border-[rgb(var(--brand))] focus-within:ring-4 focus-within:ring-[rgba(71,95,88,0.12)]">
-                  <FiLock className="h-4 w-4 text-slate-400" />
+                <div className="mt-1 flex items-center gap-2 rounded-2xl border bg-white px-4 py-3 focus-within:border-brand focus-within:ring-4 focus-within:ring-brand/12">
+                  <FiLock className="h-4 w-4 text-neutral-400" />
                   <input
                     type="password"
                     className="w-full bg-transparent text-sm outline-none"
@@ -109,7 +104,7 @@ export default function LoginPage() {
 
               <div className="flex items-center justify-between">
                 <button
-                  className="text-sm font-medium text-[rgb(var(--brand))] hover:underline"
+                  className="text-sm font-medium text-brand hover:underline"
                   onClick={() => setForgotOpen(true)}
                   type="button"
                 >
@@ -126,7 +121,7 @@ export default function LoginPage() {
                 <FiArrowRight className="h-4 w-4" />
               </Button>
 
-              <p className="pt-2 text-center text-xs text-slate-500">
+              <p className="pt-2 text-center text-xs text-neutral-500">
                 By continuing you agree to the platform policies.
               </p>
             </div>

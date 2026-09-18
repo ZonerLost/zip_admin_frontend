@@ -77,23 +77,23 @@ export default function InsurancePlanModal({
       <div className="space-y-4">
         <div className="grid gap-4 md:grid-cols-2">
           <div>
-            <label className="text-xs font-medium text-slate-600">Name</label>
+            <label className="text-xs font-medium text-neutral-600">Name</label>
             <input
               value={name}
               onChange={(event) => setName(event.target.value)}
               placeholder="Premium Cover"
-              className="mt-1 w-full rounded-2xl border px-4 py-3 text-sm outline-none focus:border-[rgb(var(--brand))]"
+              className="mt-1 w-full rounded-2xl border px-4 py-3 text-sm outline-none focus:border-brand"
             />
           </div>
 
           <div>
-            <label className="text-xs font-medium text-slate-600">
+            <label className="text-xs font-medium text-neutral-600">
               Pricing Type
             </label>
             <select
               value={pricingType}
               onChange={(event) => setPricingType(event.target.value)}
-              className="mt-1 w-full rounded-2xl border px-4 py-3 text-sm outline-none focus:border-[rgb(var(--brand))]"
+              className="mt-1 w-full rounded-2xl border px-4 py-3 text-sm outline-none focus:border-brand"
             >
               <option value="percentage">Percentage of rental price</option>
               <option value="fixed_amount">Fixed amount</option>
@@ -103,7 +103,7 @@ export default function InsurancePlanModal({
         </div>
 
         <div>
-          <label className="text-xs font-medium text-slate-600">
+          <label className="text-xs font-medium text-neutral-600">
             Description
           </label>
           <textarea
@@ -111,12 +111,12 @@ export default function InsurancePlanModal({
             value={description}
             onChange={(event) => setDescription(event.target.value)}
             placeholder="Explain what the plan covers and when it applies."
-            className="mt-1 w-full rounded-2xl border px-4 py-3 text-sm outline-none focus:border-[rgb(var(--brand))]"
+            className="mt-1 w-full rounded-2xl border px-4 py-3 text-sm outline-none focus:border-brand"
           />
         </div>
 
         <div>
-          <label className="text-xs font-medium text-slate-600">
+          <label className="text-xs font-medium text-neutral-600">
             Price Value
           </label>
           <input
@@ -125,15 +125,15 @@ export default function InsurancePlanModal({
             step="0.01"
             value={priceValue}
             onChange={(event) => setPriceValue(event.target.value)}
-            className="mt-1 w-full rounded-2xl border px-4 py-3 text-sm outline-none focus:border-[rgb(var(--brand))]"
+            className="mt-1 w-full rounded-2xl border px-4 py-3 text-sm outline-none focus:border-brand"
           />
-          <p className="mt-1 text-xs text-slate-500">{pricingHelp}</p>
+          <p className="mt-1 text-xs text-neutral-500">{pricingHelp}</p>
         </div>
 
         <div className="grid gap-4 xl:grid-cols-2">
           <div className="rounded-2xl border p-4">
-            <p className="text-sm font-semibold text-slate-900">Categories</p>
-            <p className="mt-1 text-xs text-slate-500">
+            <p className="text-sm font-semibold text-neutral-900">Categories</p>
+            <p className="mt-1 text-xs text-neutral-500">
               Assign the plan in bulk at category level.
             </p>
             <div className="mt-3 space-y-2">
@@ -150,7 +150,7 @@ export default function InsurancePlanModal({
                         toggleId(current, category.id),
                       )
                     }
-                    className="h-4 w-4 accent-[rgb(var(--brand))]"
+                    className="h-4 w-4 accent-brand"
                   />
                   <span>{category.name}</span>
                 </label>
@@ -159,10 +159,10 @@ export default function InsurancePlanModal({
           </div>
 
           <div className="rounded-2xl border p-4">
-            <p className="text-sm font-semibold text-slate-900">
+            <p className="text-sm font-semibold text-neutral-900">
               Sub-categories
             </p>
-            <p className="mt-1 text-xs text-slate-500">
+            <p className="mt-1 text-xs text-neutral-500">
               Refine insurance application below category level.
             </p>
             <div className="mt-3 max-h-72 space-y-2 overflow-auto">
@@ -179,11 +179,11 @@ export default function InsurancePlanModal({
                         toggleId(current, subCategory.id),
                       )
                     }
-                    className="mt-0.5 h-4 w-4 accent-[rgb(var(--brand))]"
+                    className="mt-0.5 h-4 w-4 accent-brand"
                   />
                   <span>
                     {subCategory.name}
-                    <span className="block text-xs text-slate-500">
+                    <span className="block text-xs text-neutral-500">
                       {subCategory.categoryName}
                     </span>
                   </span>
@@ -193,7 +193,7 @@ export default function InsurancePlanModal({
           </div>
         </div>
 
-        <div className="rounded-2xl border bg-slate-50 p-4 text-xs text-slate-600">
+        <div className="rounded-2xl border bg-neutral-50 p-4 text-xs text-neutral-600">
           Specific item assignments are managed in the override table. Item
           overrides replace inherited category and sub-category plans.
         </div>

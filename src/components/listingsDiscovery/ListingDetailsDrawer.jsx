@@ -13,11 +13,11 @@ export default function ListingDetailsDrawer({
   return (
     <Drawer open={open} title="Listing Details" onClose={onClose}>
       {!listing ? (
-        <p className="text-sm text-slate-500">No listing selected.</p>
+        <p className="text-sm text-neutral-500">No listing selected.</p>
       ) : (
         <div className="space-y-4">
           <div className="rounded-2xl border bg-white p-4">
-            <p className="text-sm font-semibold text-slate-900">
+            <p className="text-sm font-semibold text-neutral-900">
               {listing.title}
             </p>
             <div className="mt-3 flex flex-wrap items-center gap-2">
@@ -25,30 +25,30 @@ export default function ListingDetailsDrawer({
               <StatusPill value={listing.featured ? "Featured" : "Normal"} />
             </div>
 
-            <div className="mt-4 space-y-2 text-sm text-slate-700">
+            <div className="mt-4 space-y-2 text-sm text-neutral-700">
               <div className="flex items-center gap-2">
-                <FiUser className="text-slate-400" />
-                <span className="text-slate-500">Owner:</span>
+                <FiUser className="text-neutral-400" />
+                <span className="text-neutral-500">Owner:</span>
                 <span className="font-medium">{listing.owner}</span>
               </div>
               <div className="flex items-center gap-2">
-                <FiMapPin className="text-slate-400" />
-                <span className="text-slate-500">City:</span>
+                <FiMapPin className="text-neutral-400" />
+                <span className="text-neutral-500">City:</span>
                 <span className="font-medium">{listing.city}</span>
               </div>
               <div className="flex items-center gap-2">
-                <FiTag className="text-slate-400" />
-                <span className="text-slate-500">Category:</span>
+                <FiTag className="text-neutral-400" />
+                <span className="text-neutral-500">Category:</span>
                 <span className="font-medium">{categoryName || "-"}</span>
               </div>
               <div className="flex items-center gap-2">
-                <FiStar className="text-slate-400" />
-                <span className="text-slate-500">CO₂:</span>
+                <FiStar className="text-neutral-400" />
+                <span className="text-neutral-500">CO₂:</span>
                 <span className="font-medium">
                   {Number(listing.co2Kg || 0).toFixed(1)} kg
                 </span>
               </div>
-              <div className="text-xs text-slate-500">
+              <div className="text-xs text-neutral-500">
                 Created: {formatDate(listing.createdAt)}
               </div>
             </div>

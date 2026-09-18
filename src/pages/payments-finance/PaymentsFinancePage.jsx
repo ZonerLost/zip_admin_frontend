@@ -183,7 +183,7 @@ function PaymentsFinancePageContent() {
                   setQ(e.target.value);
                 }}
                 placeholder="Search transactions..."
-                className="w-full rounded-full border bg-white px-4 py-3 text-sm outline-none focus:border-[rgb(var(--brand))] focus:ring-4 focus:ring-[rgba(71,95,88,0.12)]"
+                className="w-full rounded-full border bg-white px-4 py-3 text-sm outline-none focus:border-brand focus:ring-4 focus:ring-brand/12"
               />
 
               <select
@@ -229,7 +229,7 @@ function PaymentsFinancePageContent() {
         <div className="grid gap-3" key={analyticsRenderKey}>
           {analyticsLoading ? (
             <Card className="p-6">
-              <p className="text-sm text-slate-500">Loading analytics...</p>
+              <p className="text-sm text-neutral-500">Loading analytics...</p>
             </Card>
           ) : (
             <>
@@ -277,7 +277,7 @@ function PaymentsFinancePageContent() {
             <div className="relative">
               {tableLoading ? (
                 <Card className="p-6">
-                  <p className="text-sm text-slate-500">
+                  <p className="text-sm text-neutral-500">
                     Loading transactions...
                   </p>
                 </Card>
@@ -298,7 +298,7 @@ function PaymentsFinancePageContent() {
 
               {tableRefreshing ? (
                 <div className="absolute inset-0 z-10 flex items-center justify-center rounded-3xl bg-white/40 backdrop-blur-[1px]">
-                  <div className="rounded-full border bg-white px-4 py-2 text-sm text-slate-600 shadow-sm">
+                  <div className="rounded-full border bg-white px-4 py-2 text-sm text-neutral-600 shadow-sm">
                     Updating transactions...
                   </div>
                 </div>
@@ -318,7 +318,7 @@ function PaymentsFinancePageContent() {
           <div className="space-y-3">
             {feesLoading ? (
               <Card className="p-6">
-                <p className="text-sm text-slate-500">
+                <p className="text-sm text-neutral-500">
                   Loading fee settings...
                 </p>
               </Card>

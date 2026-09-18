@@ -53,7 +53,7 @@ export default function TeamRolesSection({
         key: "permissions",
         header: "Permissions",
         render: (r) => (
-          <div className="max-w-90 truncate text-sm text-slate-700">
+          <div className="max-w-90 truncate text-sm text-neutral-700">
             {(r.permissions || []).join(", ") || "-"}
           </div>
         ),
@@ -64,14 +64,14 @@ export default function TeamRolesSection({
         render: (r) => (
           <div className="flex items-center gap-2">
             <button
-              className="rounded-xl p-2 hover:bg-slate-100"
+              className="rounded-xl p-2 hover:bg-neutral-100"
               onClick={() => openEdit(r)}
               aria-label="Edit"
             >
               <FiEdit2 />
             </button>
             <button
-              className="rounded-xl p-2 hover:bg-slate-100"
+              className="rounded-xl p-2 hover:bg-neutral-100"
               onClick={() => onDelete(r)}
               aria-label="Delete"
             >
@@ -87,12 +87,12 @@ export default function TeamRolesSection({
     <Card className="p-0">
       <div className="flex items-center justify-between gap-3 border-b p-4">
         <div className="flex items-center gap-2">
-          <div className="rounded-2xl bg-[rgba(71,95,88,0.10)] p-2 text-[rgb(var(--brand))]">
+          <div className="rounded-2xl bg-brand-soft p-2 text-brand">
             <FiShield className="h-4 w-4" />
           </div>
           <div>
-            <p className="text-sm font-semibold text-slate-900">Team Roles</p>
-            <p className="text-xs text-slate-500">
+            <p className="text-sm font-semibold text-neutral-900">Team Roles</p>
+            <p className="text-xs text-neutral-500">
               CRUD roles & permissions (admin side).
             </p>
           </div>
@@ -124,7 +124,7 @@ export default function TeamRolesSection({
       >
         <div className="space-y-3">
           <div>
-            <label className="text-xs font-medium text-slate-600">
+            <label className="text-xs font-medium text-neutral-600">
               Role Name
             </label>
             <input
@@ -136,7 +136,7 @@ export default function TeamRolesSection({
           </div>
 
           <div>
-            <label className="text-xs font-medium text-slate-600">
+            <label className="text-xs font-medium text-neutral-600">
               Permissions (comma separated)
             </label>
             <input
@@ -145,7 +145,7 @@ export default function TeamRolesSection({
               onChange={(e) => setPermissions(e.target.value)}
               placeholder="disputes.manage, reviews.moderate"
             />
-            <p className="mt-1 text-xs text-slate-500">
+            <p className="mt-1 text-xs text-neutral-500">
               Use "*" for full access, or specific permissions for scoped roles.
             </p>
           </div>

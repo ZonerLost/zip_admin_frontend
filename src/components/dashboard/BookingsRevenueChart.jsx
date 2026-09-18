@@ -16,6 +16,7 @@ import {
   Line,
   Legend,
 } from "recharts";
+import { chart } from "../../theme/palette.js";
 
 export default function BookingsRevenueChart({ loading = false }) {
   const { resolvedRange, comparePreviousYear, resolvePreviousYear } =
@@ -87,14 +88,14 @@ export default function BookingsRevenueChart({ loading = false }) {
   return (
     <ChartCard title="Bookings Revenue" subtitle="Revenue over time">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-        <div className="text-xs sm:text-sm text-slate-500">
+        <div className="text-xs sm:text-sm text-neutral-500">
           Showing: {resolvedRange?.label}
         </div>
         <div className="flex items-center flex-wrap gap-2"></div>
       </div>
 
       {loading ? (
-        <div className="h-55 animate-pulse rounded-2xl bg-slate-100 mt-4" />
+        <div className="h-55 animate-pulse rounded-2xl bg-neutral-100 mt-4" />
       ) : !rows.length ? (
         <EmptyState
           title="No revenue data yet"
@@ -104,20 +105,20 @@ export default function BookingsRevenueChart({ loading = false }) {
         <div className="w-full mt-4">
           <div className="mb-3 grid grid-cols-1 gap-2 sm:grid-cols-3">
             <div className="rounded-2xl border bg-white p-3">
-              <p className="text-xs text-slate-500">Total Revenue</p>
-              <p className="mt-1 text-sm font-semibold text-slate-900">
+              <p className="text-xs text-neutral-500">Total Revenue</p>
+              <p className="mt-1 text-sm font-semibold text-neutral-900">
                 {formatMoney(stats.totalRevenue)}
               </p>
             </div>
             <div className="rounded-2xl border bg-white p-3">
-              <p className="text-xs text-slate-500">Total Bookings</p>
-              <p className="mt-1 text-sm font-semibold text-slate-900">
+              <p className="text-xs text-neutral-500">Total Bookings</p>
+              <p className="mt-1 text-sm font-semibold text-neutral-900">
                 {stats.totalBookings}
               </p>
             </div>
             <div className="rounded-2xl border bg-white p-3">
-              <p className="text-xs text-slate-500">Avg / Booking</p>
-              <p className="mt-1 text-sm font-semibold text-slate-900">
+              <p className="text-xs text-neutral-500">Avg / Booking</p>
+              <p className="mt-1 text-sm font-semibold text-neutral-900">
                 {formatMoney(stats.avgOrder)}
               </p>
             </div>
@@ -133,8 +134,8 @@ export default function BookingsRevenueChart({ loading = false }) {
                   <Legend verticalAlign="top" align="right" />
                   <defs>
                     <linearGradient id="revFill" x1="0" x2="0" y1="0" y2="1">
-                      <stop offset="0%" stopColor="rgba(71,95,88,0.22)" />
-                      <stop offset="100%" stopColor="rgba(71,95,88,0.05)" />
+                      <stop offset="0%" stopColor={chart.current} stopOpacity={0.22} />
+                      <stop offset="100%" stopColor={chart.current} stopOpacity={0.05} />
                     </linearGradient>
                     <linearGradient
                       id="prevRevFill"
@@ -143,11 +144,11 @@ export default function BookingsRevenueChart({ loading = false }) {
                       y1="0"
                       y2="1"
                     >
-                      <stop offset="0%" stopColor="rgba(71,95,88,0.14)" />
-                      <stop offset="100%" stopColor="rgba(71,95,88,0.02)" />
+                      <stop offset="0%" stopColor={chart.previous} stopOpacity={0.14} />
+                      <stop offset="100%" stopColor={chart.previous} stopOpacity={0.02} />
                     </linearGradient>
                   </defs>
-                  <CartesianGrid stroke="#E9ECEB" vertical={false} />
+                  <CartesianGrid stroke={chart.grid} vertical={false} />
                   <XAxis dataKey="label" tick={{ fontSize: 12 }} />
                   <YAxis tickFormatter={(v) => formatMoney(v)} />
                   <Tooltip
@@ -161,7 +162,7 @@ export default function BookingsRevenueChart({ loading = false }) {
                   <Area
                     type="monotone"
                     dataKey="revenue"
-                    stroke="#475F58"
+                    stroke={chart.current}
                     fillOpacity={1}
                     fill="url(#revFill)"
                     dot={{ r: 4 }}
@@ -172,7 +173,7 @@ export default function BookingsRevenueChart({ loading = false }) {
                       // prev series now pulled from merged data
                       dataKey="prevRevenue"
                       type="monotone"
-                      stroke="rgba(71,95,88,0.75)"
+                      stroke={chart.previous}
                       strokeWidth={2}
                       dot={false}
                       strokeDasharray="4 4"
@@ -184,7 +185,7 @@ export default function BookingsRevenueChart({ loading = false }) {
                   <Line
                     type="monotone"
                     dataKey="bookings"
-                    stroke="#A0B5AF"
+                    stroke={chart.secondary}
                     dot={false}
                     name="Bookings"
                   />
@@ -192,7 +193,7 @@ export default function BookingsRevenueChart({ loading = false }) {
                     <Line
                       type="monotone"
                       dataKey="prevBookings"
-                      stroke="rgba(160,181,175,0.6)"
+                      stroke={chart.secondaryPrevious}
                       dot={false}
                       strokeDasharray="4 4"
                       name="Prev bookings"
@@ -203,17 +204,14 @@ export default function BookingsRevenueChart({ loading = false }) {
             </div>
           </div>
 
-          <div className="mt-3 flex items-center gap-3 text-xs text-slate-600">
+          <div className="mt-3 flex items-center gap-3 text-xs text-neutral-600">
             <div className="flex items-center gap-2">
-              <span className="h-2 w-2 rounded-full bg-[rgb(71,95,88)]" />
+              <span className="w-4 border-t-2 border-neutral-500" />
               Current
             </div>
             {prevRows ? (
               <div className="flex items-center gap-2">
-                <span
-                  className="h-2 w-2 rounded-full"
-                  style={{ backgroundColor: "rgba(71,95,88,0.75)" }}
-                />
+                <span className="w-4 border-t-2 border-dashed border-neutral-500" />
                 Prev year
               </div>
             ) : null}

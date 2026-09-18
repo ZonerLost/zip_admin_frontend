@@ -12,9 +12,9 @@ export default function Pagination({ page, pageSize, total, onChange }) {
 
   return (
     <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-      <p className="text-xs text-slate-500">
-        Page <span className="font-medium text-slate-900">{page}</span> of{" "}
-        <span className="font-medium text-slate-900">{pages}</span> • {total}{" "}
+      <p className="text-xs text-neutral-500">
+        Page <span className="font-medium text-neutral-900">{page}</span> of{" "}
+        <span className="font-medium text-neutral-900">{pages}</span> • {total}{" "}
         total
       </p>
       <div className="flex items-center gap-2">

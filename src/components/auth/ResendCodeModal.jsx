@@ -17,7 +17,7 @@ export default function ResendCodeModal({ open, email, onClose, onResend }) {
         </div>
       }
     >
-      <p className="text-sm text-slate-600">
+      <p className="text-sm text-neutral-600">
         We’ll resend a verification code to{" "}
         <span className="font-medium">{email}</span>.
       </p>

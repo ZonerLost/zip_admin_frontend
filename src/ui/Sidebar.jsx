@@ -16,6 +16,7 @@ import {
   FiX,
 } from "react-icons/fi";
 import { cn } from "../utils/cn.js";
+import AtussaLogo from "../components/brand/AtussaLogo.jsx";
 
 const NAV = [
   { label: "Dashboard", path: "/dashboard", icon: FiHome },
@@ -113,18 +114,15 @@ function SidebarInner({ onNavigate, onLogout }) {
 
   return (
     <div className="flex h-full flex-col">
-      <div className="flex items-center gap-3 px-4 py-5">
-        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[rgba(71,95,88,0.06)]">
-          <img src="/logo.png" alt="Zip" className="h-12 w-12 object-contain" />
-        </div>
-        <div className="leading-tight">
-          <p className="text-sm font-semibold text-slate-900">Zip Admin</p>
-          <p className="text-xs text-slate-500">Management Console</p>
-        </div>
+      <div className="px-5 pb-4 pt-6">
+        <AtussaLogo variant="horizontal" className="h-9 w-auto" />
+        <p className="mt-3 text-[11px] font-medium uppercase tracking-[0.18em] text-neutral-500">
+          Admin console
+        </p>
       </div>
 
       <div className="px-3">
-        <div className="h-px bg-(--border)" />
+        <div className="h-px bg-line" />
       </div>
 
       <nav className="flex-1 overflow-auto px-3 py-4">
@@ -143,8 +141,8 @@ function SidebarInner({ onNavigate, onLogout }) {
                     className={cn(
                       "rounded-2xl transition",
                       isGroupActive
-                        ? "bg-[rgba(71,95,88,0.10)] text-[rgb(var(--brand))]"
-                        : "text-slate-700 hover:bg-slate-50",
+                        ? "bg-brand-soft text-brand"
+                        : "text-neutral-700 hover:bg-neutral-50",
                     )}
                   >
                     <div className="flex items-center gap-2 px-3 py-3">
@@ -165,8 +163,8 @@ function SidebarInner({ onNavigate, onLogout }) {
                         className={cn(
                           "flex h-8 w-8 shrink-0 items-center justify-center rounded-xl transition",
                           isGroupActive
-                            ? "hover:bg-[rgba(71,95,88,0.12)]"
-                            : "hover:bg-slate-100",
+                            ? "hover:bg-sage/30"
+                            : "hover:bg-neutral-100",
                         )}
                       >
                         {isExpanded ? (
@@ -184,10 +182,10 @@ function SidebarInner({ onNavigate, onLogout }) {
                     className={() =>
                       cn(
                         "flex items-center gap-3 rounded-2xl px-3 py-3 text-sm font-medium transition",
-                        "hover:bg-slate-50",
+                        "hover:bg-neutral-50",
                         isGroupActive
-                          ? "bg-[rgba(71,95,88,0.10)] text-[rgb(var(--brand))]"
-                          : "text-slate-700",
+                          ? "bg-brand-soft text-brand"
+                          : "text-neutral-700",
                       )
                     }
                   >
@@ -197,7 +195,7 @@ function SidebarInner({ onNavigate, onLogout }) {
                 )}
 
                 {hasChildren && isExpanded ? (
-                  <div className="ml-7 mt-2 rounded-2xl border border-slate-200 bg-slate-50/70 p-2">
+                  <div className="ml-7 mt-2 rounded-2xl border border-neutral-200 bg-neutral-50/70 p-2">
                     {item.children.map((child) => (
                       <NavLink
                         key={child.path}
@@ -207,16 +205,16 @@ function SidebarInner({ onNavigate, onLogout }) {
                           cn(
                             "flex items-center gap-2 rounded-xl px-3 py-2 text-sm transition",
                             isActive
-                              ? "bg-white font-semibold text-[rgb(var(--brand))] shadow-sm"
-                              : "text-slate-500 hover:bg-white hover:text-slate-700",
+                              ? "bg-white font-semibold text-brand shadow-sm"
+                              : "text-neutral-500 hover:bg-white hover:text-neutral-700",
                           )
                         }
                       >
                         <span
                           className={cn(
-                            "h-1.5 w-1.5 rounded-full bg-slate-300",
+                            "h-1.5 w-1.5 rounded-full bg-neutral-300",
                             location.pathname === child.path
-                              ? "bg-[rgb(var(--brand))]"
+                              ? "bg-brand"
                               : "",
                           )}
                         />
@@ -235,7 +233,7 @@ function SidebarInner({ onNavigate, onLogout }) {
         <div className="mt-auto px-1">
           <button
             onClick={() => onLogout?.()}
-            className="w-full flex items-center gap-3 rounded-2xl px-3 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50"
+            className="w-full flex items-center gap-3 rounded-2xl px-3 py-3 text-sm font-medium text-neutral-700 hover:bg-neutral-50"
           >
             <FiLogOut className="h-5 w-5" />
             <span>Logout</span>
@@ -285,16 +283,16 @@ export default function Sidebar({ open = false, onClose, onLogout }) {
           <div className="absolute inset-0 bg-black/30" onClick={onClose} />
           <div className="absolute left-0 top-0 h-full w-[85%] max-w-[320px] border-r bg-white shadow-2xl">
             <div className="flex items-center justify-between px-4 py-4">
-              <p className="text-sm font-semibold text-slate-900">Menu</p>
+              <p className="text-sm font-semibold text-neutral-900">Menu</p>
               <button
-                className="rounded-xl p-2 hover:bg-slate-100"
+                className="rounded-xl p-2 hover:bg-neutral-100"
                 onClick={onClose}
                 aria-label="Close sidebar"
               >
                 <FiX />
               </button>
             </div>
-            <div className="h-px bg-(--border)" />
+            <div className="h-px bg-line" />
             <SidebarInner onNavigate={onClose} onLogout={handleLogout} />
           </div>
         </div>

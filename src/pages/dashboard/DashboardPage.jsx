@@ -88,7 +88,7 @@ function DashboardContent() {
     <>
       {!data ? (
         <Card className="p-6">
-          <p className="text-sm text-slate-500">Loading dashboard...</p>
+          <p className="text-sm text-neutral-500">Loading dashboard...</p>
         </Card>
       ) : (
         <div className="space-y-3 sm:space-y-4 lg:space-y-6">

@@ -7,6 +7,7 @@ import ForgotPasswordModal from "../../components/auth/ForgotPasswordModal.jsx";
 import VerifyCodeModal from "../../components/auth/VerifyCodeModal.jsx";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { isValidEmail } from "../../utils/validators.js";
+import AtussaLogo from "../../components/brand/AtussaLogo.jsx";
 
 export default function LoginPage() {
   const nav = useNavigate();
@@ -51,16 +52,16 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[rgb(var(--mint))]">
+    <div className="min-h-screen bg-canvas">
       <div className="mx-auto flex min-h-screen max-w-6xl items-center justify-center px-4 py-10">
         <div className="w-full max-w-md">
           <div className="mb-5 text-center">
-            <div className="mx-auto mb-3 h-14 w-14 rounded-[22px] bg-white/70 ring-1 ring-black/5" />
-            <h1 className="text-2xl font-semibold text-slate-900">
+            <AtussaLogo variant="mark" className="mx-auto mb-3 h-14 w-14" />
+            <h1 className="text-2xl font-semibold text-neutral-900">
               Welcome back
             </h1>
-            <p className="mt-1 text-sm text-slate-600">
-              Sign in using the calm Zip theme.
+            <p className="mt-1 text-sm text-neutral-600">
+              Sign in to the Atussa admin console.
             </p>
           </div>
 
@@ -73,11 +74,11 @@ export default function LoginPage() {
 
             <div className="space-y-3">
               <div>
-                <label className="text-xs font-medium text-slate-600">
+                <label className="text-xs font-medium text-neutral-600">
                   Email
                 </label>
-                <div className="mt-1 flex items-center gap-2 rounded-2xl border bg-white px-4 py-3 focus-within:border-[rgb(var(--brand))] focus-within:ring-4 focus-within:ring-[rgba(71,95,88,0.12)]">
-                  <FiMail className="h-4 w-4 text-slate-400" />
+                <div className="mt-1 flex items-center gap-2 rounded-2xl border bg-white px-4 py-3 focus-within:border-brand focus-within:ring-4 focus-within:ring-brand/12">
+                  <FiMail className="h-4 w-4 text-neutral-400" />
                   <input
                     className="w-full bg-transparent text-sm outline-none"
                     value={email}
@@ -89,11 +90,11 @@ export default function LoginPage() {
               </div>
 
               <div>
-                <label className="text-xs font-medium text-slate-600">
+                <label className="text-xs font-medium text-neutral-600">
                   Password
                 </label>
-                <div className="mt-1 flex items-center gap-2 rounded-2xl border bg-white px-4 py-3 focus-within:border-[rgb(var(--brand))] focus-within:ring-4 focus-within:ring-[rgba(71,95,88,0.12)]">
-                  <FiLock className="h-4 w-4 text-slate-400" />
+                <div className="mt-1 flex items-center gap-2 rounded-2xl border bg-white px-4 py-3 focus-within:border-brand focus-within:ring-4 focus-within:ring-brand/12">
+                  <FiLock className="h-4 w-4 text-neutral-400" />
                   <input
                     type="password"
                     className="w-full bg-transparent text-sm outline-none"
@@ -107,14 +108,14 @@ export default function LoginPage() {
 
               <div className="flex items-center justify-between">
                 <button
-                  className="text-sm font-medium text-[rgb(var(--brand))] hover:underline"
+                  className="text-sm font-medium text-brand hover:underline"
                   onClick={() => setForgotOpen(true)}
                   type="button"
                 >
                   Forgot password?
                 </button>
 
-                <span className="text-xs text-slate-500">
+                <span className="text-xs text-neutral-500">
                   OTP: 123456 (mock)
                 </span>
               </div>
@@ -128,7 +129,7 @@ export default function LoginPage() {
                 <FiArrowRight className="h-4 w-4" />
               </Button>
 
-              <p className="pt-2 text-center text-xs text-slate-500">
+              <p className="pt-2 text-center text-xs text-neutral-500">
                 By continuing you agree to the platform policies.
               </p>
             </div>

@@ -13,8 +13,8 @@ export default function Button({
     "inline-flex items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-medium transition active:scale-[0.99]";
   const styles =
     variant === "outline"
-      ? "border bg-white text-slate-900 hover:bg-slate-50"
-      : "bg-[rgb(var(--brand))] text-white hover:opacity-95";
+      ? "border bg-white text-neutral-900 hover:bg-neutral-50"
+      : "bg-brand text-white hover:opacity-95";
 
   return (
     <button

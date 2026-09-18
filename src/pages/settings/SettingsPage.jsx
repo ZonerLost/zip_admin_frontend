@@ -78,7 +78,7 @@ export default function SettingsPage() {
 
       {loading ? (
         <Card className="p-6">
-          <p className="text-sm text-slate-500">Loading...</p>
+          <p className="text-sm text-neutral-500">Loading...</p>
         </Card>
       ) : (
         <div className="space-y-3">

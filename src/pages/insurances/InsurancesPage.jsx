@@ -102,24 +102,24 @@ function InsurancesPageContent() {
           />
 
           <Card className="p-5">
-            <p className="text-sm font-semibold text-slate-900">
+            <p className="text-sm font-semibold text-neutral-900">
               Inheritance Logic
             </p>
-            <p className="mt-2 text-sm text-slate-600">
+            <p className="mt-2 text-sm text-neutral-600">
               Insurance plans can be assigned in bulk at category and
               sub-category level.
             </p>
-            <p className="mt-3 text-sm text-slate-600">
+            <p className="mt-3 text-sm text-neutral-600">
               Specific item overrides replace inherited plans for the selected
               item only.
             </p>
-            <p className="mt-3 rounded-2xl bg-slate-50 p-4 text-sm text-slate-600">
+            <p className="mt-3 rounded-2xl bg-neutral-50 p-4 text-sm text-neutral-600">
               Example: Category <span className="font-medium">Camping</span>{" "}
               inherits Basic Protection + Premium Cover, but item{" "}
               <span className="font-medium">High-value tent</span> can override
               that inheritance and keep only Basic Protection.
             </p>
-            <p className="mt-4 text-xs text-slate-500">
+            <p className="mt-4 text-xs text-neutral-500">
               The date filter applies to insurance metrics and usage tables
               below. Plan setup and overrides are configuration-level controls.
             </p>
@@ -128,7 +128,7 @@ function InsurancesPageContent() {
 
         {loading ? (
           <Card className="p-6">
-            <p className="text-sm text-slate-500">Loading insurance data...</p>
+            <p className="text-sm text-neutral-500">Loading insurance data...</p>
           </Card>
         ) : (
           <InsuranceUsageTables

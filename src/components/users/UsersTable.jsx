@@ -32,7 +32,7 @@ function ActionsMenu({ row, onView, onEdit, onVerify, onDelete }) {
     <div className="relative inline-block" ref={ref}>
       <button
         type="button"
-        className="rounded-xl p-2 hover:bg-slate-100"
+        className="rounded-xl p-2 hover:bg-neutral-100"
         onClick={(e) => {
           e.preventDefault();
           e.stopPropagation();
@@ -46,7 +46,7 @@ function ActionsMenu({ row, onView, onEdit, onVerify, onDelete }) {
         <div className="absolute right-0 z-50 mt-1 w-40 rounded-2xl border bg-white shadow-lg py-1">
           <button
             type="button"
-            className="flex w-full items-center gap-2 px-4 py-2 text-sm hover:bg-slate-50"
+            className="flex w-full items-center gap-2 px-4 py-2 text-sm hover:bg-neutral-50"
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
@@ -58,7 +58,7 @@ function ActionsMenu({ row, onView, onEdit, onVerify, onDelete }) {
           </button>
           <button
             type="button"
-            className="flex w-full items-center gap-2 px-4 py-2 text-sm hover:bg-slate-50"
+            className="flex w-full items-center gap-2 px-4 py-2 text-sm hover:bg-neutral-50"
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
@@ -70,7 +70,7 @@ function ActionsMenu({ row, onView, onEdit, onVerify, onDelete }) {
           </button>
           <button
             type="button"
-            className="flex w-full items-center gap-2 px-4 py-2 text-sm hover:bg-slate-50"
+            className="flex w-full items-center gap-2 px-4 py-2 text-sm hover:bg-neutral-50"
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
@@ -446,8 +446,8 @@ export default function UsersTable({
     <Card className="p-0">
       <div className="flex flex-col gap-3 border-b p-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p className="text-sm font-semibold text-slate-900">Users</p>
-          <p className="text-xs text-slate-500">
+          <p className="text-sm font-semibold text-neutral-900">Users</p>
+          <p className="text-xs text-neutral-500">
             Create, edit, verify, and manage users (CRUD).
           </p>
         </div>
@@ -463,7 +463,7 @@ export default function UsersTable({
 
           <button
             type="button"
-            className="ml-2 rounded-full bg-[rgb(var(--brand))] px-3 py-2 text-white text-sm"
+            className="ml-2 rounded-full bg-brand px-3 py-2 text-white text-sm"
             onClick={exportFiltered}
           >
             Export filtered
@@ -509,7 +509,7 @@ export default function UsersTable({
       >
         <div className="space-y-3">
           <div>
-            <label className="text-xs text-slate-500">Role</label>
+            <label className="text-xs text-neutral-500">Role</label>
             <select
               className="mt-1 w-full rounded-2xl border px-3 py-2 text-sm"
               value={roleFilter}
@@ -522,7 +522,7 @@ export default function UsersTable({
           </div>
 
           <div>
-            <label className="text-xs text-slate-500">Inactive (months)</label>
+            <label className="text-xs text-neutral-500">Inactive (months)</label>
             <input
               type="number"
               min={0}
@@ -534,7 +534,7 @@ export default function UsersTable({
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-xs text-slate-500">Min Listings</label>
+              <label className="text-xs text-neutral-500">Min Listings</label>
               <input
                 type="number"
                 min={0}
@@ -545,7 +545,7 @@ export default function UsersTable({
             </div>
 
             <div>
-              <label className="text-xs text-slate-500">Min Bookings</label>
+              <label className="text-xs text-neutral-500">Min Bookings</label>
               <input
                 type="number"
                 min={0}
@@ -575,9 +575,9 @@ export default function UsersTable({
       >
         <div className="space-y-3">
           <div>
-            <label className="text-xs font-medium text-slate-600">Name</label>
+            <label className="text-xs font-medium text-neutral-600">Name</label>
             <input
-              className="mt-1 w-full rounded-2xl border px-4 py-3 text-sm outline-none focus:border-[rgb(var(--brand))] focus:ring-4 focus:ring-[rgba(71,95,88,0.12)]"
+              className="mt-1 w-full rounded-2xl border px-4 py-3 text-sm outline-none focus:border-brand focus:ring-4 focus:ring-brand/12"
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="John Doe"
@@ -585,9 +585,9 @@ export default function UsersTable({
           </div>
 
           <div>
-            <label className="text-xs font-medium text-slate-600">Email</label>
+            <label className="text-xs font-medium text-neutral-600">Email</label>
             <input
-              className="mt-1 w-full rounded-2xl border px-4 py-3 text-sm outline-none focus:border-[rgb(var(--brand))] focus:ring-4 focus:ring-[rgba(71,95,88,0.12)]"
+              className="mt-1 w-full rounded-2xl border px-4 py-3 text-sm outline-none focus:border-brand focus:ring-4 focus:ring-brand/12"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="john@example.com"
@@ -600,9 +600,9 @@ export default function UsersTable({
           </div>
 
           <div>
-            <label className="text-xs font-medium text-slate-600">Status</label>
+            <label className="text-xs font-medium text-neutral-600">Status</label>
             <select
-              className="mt-1 w-full rounded-2xl border px-4 py-3 text-sm outline-none focus:border-[rgb(var(--brand))] focus:ring-4 focus:ring-[rgba(71,95,88,0.12)]"
+              className="mt-1 w-full rounded-2xl border px-4 py-3 text-sm outline-none focus:border-brand focus:ring-4 focus:ring-brand/12"
               value={status}
               onChange={(e) => setStatus(e.target.value)}
             >
@@ -613,9 +613,9 @@ export default function UsersTable({
           </div>
 
           <div>
-            <label className="text-xs font-medium text-slate-600">System Role</label>
+            <label className="text-xs font-medium text-neutral-600">System Role</label>
             <select
-              className="mt-1 w-full rounded-2xl border px-4 py-3 text-sm outline-none focus:border-[rgb(var(--brand))] focus:ring-4 focus:ring-[rgba(71,95,88,0.12)]"
+              className="mt-1 w-full rounded-2xl border px-4 py-3 text-sm outline-none focus:border-brand focus:ring-4 focus:ring-brand/12"
               value={systemRole}
               onChange={(e) => setSystemRole(e.target.value)}
             >
@@ -626,7 +626,7 @@ export default function UsersTable({
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-xs font-medium text-slate-600">Role</label>
+              <label className="text-xs font-medium text-neutral-600">Role</label>
               <select
                 className="mt-1 w-full rounded-2xl border px-4 py-3 text-sm"
                 value={isOwner ? "owner" : "renter"}
@@ -638,7 +638,7 @@ export default function UsersTable({
             </div>
 
             <div>
-              <label className="text-xs font-medium text-slate-600">
+              <label className="text-xs font-medium text-neutral-600">
                 Last Active
               </label>
               <input
@@ -652,7 +652,7 @@ export default function UsersTable({
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-xs font-medium text-slate-600">
+              <label className="text-xs font-medium text-neutral-600">
                 Listings Count
               </label>
               <input
@@ -664,7 +664,7 @@ export default function UsersTable({
               />
             </div>
             <div>
-              <label className="text-xs font-medium text-slate-600">
+              <label className="text-xs font-medium text-neutral-600">
                 Bookings Count
               </label>
               <input

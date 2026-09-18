@@ -35,7 +35,7 @@ function GrowthCell({ value }) {
       ? "text-emerald-600"
       : numeric < 0
         ? "text-rose-600"
-        : "text-slate-600";
+        : "text-neutral-600";
 
   return (
     <span className={`font-medium ${colorClass}`}>
@@ -166,20 +166,20 @@ export default function CityOverviewTable({
   return (
     <Card className="mt-4 p-0">
       <div className="border-b p-4">
-        <p className="text-sm font-semibold text-slate-900">City overview</p>
-        <p className="mt-1 text-xs text-slate-500">
+        <p className="text-sm font-semibold text-neutral-900">City overview</p>
+        <p className="mt-1 text-xs text-neutral-500">
           One row per city with adoption, growth, popularity, and sustainability
           metrics.
         </p>
       </div>
 
-      <div className="border-b px-4 py-3 text-xs font-medium text-slate-500">
+      <div className="border-b px-4 py-3 text-xs font-medium text-neutral-500">
         Showing: {rangeLabel}
       </div>
 
       <div className="p-4">
         {loading ? (
-          <div className="rounded-2xl border bg-white px-4 py-8 text-sm text-slate-500">
+          <div className="rounded-2xl border bg-white px-4 py-8 text-sm text-neutral-500">
             Loading city overview...
           </div>
         ) : (

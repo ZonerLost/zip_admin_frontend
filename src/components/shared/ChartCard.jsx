@@ -6,9 +6,9 @@ export default function ChartCard({ title, subtitle, right, children }) {
     <Card className="p-3 sm:p-5 h-full min-h-0 sm:min-h-105 flex flex-col">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-          <p className="text-sm font-semibold text-slate-900">{title}</p>
+          <p className="text-sm font-semibold text-neutral-900">{title}</p>
           {subtitle ? (
-            <p className="mt-1 text-xs sm:text-sm text-slate-500">{subtitle}</p>
+            <p className="mt-1 text-xs sm:text-sm text-neutral-500">{subtitle}</p>
           ) : null}
         </div>
         <div className="w-full sm:w-auto">{right}</div>

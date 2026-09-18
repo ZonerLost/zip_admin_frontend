@@ -197,7 +197,7 @@ function UsersPageContent() {
                 setQ(e.target.value);
               }}
               placeholder="Search users..."
-              className="w-full rounded-full border bg-white px-4 py-3 text-sm outline-none focus:border-[rgb(var(--brand))] focus:ring-4 focus:ring-[rgba(71,95,88,0.12)] sm:w-[320px]"
+              className="w-full rounded-full border bg-white px-4 py-3 text-sm outline-none focus:border-brand focus:ring-4 focus:ring-brand/12 sm:w-[320px]"
             />
             <RangeSelector wrap={false} />
           </div>
@@ -219,7 +219,7 @@ function UsersPageContent() {
       <div className="mt-4 space-y-3 sm:mt-6">
         {loading ? (
           <Card className="p-6">
-            <p className="text-sm text-slate-500">Loading users...</p>
+            <p className="text-sm text-neutral-500">Loading users...</p>
           </Card>
         ) : (
           <>
@@ -276,7 +276,7 @@ function UsersPageContent() {
           </div>
         }
       >
-        <p className="text-sm text-slate-600">
+        <p className="text-sm text-neutral-600">
           Are you sure you want to delete{" "}
           <span className="font-semibold">{toDelete?.name}</span>?
         </p>

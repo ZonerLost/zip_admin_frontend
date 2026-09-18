@@ -14,12 +14,12 @@ export default function SettingsPreferencesForm({ value, onSave }) {
     <Card className="p-5">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <p className="text-sm font-semibold text-slate-900">Preferences</p>
-          <p className="mt-1 text-sm text-slate-500">
+          <p className="text-sm font-semibold text-neutral-900">Preferences</p>
+          <p className="mt-1 text-sm text-neutral-500">
             UI behavior and defaults.
           </p>
         </div>
-        <div className="rounded-2xl bg-[rgba(71,95,88,0.10)] p-2 text-[rgb(var(--brand))]">
+        <div className="rounded-2xl bg-brand-soft p-2 text-brand">
           <FiSliders className="h-5 w-5" />
         </div>
       </div>
@@ -30,11 +30,11 @@ export default function SettingsPreferencesForm({ value, onSave }) {
             type="checkbox"
             checked={Boolean(local.compactTables)}
             onChange={(e) => update({ compactTables: e.target.checked })}
-            className="h-4 w-4 accent-[rgb(var(--brand))]"
+            className="h-4 w-4 accent-brand"
           />
           <div>
-            <p className="text-sm font-medium text-slate-900">Compact tables</p>
-            <p className="text-xs text-slate-500">
+            <p className="text-sm font-medium text-neutral-900">Compact tables</p>
+            <p className="text-xs text-neutral-500">
               Show denser rows for admin tables.
             </p>
           </div>
@@ -45,18 +45,18 @@ export default function SettingsPreferencesForm({ value, onSave }) {
             type="checkbox"
             checked={Boolean(local.showHelpHints)}
             onChange={(e) => update({ showHelpHints: e.target.checked })}
-            className="h-4 w-4 accent-[rgb(var(--brand))]"
+            className="h-4 w-4 accent-brand"
           />
           <div>
-            <p className="text-sm font-medium text-slate-900">Show hints</p>
-            <p className="text-xs text-slate-500">
+            <p className="text-sm font-medium text-neutral-900">Show hints</p>
+            <p className="text-xs text-neutral-500">
               Display small helper text across pages.
             </p>
           </div>
         </label>
 
         <div>
-          <label className="text-xs font-medium text-slate-600">
+          <label className="text-xs font-medium text-neutral-600">
             Default Page Size
           </label>
           <select

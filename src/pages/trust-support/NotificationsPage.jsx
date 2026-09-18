@@ -95,7 +95,7 @@ export default function NotificationsPage() {
                 setQ(e.target.value);
               }}
               placeholder="Search logs..."
-              className="w-full rounded-full border bg-white px-4 py-3 text-sm outline-none focus:border-[rgb(var(--brand))] focus:ring-4 focus:ring-[rgba(71,95,88,0.12)] sm:w-70"
+              className="w-full rounded-full border bg-white px-4 py-3 text-sm outline-none focus:border-brand focus:ring-4 focus:ring-brand/12 sm:w-70"
             />
             <select
               value={type}
@@ -118,7 +118,7 @@ export default function NotificationsPage() {
         <div>
           {settingsLoading ? (
             <Card className="p-6">
-              <p className="text-sm text-slate-500">
+              <p className="text-sm text-neutral-500">
                 Loading notification settings...
               </p>
             </Card>
@@ -131,7 +131,7 @@ export default function NotificationsPage() {
           <div className="relative">
             {logsLoading ? (
               <Card className="p-6">
-                <p className="text-sm text-slate-500">
+                <p className="text-sm text-neutral-500">
                   Loading notification logs...
                 </p>
               </Card>
@@ -149,7 +149,7 @@ export default function NotificationsPage() {
 
             {logsRefreshing ? (
               <div className="absolute inset-0 z-10 flex items-center justify-center rounded-3xl bg-white/40 backdrop-blur-[1px]">
-                <div className="rounded-full border bg-white px-4 py-2 text-sm text-slate-600 shadow-sm">
+                <div className="rounded-full border bg-white px-4 py-2 text-sm text-neutral-600 shadow-sm">
                   Updating logs...
                 </div>
               </div>

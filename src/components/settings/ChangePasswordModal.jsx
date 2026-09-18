@@ -50,7 +50,7 @@ export default function ChangePasswordModal({ open, onClose, onSubmit }) {
         ) : null}
 
         <div>
-          <label className="text-xs font-medium text-slate-600">
+          <label className="text-xs font-medium text-neutral-600">
             Current Password
           </label>
           <input
@@ -63,7 +63,7 @@ export default function ChangePasswordModal({ open, onClose, onSubmit }) {
 
         <div className="grid gap-3 sm:grid-cols-2">
           <div>
-            <label className="text-xs font-medium text-slate-600">
+            <label className="text-xs font-medium text-neutral-600">
               New Password
             </label>
             <input
@@ -72,10 +72,10 @@ export default function ChangePasswordModal({ open, onClose, onSubmit }) {
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
             />
-            <p className="mt-1 text-xs text-slate-500">Min 8 characters.</p>
+            <p className="mt-1 text-xs text-neutral-500">Min 8 characters.</p>
           </div>
           <div>
-            <label className="text-xs font-medium text-slate-600">
+            <label className="text-xs font-medium text-neutral-600">
               Confirm
             </label>
             <input

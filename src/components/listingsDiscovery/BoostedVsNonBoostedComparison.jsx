@@ -13,6 +13,7 @@ import {
   CartesianGrid,
   Legend,
 } from "recharts";
+import { chart } from "../../theme/palette.js";
 
 export default function BoostedVsNonBoostedComparison() {
   const { resolvedRange } = useDashboardRange();
@@ -57,20 +58,20 @@ export default function BoostedVsNonBoostedComparison() {
         <div className="w-full mt-4">
           <div className="mb-3 grid grid-cols-1 gap-2 sm:grid-cols-3">
             <div className="rounded-2xl border bg-white p-3">
-              <p className="text-xs text-slate-500">Avg Boosted</p>
-              <p className="mt-1 text-sm font-semibold text-slate-900">
+              <p className="text-xs text-neutral-500">Avg Boosted</p>
+              <p className="mt-1 text-sm font-semibold text-neutral-900">
                 {summary.avgBoosted}
               </p>
             </div>
             <div className="rounded-2xl border bg-white p-3">
-              <p className="text-xs text-slate-500">Avg Non-Boosted</p>
-              <p className="mt-1 text-sm font-semibold text-slate-900">
+              <p className="text-xs text-neutral-500">Avg Non-Boosted</p>
+              <p className="mt-1 text-sm font-semibold text-neutral-900">
                 {summary.avgNon}
               </p>
             </div>
             <div className="rounded-2xl border bg-white p-3">
-              <p className="text-xs text-slate-500">Avg % Diff</p>
-              <p className="mt-1 text-sm font-semibold text-slate-900">
+              <p className="text-xs text-neutral-500">Avg % Diff</p>
+              <p className="mt-1 text-sm font-semibold text-neutral-900">
                 {summary.pctDiff}%
               </p>
             </div>
@@ -84,7 +85,7 @@ export default function BoostedVsNonBoostedComparison() {
                   margin={{ top: 8, right: 8, left: 8, bottom: 8 }}
                 >
                   <Legend verticalAlign="top" align="right" />
-                  <CartesianGrid stroke="#E9ECEB" vertical={false} />
+                  <CartesianGrid stroke={chart.grid} vertical={false} />
                   <XAxis dataKey="label" tick={{ fontSize: 12 }} />
                   <YAxis />
                   <Tooltip />
@@ -92,18 +93,18 @@ export default function BoostedVsNonBoostedComparison() {
                     type="monotone"
                     dataKey="boosted"
                     name="Boosted"
-                    stroke="#059669"
+                    stroke={chart.current}
                     strokeWidth={3}
-                    fill="rgba(5,150,105,0.08)"
+                    fill={chart.current} fillOpacity={0.08}
                     dot={{ r: 4 }}
                   />
                   <Area
                     type="monotone"
                     dataKey="nonBoosted"
                     name="Non-boosted"
-                    stroke="#374151"
+                    stroke={chart.secondary}
                     strokeWidth={3}
-                    fill="rgba(55,65,81,0.06)"
+                    fill={chart.secondary} fillOpacity={0.06}
                     dot={false}
                   />
                 </AreaChart>

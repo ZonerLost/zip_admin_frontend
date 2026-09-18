@@ -11,6 +11,7 @@ import {
   CartesianGrid,
 } from "recharts";
 import * as svc from "../../services/paymentsFinance.service.js";
+import { chart } from "../../theme/palette.js";
 
 export default function RefundsChart({
   start,
@@ -73,7 +74,7 @@ export default function RefundsChart({
                 }))}
                 margin={{ top: 8, right: 8, left: 8, bottom: 8 }}
               >
-                <CartesianGrid stroke="#E9ECEB" vertical={false} />
+                <CartesianGrid stroke={chart.grid} vertical={false} />
                 <XAxis dataKey="label" tick={{ fontSize: 12 }} />
                 <YAxis tickFormatter={(v) => `$${v}`} />
                 <Tooltip formatter={(v) => `$${v}`} />
@@ -81,9 +82,9 @@ export default function RefundsChart({
                   type="monotone"
                   dataKey="value"
                   name="Current"
-                  stroke="#EF4444"
+                  stroke={chart.current}
                   strokeWidth={3}
-                  fill="rgba(239,68,68,0.08)"
+                  fill={chart.current} fillOpacity={0.08}
                   dot={{ r: 4 }}
                 />
                 {prevRows ? (
@@ -91,11 +92,11 @@ export default function RefundsChart({
                     type="monotone"
                     dataKey="prevValue"
                     name="Prev year"
-                    stroke="rgba(239,68,68,0.75)"
+                    stroke={chart.previous}
                     strokeWidth={2}
                     dot={false}
                     strokeDasharray="4 4"
-                    fill="rgba(239,68,68,0.02)"
+                    fill={chart.previous} fillOpacity={0.02}
                   />
                 ) : null}
               </AreaChart>

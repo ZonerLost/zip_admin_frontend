@@ -9,7 +9,7 @@ export default function IconButton({
   return (
     <button
       type={type}
-      className={cn("rounded-xl p-2 hover:bg-slate-100 transition", className)}
+      className={cn("rounded-xl p-2 hover:bg-neutral-100 transition", className)}
       {...props}
     />
   );

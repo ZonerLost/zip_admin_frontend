@@ -11,6 +11,7 @@ import {
   CartesianGrid,
 } from "recharts";
 import * as svc from "../../services/bookingsOperations.service.js";
+import { chart } from "../../theme/palette.js";
 
 export default function PctDiffBoostedVsNonBoosted({
   start,
@@ -78,7 +79,7 @@ export default function PctDiffBoostedVsNonBoosted({
                 }))}
                 margin={{ top: 8, right: 8, left: 8, bottom: 8 }}
               >
-                <CartesianGrid stroke="#E9ECEB" vertical={false} />
+                <CartesianGrid stroke={chart.grid} vertical={false} />
                 <XAxis dataKey="label" tick={{ fontSize: 12 }} />
                 <YAxis tickFormatter={(v) => `${v}%`} />
                 <Tooltip formatter={(v) => `${v}%`} />
@@ -86,9 +87,9 @@ export default function PctDiffBoostedVsNonBoosted({
                   type="monotone"
                   dataKey="pctDiff"
                   name="Current"
-                  stroke="#8B5CF6"
+                  stroke={chart.current}
                   strokeWidth={3}
-                  fill="rgba(139,92,246,0.08)"
+                  fill={chart.current} fillOpacity={0.08}
                   dot={{ r: 4 }}
                 />
                 {prevRows ? (
@@ -96,11 +97,11 @@ export default function PctDiffBoostedVsNonBoosted({
                     type="monotone"
                     dataKey="prevPctDiff"
                     name="Prev year"
-                    stroke="rgba(139,92,246,0.75)"
+                    stroke={chart.previous}
                     strokeWidth={2}
                     dot={false}
                     strokeDasharray="4 4"
-                    fill="rgba(139,92,246,0.02)"
+                    fill={chart.previous} fillOpacity={0.02}
                   />
                 ) : null}
               </AreaChart>
