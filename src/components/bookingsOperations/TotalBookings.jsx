@@ -138,7 +138,7 @@ export default function TotalBookings({
                       strokeWidth={2}
                       dot={false}
                       strokeDasharray="4 4"
-                      fill={chart.previous} fillOpacity={0.02}
+                      fill={chart.previous}
                       fillOpacity={0.12}
                     />
                   ) : null}

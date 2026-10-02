@@ -104,7 +104,8 @@ export async function listTransactions({
 }
 
 export async function createRefund(payload) {
-  const res = await api.put(`/admin/payments/${payload.bookingId}/refund`, {
+  const targetId = payload.paymentId || payload.id || payload.bookingId;
+  const res = await api.put(`/admin/payments/${targetId}/refund`, {
     reason: payload.reason || "Admin initiated refund",
   });
   return normalize(res.data);
