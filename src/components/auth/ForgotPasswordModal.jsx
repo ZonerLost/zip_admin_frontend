@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { FiEye, FiEyeOff } from "react-icons/fi";
 import Modal from "../shared/Modal.jsx";
 import Button from "../shared/Button.jsx";
 import { isValidEmail } from "../../utils/validators.js";
@@ -28,6 +29,8 @@ export default function ForgotPasswordModal({
   const [otp, setOtp] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
 
@@ -38,6 +41,8 @@ export default function ForgotPasswordModal({
     setOtp("");
     setPassword("");
     setConfirm("");
+    setShowPassword(false);
+    setShowConfirm(false);
     setErr("");
     setBusy(false);
   }, [open, emailDefault]);
@@ -176,13 +181,27 @@ export default function ForgotPasswordModal({
               <label className="text-xs font-medium text-neutral-600">
                 New password
               </label>
-              <input
-                type="password"
-                className="mt-1 w-full rounded-2xl border px-4 py-3 text-sm outline-none focus:border-brand focus:ring-4 focus:ring-brand/12"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                autoComplete="new-password"
-              />
+              <div className="mt-1 flex items-center gap-2 rounded-2xl border bg-white px-4 py-3 focus-within:border-brand focus-within:ring-4 focus-within:ring-brand/12">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  className="w-full bg-transparent text-sm outline-none"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  autoComplete="new-password"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  className="shrink-0 text-neutral-400 hover:text-neutral-700 transition-colors focus:outline-none"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? (
+                    <FiEyeOff className="h-4 w-4" />
+                  ) : (
+                    <FiEye className="h-4 w-4" />
+                  )}
+                </button>
+              </div>
               <p className="mt-1 text-xs text-neutral-500">
                 At least 8 characters, with an uppercase letter, a lowercase
                 letter and a number.
@@ -193,13 +212,27 @@ export default function ForgotPasswordModal({
               <label className="text-xs font-medium text-neutral-600">
                 Confirm password
               </label>
-              <input
-                type="password"
-                className="mt-1 w-full rounded-2xl border px-4 py-3 text-sm outline-none focus:border-brand focus:ring-4 focus:ring-brand/12"
-                value={confirm}
-                onChange={(e) => setConfirm(e.target.value)}
-                autoComplete="new-password"
-              />
+              <div className="mt-1 flex items-center gap-2 rounded-2xl border bg-white px-4 py-3 focus-within:border-brand focus-within:ring-4 focus-within:ring-brand/12">
+                <input
+                  type={showConfirm ? "text" : "password"}
+                  className="w-full bg-transparent text-sm outline-none"
+                  value={confirm}
+                  onChange={(e) => setConfirm(e.target.value)}
+                  autoComplete="new-password"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirm((prev) => !prev)}
+                  className="shrink-0 text-neutral-400 hover:text-neutral-700 transition-colors focus:outline-none"
+                  aria-label={showConfirm ? "Hide confirm password" : "Show confirm password"}
+                >
+                  {showConfirm ? (
+                    <FiEyeOff className="h-4 w-4" />
+                  ) : (
+                    <FiEye className="h-4 w-4" />
+                  )}
+                </button>
+              </div>
               {confirm && confirm !== password ? (
                 <p className="mt-1 text-xs text-rose-600">
                   These do not match.

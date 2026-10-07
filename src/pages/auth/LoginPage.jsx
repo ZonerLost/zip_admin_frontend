@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FiArrowRight, FiLock, FiMail } from "react-icons/fi";
+import { FiArrowRight, FiEye, FiEyeOff, FiLock, FiMail } from "react-icons/fi";
 import Button from "../../components/shared/Button.jsx";
 import Card from "../../components/shared/Card.jsx";
 import ForgotPasswordModal from "../../components/auth/ForgotPasswordModal.jsx";
@@ -17,6 +17,7 @@ export default function LoginPage() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -84,15 +85,27 @@ export default function LoginPage() {
                   Password
                 </label>
                 <div className="mt-1 flex items-center gap-2 rounded-2xl border bg-white px-4 py-3 focus-within:border-brand focus-within:ring-4 focus-within:ring-brand/12">
-                  <FiLock className="h-4 w-4 text-neutral-400" />
+                  <FiLock className="h-4 w-4 shrink-0 text-neutral-400" />
                   <input
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     className="w-full bg-transparent text-sm outline-none"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
                     autoComplete="current-password"
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    className="shrink-0 text-neutral-400 hover:text-neutral-700 transition-colors focus:outline-none"
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                  >
+                    {showPassword ? (
+                      <FiEyeOff className="h-4 w-4" />
+                    ) : (
+                      <FiEye className="h-4 w-4" />
+                    )}
+                  </button>
                 </div>
               </div>
 
