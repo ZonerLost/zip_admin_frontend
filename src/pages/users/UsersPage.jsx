@@ -178,7 +178,7 @@ function UsersPageContent() {
   async function confirmVerify(user) {
     if (!user) return;
 
-    await usersService.setVerified(user.id, !user.verified);
+    await usersService.setVerified(user.id, !user.identityVerified);
     setVerifyOpen(false);
     await refreshUsers();
   }
@@ -187,7 +187,7 @@ function UsersPageContent() {
     <>
       <PageHeader
         title="Users"
-        subtitle="Manage users with verification and clean CRUD flows."
+        subtitle="Search, inspect, verify and manage access."
         right={
           <div className="flex w-full flex-col gap-2 xl:w-auto xl:flex-row xl:items-center">
             <input
@@ -248,6 +248,7 @@ function UsersPageContent() {
         open={drawerOpen}
         user={selected}
         onClose={() => setDrawerOpen(false)}
+        onChanged={refreshUsers}
       />
 
       <VerifyUserModal

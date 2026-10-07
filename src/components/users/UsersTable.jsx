@@ -11,7 +11,6 @@ import {
   FiTrash2,
   FiUserCheck,
 } from "react-icons/fi";
-import { isEmail } from "../../utils/validators.js";
 import * as usersService from "../../services/users.service.js";
 
 function ActionsMenu({ row, onView, onEdit, onVerify, onDelete }) {
@@ -97,48 +96,10 @@ function ActionsMenu({ row, onView, onEdit, onVerify, onDelete }) {
   );
 }
 
-const MOCK_USERS = [
-  {
-    id: 1,
-    name: "Alice Johnson",
-    email: "alice.johnson@example.com",
-    status: "Active",
-    verified: true,
-  },
-  {
-    id: 2,
-    name: "Bob Martin",
-    email: "bob.martin@example.com",
-    status: "Active",
-    verified: false,
-  },
-  {
-    id: 3,
-    name: "Carla Gomez",
-    email: "carla.gomez@example.com",
-    status: "Pending",
-    verified: false,
-  },
-  {
-    id: 4,
-    name: "Daniel Wu",
-    email: "daniel.wu@example.com",
-    status: "Disabled",
-    verified: true,
-  },
-  {
-    id: 5,
-    name: "Eve Thompson",
-    email: "eve.thompson@example.com",
-    status: "Active",
-    verified: true,
-  },
-];
-
 export default function UsersTable({
   rows,
   onView,
-  onCreate,
+  onCreate: _onCreate, // no admin signup endpoint; the create path is gone
   onUpdate,
   onDelete,
   onVerify,
@@ -147,28 +108,22 @@ export default function UsersTable({
   const [editing, setEditing] = useState(null);
 
   const [name, setName] = useState("");
+  // Editable: name, phone, role. Email is shown read-only. The rest of what this editor used to
+  // hold — status, acts-as, listings/bookings counts, last active — is either derived server-side or
+  // changed through a different action entirely, so it is not state here any more.
   const [email, setEmail] = useState("");
-  const [status, setStatus] = useState("Active");
+  const [phone, setPhone] = useState("");
   const [systemRole, setSystemRole] = useState("user");
-  const [isOwner, setIsOwner] = useState(false);
-  const [listingsCount, setListingsCount] = useState(0);
-  const [bookingsCount, setBookingsCount] = useState(0);
-  const [lastActive, setLastActive] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState("");
 
   function openEdit(user) {
     setEditing(user);
     setName(user.name || "");
     setEmail(user.email || "");
-    setStatus(user.status || "Active");
+    setPhone(user.phone || "");
     setSystemRole(user.role ?? "user");
-    setIsOwner(Boolean(user.isOwner));
-    setListingsCount(user.listingsCount ?? 0);
-    setBookingsCount(user.bookingsCount ?? 0);
-    setLastActive(
-      user.lastActive
-        ? new Date(user.lastActive).toISOString().slice(0, 10)
-        : "",
-    );
+    setSaveError("");
     setEditorOpen(true);
   }
 
@@ -225,7 +180,12 @@ export default function UsersTable({
     ];
   }, [onView, onDelete, onVerify]);
 
-  const displayRows = Array.isArray(rows) && rows.length ? rows : MOCK_USERS;
+  // Whatever the server returned, including nothing. There used to be a MOCK_USERS fallback here:
+  // an empty or failed list silently rendered five invented people — Alice Johnson, Bob Martin and
+  // friends — with ids 1 to 5, which every row action would then have been fired against. An empty
+  // table is the truth; a fake one is a trap.
+  // Memoised because an effect below depends on it; a new array each render re-ran that effect.
+  const displayRows = useMemo(() => (Array.isArray(rows) ? rows : []), [rows]);
   const [filteredRows, setFilteredRows] = useState(displayRows);
 
   // show/hide the filter modal (mobile-friendly)
@@ -269,7 +229,8 @@ export default function UsersTable({
     }
   });
 
-  const canSave = name.trim().length >= 2 && isEmail(email);
+  // Email is no longer edited here, so it is no longer gated on.
+  const canSave = name.trim().length >= 2;
 
   // apply filters server-side via the users service and persist them
   async function applyFilters() {
@@ -376,30 +337,27 @@ export default function UsersTable({
   }
 
   async function save() {
-    if (!canSave) return;
-    if (!editing) {
-      await onCreate({
-        name,
-        email,
-        status,
-        isOwner,
-        listingsCount: Number(listingsCount),
-        bookingsCount: Number(bookingsCount),
-        lastActive: lastActive ? new Date(lastActive).toISOString() : null,
-      });
-    } else {
-      await onUpdate(editing, {
-        name,
-        email,
-        status,
-        role: systemRole,
-        isOwner,
-        listingsCount: Number(listingsCount),
-        bookingsCount: Number(bookingsCount),
-        lastActive: lastActive ? new Date(lastActive).toISOString() : null,
-      });
+    if (!canSave || !editing) return;
+
+    // Only what the server can save. The rest of what this form used to send was either derived
+    // (isOwner, listingsCount and bookingsCount come from the user's history arrays; lastActive
+    // from lastLoginAt) or refused outright (email is the login identity; status is changed by
+    // banning, not by editing a string). Sending them achieved nothing and implied otherwise.
+    //
+    // The create branch is gone with them: there is no admin signup endpoint, the button was already
+    // removed, and the service throws. Editing is the only path in here.
+    setSaveError("");
+    setSaving(true);
+    try {
+      await onUpdate(editing, { name, phone, role: systemRole });
+      setEditorOpen(false);
+    } catch (e) {
+      // Role changes can legitimately be refused — self-demotion and removing the last admin are
+      // both blocked server-side — so the dialog stays open with the reason.
+      setSaveError(e?.message || "Those changes could not be saved.");
+    } finally {
+      setSaving(false);
     }
-    setEditorOpen(false);
   }
 
   // fetch filtered rows whenever filters or displayRows change
@@ -548,13 +506,19 @@ export default function UsersTable({
             <Button variant="outline" onClick={() => setEditorOpen(false)}>
               Cancel
             </Button>
-            <Button disabled={!canSave} onClick={save}>
-              Save
+            <Button disabled={!canSave || saving} onClick={save}>
+              {saving ? "Saving..." : "Save"}
             </Button>
           </div>
         }
       >
         <div className="space-y-3">
+          {saveError ? (
+            <div className="rounded-2xl border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+              {saveError}
+            </div>
+          ) : null}
+
           <div>
             <label className="text-xs font-medium text-neutral-600">Name</label>
             <input
@@ -566,31 +530,29 @@ export default function UsersTable({
           </div>
 
           <div>
-            <label className="text-xs font-medium text-neutral-600">Email</label>
+            <label className="text-xs font-medium text-neutral-600">Phone</label>
             <input
               className="mt-1 w-full rounded-2xl border px-4 py-3 text-sm outline-none focus:border-brand focus:ring-4 focus:ring-brand/12"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="john@example.com"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              placeholder="+1 555 0100"
             />
-            {!isEmail(email) && email.length > 0 ? (
-              <p className="mt-1 text-xs text-rose-600">
-                Please enter a valid email.
-              </p>
-            ) : null}
           </div>
 
           <div>
-            <label className="text-xs font-medium text-neutral-600">Status</label>
-            <select
-              className="mt-1 w-full rounded-2xl border px-4 py-3 text-sm outline-none focus:border-brand focus:ring-4 focus:ring-brand/12"
-              value={status}
-              onChange={(e) => setStatus(e.target.value)}
-            >
-              <option>Active</option>
-              <option>Disabled</option>
-              <option>Pending</option>
-            </select>
+            <label className="text-xs font-medium text-neutral-600">Email</label>
+            <input
+              className="mt-1 w-full cursor-not-allowed rounded-2xl border bg-neutral-50 px-4 py-3 text-sm text-neutral-500 outline-none"
+              value={email}
+              readOnly
+              disabled
+            />
+            <p className="mt-1 text-xs text-neutral-500">
+              Read-only. The email is the sign-in identity and carries a
+              verification state, so changing it for someone would lock them out
+              while still claiming the new address was confirmed. Users change
+              it themselves, with verification.
+            </p>
           </div>
 
           <div>
@@ -605,58 +567,9 @@ export default function UsersTable({
             </select>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="text-xs font-medium text-neutral-600">Role</label>
-              <select
-                className="mt-1 w-full rounded-2xl border px-4 py-3 text-sm"
-                value={isOwner ? "owner" : "renter"}
-                onChange={(e) => setIsOwner(e.target.value === "owner")}
-              >
-                <option value="renter">Renter</option>
-                <option value="owner">Owner</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="text-xs font-medium text-neutral-600">
-                Last Active
-              </label>
-              <input
-                type="date"
-                className="mt-1 w-full rounded-2xl border px-4 py-3 text-sm"
-                value={lastActive}
-                onChange={(e) => setLastActive(e.target.value)}
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="text-xs font-medium text-neutral-600">
-                Listings Count
-              </label>
-              <input
-                type="number"
-                min={0}
-                className="mt-1 w-full rounded-2xl border px-4 py-3 text-sm"
-                value={listingsCount}
-                onChange={(e) => setListingsCount(Number(e.target.value))}
-              />
-            </div>
-            <div>
-              <label className="text-xs font-medium text-neutral-600">
-                Bookings Count
-              </label>
-              <input
-                type="number"
-                min={0}
-                className="mt-1 w-full rounded-2xl border px-4 py-3 text-sm"
-                value={bookingsCount}
-                onChange={(e) => setBookingsCount(Number(e.target.value))}
-              />
-            </div>
-          </div>
+          {/* Acts-as, last active, listings and bookings counts were editable inputs here. All four
+              are derived server-side from the user's own activity, so typing a number changed
+              nothing — they are facts about the account, shown in the details panel. */}
         </div>
       </Modal>
     </Card>
