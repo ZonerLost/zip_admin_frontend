@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Navigate, NavLink, useParams } from "react-router-dom";
+import { useParams, Navigate } from "react-router-dom";
 import {
   FiBox,
   FiCalendar,
@@ -18,40 +18,6 @@ import { useDashboardRange } from "../../context/useDashboardRange.js";
 import { formatMoney } from "../../utils/formatters.js";
 import * as svc from "../../services/categoriesProducts.service.js";
 
-const SECTION_CONFIG = {
-  categories: {
-    label: "Categories",
-    subtitle: "Marketplace performance by top-level category.",
-    emptyText: "No category analytics available for this range.",
-    metricLabel: "Tracked categories",
-    rowsKey: "categories",
-    defaultSort: { key: "revenue", direction: "desc" },
-  },
-  "sub-categories": {
-    label: "Sub-categories",
-    subtitle: "Performance signals by sub-category.",
-    emptyText: "No sub-category analytics available for this range.",
-    metricLabel: "Tracked sub-categories",
-    rowsKey: "subCategories",
-    defaultSort: { key: "revenue", direction: "desc" },
-  },
-  "overall-products": {
-    label: "Overall products",
-    subtitle:
-      "Product-type performance across listings, views, bookings, and reviews.",
-    emptyText: "No product analytics available for this range.",
-    metricLabel: "Tracked product types",
-    rowsKey: "products",
-    defaultSort: { key: "revenue", direction: "desc" },
-  },
-};
-
-const SUBMODULE_LINKS = [
-  { label: "Categories", to: "/categories-products/categories" },
-  { label: "Sub-categories", to: "/categories-products/sub-categories" },
-  { label: "Overall products", to: "/categories-products/overall-products" },
-];
-
 function formatNumber(value) {
   return new Intl.NumberFormat().format(Number(value || 0));
 }
@@ -68,219 +34,30 @@ function formatRating(value) {
   return Number(value || 0).toFixed(2);
 }
 
-function buildColumns(section) {
-  if (section === "categories") {
-    return [
-      {
-        key: "name",
-        header: "Category",
-        minWidth: 220,
-        sortValue: (row) => row.name,
-      },
-      {
-        key: "totalItems",
-        header: "Items",
-        align: "right",
-        sortValue: (row) => row.totalItems,
-        render: (row) => formatNumber(row.totalItems),
-      },
-      {
-        key: "bookings",
-        header: "Bookings",
-        align: "right",
-        sortValue: (row) => row.bookings,
-        render: (row) => formatNumber(row.bookings),
-      },
-      {
-        key: "revenue",
-        header: "Revenue",
-        align: "right",
-        sortValue: (row) => row.revenue,
-        render: (row) => formatMoney(row.revenue),
-      },
-      {
-        key: "boostedItems",
-        header: "Boosted items",
-        align: "right",
-        sortValue: (row) => row.boostedItems,
-        render: (row) => formatNumber(row.boostedItems),
-      },
-      {
-        key: "leadTimeDays",
-        header: "Avg lead time",
-        align: "right",
-        sortValue: (row) => row.leadTimeDays,
-        render: (row) => formatDays(row.leadTimeDays),
-      },
-      {
-        key: "totalViews",
-        header: "Views",
-        align: "right",
-        sortValue: (row) => row.totalViews,
-        render: (row) => formatNumber(row.totalViews),
-      },
-      {
-        key: "conversionRate",
-        header: "Conversion",
-        align: "right",
-        sortValue: (row) => row.conversionRate,
-        render: (row) => formatPercent(row.conversionRate),
-      },
-      {
-        key: "boostedRate",
-        header: "Boosted %",
-        align: "right",
-        sortValue: (row) => row.boostedRate,
-        render: (row) => formatPercent(row.boostedRate),
-      },
-      {
-        key: "avgRentalDuration",
-        header: "Avg rental duration",
-        align: "right",
-        sortValue: (row) => row.avgRentalDuration,
-        render: (row) => formatDays(row.avgRentalDuration),
-      },
-      {
-        key: "availabilityRate",
-        header: "Availability",
-        align: "right",
-        sortValue: (row) => row.availabilityRate,
-        render: (row) => formatPercent(row.availabilityRate),
-      },
-      {
-        key: "avgRating",
-        header: "Avg rating",
-        align: "right",
-        sortValue: (row) => row.avgRating,
-        render: (row) => formatRating(row.avgRating),
-      },
-      {
-        key: "reviews",
-        header: "Reviews",
-        align: "right",
-        sortValue: (row) => row.reviews,
-        render: (row) => formatNumber(row.reviews),
-      },
-    ];
-  }
-
-  if (section === "sub-categories") {
-    return [
-      {
-        key: "name",
-        header: "Sub-category",
-        minWidth: 220,
-        sortValue: (row) => row.name,
-      },
-      {
-        key: "totalItems",
-        header: "Items",
-        align: "right",
-        sortValue: (row) => row.totalItems,
-        render: (row) => formatNumber(row.totalItems),
-      },
-      {
-        key: "bookings",
-        header: "Bookings",
-        align: "right",
-        sortValue: (row) => row.bookings,
-        render: (row) => formatNumber(row.bookings),
-      },
-      {
-        key: "revenue",
-        header: "Revenue",
-        align: "right",
-        sortValue: (row) => row.revenue,
-        render: (row) => formatMoney(row.revenue),
-      },
-      {
-        key: "boostedItems",
-        header: "Boosted items",
-        align: "right",
-        sortValue: (row) => row.boostedItems,
-        render: (row) => formatNumber(row.boostedItems),
-      },
-      {
-        key: "leadTimeDays",
-        header: "Avg lead time",
-        align: "right",
-        sortValue: (row) => row.leadTimeDays,
-        render: (row) => formatDays(row.leadTimeDays),
-      },
-      {
-        key: "totalViews",
-        header: "Views",
-        align: "right",
-        sortValue: (row) => row.totalViews,
-        render: (row) => formatNumber(row.totalViews),
-      },
-      {
-        key: "conversionRate",
-        header: "Conversion",
-        align: "right",
-        sortValue: (row) => row.conversionRate,
-        render: (row) => formatPercent(row.conversionRate),
-      },
-      {
-        key: "boostedRate",
-        header: "Boosted %",
-        align: "right",
-        sortValue: (row) => row.boostedRate,
-        render: (row) => formatPercent(row.boostedRate),
-      },
-      {
-        key: "avgRentalDuration",
-        header: "Avg rental duration",
-        align: "right",
-        sortValue: (row) => row.avgRentalDuration,
-        render: (row) => formatDays(row.avgRentalDuration),
-      },
-      {
-        key: "availabilityRate",
-        header: "Availability",
-        align: "right",
-        sortValue: (row) => row.availabilityRate,
-        render: (row) => formatPercent(row.availabilityRate),
-      },
-      {
-        key: "avgRating",
-        header: "Avg rating",
-        align: "right",
-        sortValue: (row) => row.avgRating,
-        render: (row) => formatRating(row.avgRating),
-      },
-      {
-        key: "reviews",
-        header: "Reviews",
-        align: "right",
-        sortValue: (row) => row.reviews,
-        render: (row) => formatNumber(row.reviews),
-      },
-    ];
-  }
-
+function buildProductColumns() {
   return [
     {
       key: "name",
       header: "Product",
-      minWidth: 220,
+      minWidth: 200,
       sortValue: (row) => row.name,
     },
     {
       key: "categoryName",
       header: "Category",
-      minWidth: 190,
+      minWidth: 160,
       sortValue: (row) => row.categoryName,
     },
     {
       key: "subCategoryName",
       header: "Sub-category",
-      minWidth: 190,
+      minWidth: 160,
       sortValue: (row) => row.subCategoryName,
     },
     {
       key: "totalItems",
       header: "Items listed",
+      minWidth: 110,
       align: "right",
       sortValue: (row) => row.totalItems,
       render: (row) => formatNumber(row.totalItems),
@@ -288,6 +65,7 @@ function buildColumns(section) {
     {
       key: "boostedItems",
       header: "Boosted items",
+      minWidth: 120,
       align: "right",
       sortValue: (row) => row.boostedItems,
       render: (row) => formatNumber(row.boostedItems),
@@ -295,6 +73,7 @@ function buildColumns(section) {
     {
       key: "bookings",
       header: "Bookings",
+      minWidth: 100,
       align: "right",
       sortValue: (row) => row.bookings,
       render: (row) => formatNumber(row.bookings),
@@ -302,6 +81,7 @@ function buildColumns(section) {
     {
       key: "conversionRate",
       header: "Conversion",
+      minWidth: 110,
       align: "right",
       sortValue: (row) => row.conversionRate,
       render: (row) => formatPercent(row.conversionRate),
@@ -309,6 +89,7 @@ function buildColumns(section) {
     {
       key: "boostedRate",
       header: "Boosted %",
+      minWidth: 110,
       align: "right",
       sortValue: (row) => row.boostedRate,
       render: (row) => formatPercent(row.boostedRate),
@@ -316,6 +97,7 @@ function buildColumns(section) {
     {
       key: "avgViews",
       header: "Avg views",
+      minWidth: 110,
       align: "right",
       sortValue: (row) => row.avgViews,
       render: (row) => formatNumber(row.avgViews),
@@ -323,6 +105,7 @@ function buildColumns(section) {
     {
       key: "leadTimeDays",
       header: "Avg lead time",
+      minWidth: 120,
       align: "right",
       sortValue: (row) => row.leadTimeDays,
       render: (row) => formatDays(row.leadTimeDays),
@@ -330,6 +113,7 @@ function buildColumns(section) {
     {
       key: "revenue",
       header: "Revenue",
+      minWidth: 110,
       align: "right",
       sortValue: (row) => row.revenue,
       render: (row) => formatMoney(row.revenue),
@@ -337,6 +121,7 @@ function buildColumns(section) {
     {
       key: "avgRating",
       header: "Avg rating",
+      minWidth: 110,
       align: "right",
       sortValue: (row) => row.avgRating,
       render: (row) => formatRating(row.avgRating),
@@ -344,6 +129,7 @@ function buildColumns(section) {
     {
       key: "reviews",
       header: "Reviews",
+      minWidth: 100,
       align: "right",
       sortValue: (row) => row.reviews,
       render: (row) => formatNumber(row.reviews),
@@ -360,23 +146,14 @@ function getViewSummary(rows) {
   };
 }
 
-function CategoriesProductsPageContent() {
-  const { section = "categories" } = useParams();
+function ProductsPageContent() {
+  const { section } = useParams();
   const { resolvedRange } = useDashboardRange();
-  const [analytics, setAnalytics] = useState({
-    categories: [],
-    subCategories: [],
-    products: [],
-  });
+  const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const currentSection = SECTION_CONFIG[section];
-  const columns = useMemo(() => buildColumns(section), [section]);
-  const rows = useMemo(
-    () => (currentSection ? analytics[currentSection.rowsKey] || [] : []),
-    [currentSection, analytics],
-  );
-  const viewSummary = useMemo(() => getViewSummary(rows), [rows]);
+  const columns = useMemo(() => buildProductColumns(), []);
+  const viewSummary = useMemo(() => getViewSummary(products), [products]);
 
   useEffect(() => {
     let cancelled = false;
@@ -390,7 +167,7 @@ function CategoriesProductsPageContent() {
         );
 
         if (!cancelled) {
-          setAnalytics(next);
+          setProducts(Array.isArray(next?.products) ? next.products : []);
         }
       } finally {
         if (!cancelled) {
@@ -406,39 +183,23 @@ function CategoriesProductsPageContent() {
     };
   }, [resolvedRange]);
 
-  if (!currentSection) {
-    return <Navigate to="/categories-products/categories" replace />;
+  if (section && section !== "overall-products") {
+    return <Navigate to="/categories-products/overall-products" replace />;
   }
 
   return (
     <PageContainer>
       <PageHeader
-        title="Categories & Products"
-        subtitle="Analyze category, sub-category, and product performance with sortable marketplace tables."
+        title="Products"
+        subtitle="Analyze product-type performance across listings, views, bookings, and reviews."
         right={<RangeSelector showCompare={false} />}
       />
 
       <Card className="p-2 sm:p-3">
-        <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-          <div className="flex flex-wrap gap-2">
-            {SUBMODULE_LINKS.map((link) => (
-              <NavLink
-                key={link.to}
-                to={link.to}
-                className={({ isActive }) =>
-                  [
-                    "rounded-full px-4 py-2 text-sm font-medium transition",
-                    isActive
-                      ? "bg-brand-soft text-brand"
-                      : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200",
-                  ].join(" ")
-                }
-              >
-                {link.label}
-              </NavLink>
-            ))}
-          </div>
-
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-sm font-semibold text-neutral-800">
+            Marketplace Products
+          </p>
           <div className="rounded-full bg-neutral-100 px-4 py-2 text-xs font-medium text-neutral-600">
             Showing: {resolvedRange?.label || "Last 7 days"}
           </div>
@@ -447,7 +208,7 @@ function CategoriesProductsPageContent() {
 
       <MetricsGrid className="mt-4">
         <MetricCard
-          title={currentSection.metricLabel}
+          title="Tracked products"
           value={viewSummary.entityCount}
           icon={FiGrid}
         />
@@ -468,26 +229,26 @@ function CategoriesProductsPageContent() {
       <Card className="mt-4 p-0">
         <div className="border-b p-4">
           <p className="text-sm font-semibold text-neutral-900">
-            {currentSection.label}
+            Product Analytics
           </p>
           <p className="mt-1 text-xs text-neutral-500">
-            {currentSection.subtitle} Click any column header to sort ascending
-            or descending.
+            Product-type performance across listings, views, bookings, and reviews. Click any column header to sort ascending or descending.
           </p>
         </div>
 
-        <div className="p-4">
+        <div className="p-2 sm:p-4">
           {loading ? (
             <div className="rounded-2xl border bg-white px-4 py-8 text-sm text-neutral-500">
               Loading analytics...
             </div>
           ) : (
             <SortableAnalyticsTable
-              tableKey={section}
-              rows={rows}
+              tableKey="products"
+              rows={products}
               columns={columns}
-              emptyText={currentSection.emptyText}
-              defaultSort={currentSection.defaultSort}
+              emptyText="No product analytics available for this range."
+              defaultSort={{ key: "revenue", direction: "desc" }}
+              scrollable
               mobileCards
               paginated
             />
@@ -501,7 +262,7 @@ function CategoriesProductsPageContent() {
 export default function CategoriesProductsPage() {
   return (
     <DashboardRangeProvider>
-      <CategoriesProductsPageContent />
+      <ProductsPageContent />
     </DashboardRangeProvider>
   );
 }

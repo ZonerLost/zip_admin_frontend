@@ -8,7 +8,6 @@ import {
   FiEdit2,
   FiEye,
   FiMoreVertical,
-  FiPlus,
   FiTrash2,
   FiUserCheck,
 } from "react-icons/fi";
@@ -155,19 +154,6 @@ export default function UsersTable({
   const [listingsCount, setListingsCount] = useState(0);
   const [bookingsCount, setBookingsCount] = useState(0);
   const [lastActive, setLastActive] = useState("");
-
-  function openCreate() {
-    setEditing(null);
-    setName("");
-    setEmail("");
-    setStatus("Active");
-    setSystemRole("user");
-    setIsOwner(false);
-    setListingsCount(0);
-    setBookingsCount(0);
-    setLastActive("");
-    setEditorOpen(true);
-  }
 
   function openEdit(user) {
     setEditing(user);
@@ -468,11 +454,6 @@ export default function UsersTable({
           >
             Export filtered
           </button>
-
-          <Button type="button" onClick={openCreate}>
-            <FiPlus className="h-4 w-4" />
-            Add User
-          </Button>
         </div>
       </div>
 
@@ -560,7 +541,7 @@ export default function UsersTable({
 
       <Modal
         open={editorOpen}
-        title={editing ? "Edit User" : "Add User"}
+        title="Edit User"
         onClose={() => setEditorOpen(false)}
         footer={
           <div className="flex items-center justify-end gap-2">
@@ -568,7 +549,7 @@ export default function UsersTable({
               Cancel
             </Button>
             <Button disabled={!canSave} onClick={save}>
-              {editing ? "Save" : "Create"}
+              Save
             </Button>
           </div>
         }

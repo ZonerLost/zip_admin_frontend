@@ -8,7 +8,6 @@ import {
   FiEdit2,
   FiEye,
   FiMoreVertical,
-  FiPlus,
   FiTrash2,
   FiStar,
 } from "react-icons/fi";
@@ -119,7 +118,7 @@ export default function ListingsTable({
   categories,
   loading = false,
   onView,
-  onCreate,
+  onCreate: _onCreate,
   onUpdate,
   onDelete,
   onToggleFeatured,
@@ -133,17 +132,6 @@ export default function ListingsTable({
   const [categoryId, setCategoryId] = useState(categories?.[0]?.id || "");
   const [status, setStatus] = useState("Paused");
   const [featured, setFeatured] = useState(false);
-
-  function openCreate() {
-    setEditing(null);
-    setTitle("");
-    setOwner("");
-    setCity("");
-    setCategoryId(categories?.[0]?.id || "");
-    setStatus("Paused");
-    setFeatured(false);
-    setEditorOpen(true);
-  }
 
   const openEdit = useCallback(
     (item) => {
@@ -166,7 +154,7 @@ export default function ListingsTable({
     String(categoryId || "").length > 0;
 
   async function save() {
-    if (!canSave) return;
+    if (!canSave || !editing) return;
 
     const payload = {
       title,
@@ -177,9 +165,7 @@ export default function ListingsTable({
       featured,
     };
 
-    if (!editing) await onCreate(payload);
-    else await onUpdate(editing, payload);
-
+    await onUpdate(editing, payload);
     setEditorOpen(false);
   }
 
@@ -235,12 +221,6 @@ export default function ListingsTable({
             CRUD + moderation-friendly actions.
           </p>
         </div>
-        <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
-          <Button onClick={openCreate}>
-            <FiPlus className="h-4 w-4" />
-            Add Listing
-          </Button>
-        </div>
       </div>
 
       <div className="p-2 sm:p-4">
@@ -255,7 +235,7 @@ export default function ListingsTable({
 
       <Modal
         open={editorOpen}
-        title={editing ? "Edit Listing" : "Add Listing"}
+        title="Edit Listing"
         onClose={() => setEditorOpen(false)}
         footer={
           <div className="flex items-center justify-end gap-2">
@@ -263,7 +243,7 @@ export default function ListingsTable({
               Cancel
             </Button>
             <Button disabled={!canSave} onClick={save}>
-              {editing ? "Save" : "Create"}
+              Save
             </Button>
           </div>
         }

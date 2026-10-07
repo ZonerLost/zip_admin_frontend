@@ -24,7 +24,7 @@ export default function SortableAnalyticsTable({
   emptyText = "No data found.",
   tableKey = "table",
   defaultSort,
-  scrollable = false,
+  scrollable: _scrollable = false,
   mobileCards = false,
   paginated = false,
   pageSize = 10,
@@ -134,14 +134,10 @@ export default function SortableAnalyticsTable({
   }
 
   function getColumnStyle(column) {
-    if (scrollable) {
-      return {
-        width: column.width,
-        minWidth: column.minWidth,
-      };
-    }
-
-    return column.width ? { width: column.width } : undefined;
+    return {
+      width: column.width,
+      minWidth: column.minWidth || (column.width ? undefined : 110),
+    };
   }
 
   return (
@@ -229,21 +225,11 @@ export default function SortableAnalyticsTable({
       <div
         className={
           mobileCards
-            ? scrollable
-              ? "hidden w-full overflow-x-auto sm:block"
-              : "hidden w-full overflow-hidden sm:block"
-            : scrollable
-              ? "w-full overflow-x-auto"
-              : "w-full overflow-hidden"
+            ? "hidden w-full overflow-x-auto sm:block"
+            : "w-full overflow-x-auto"
         }
       >
-        <table
-          className={
-            scrollable
-              ? "min-w-max table-auto border-separate border-spacing-0"
-              : "w-full table-fixed border-separate border-spacing-0"
-          }
-        >
+        <table className="w-full min-w-max table-auto border-separate border-spacing-0">
           <thead>
             <tr className="text-left">
               {columns.map((column) => {

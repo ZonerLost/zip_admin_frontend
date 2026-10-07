@@ -23,26 +23,15 @@ const NAV = [
   { label: "Users", path: "/users", icon: FiUsers },
   { label: "Listings & Discovery", path: "/listings-discovery", icon: FiGrid },
   {
-    label: "Categories & Products",
-    path: "/categories-products/categories",
+    label: "Products",
+    path: "/categories-products/overall-products",
     icon: FiBox,
-    children: [
-      { label: "Categories", path: "/categories-products/categories" },
-      {
-        label: "Sub-categories",
-        path: "/categories-products/sub-categories",
-      },
-      {
-        label: "Overall products",
-        path: "/categories-products/overall-products",
-      },
-    ],
   },
-  // {
-  //   label: "City Development & Growth",
-  //   path: "/city-development-growth",
-  //   icon: FiMapPin,
-  // },
+  {
+    label: "City Development & Growth",
+    path: "/city-development-growth",
+    icon: FiMapPin,
+  },
   // {
   //   label: "Insurances",
   //   path: "/insurances",

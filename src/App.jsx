@@ -63,16 +63,20 @@ export default function App() {
             />
             <Route
               path="/categories-products"
-              element={<Navigate to="/categories-products/categories" replace />}
+              element={<Navigate to="/categories-products/overall-products" replace />}
             />
             <Route
               path="/categories-products/:section"
               element={<CategoriesProductsPage />}
             />
-            {/* <Route
+            <Route
+              path="/products"
+              element={<Navigate to="/categories-products/overall-products" replace />}
+            />
+            <Route
               path="/city-development-growth"
               element={<CityDevelopmentGrowthPage />}
-            /> */}
+            />
             {/* <Route path="/insurances" element={<InsurancesPage />} /> */}
             <Route
               path="/bookings-operations"

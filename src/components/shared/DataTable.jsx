@@ -74,8 +74,8 @@ export default function DataTable({
 
       {/* Desktop: table */}
       <div className="hidden sm:block">
-        <div className="w-full overflow-hidden">
-          <table className="w-full table-fixed border-separate border-spacing-0">
+        <div className="w-full overflow-x-auto">
+          <table className="w-full min-w-max border-separate border-spacing-0">
             <thead>
               <tr className="text-left">
                 {columns.map((c) => (
