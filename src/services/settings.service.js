@@ -9,11 +9,8 @@ export async function getProfile() {
     // Needed so the admin list can mark "you" and refuse self-demotion before the server has to.
     id: u._id ?? u.id ?? "",
     name: `${u.firstName ?? ""} ${u.lastName ?? ""}`.trim() || "Admin",
-    firstName: u.firstName ?? "",
-    lastName: u.lastName ?? "",
     email: u.email ?? "",
     phone: u.phone ?? "",
-    profilePhoto: u.profilePhoto ?? null,
   };
 }
 
@@ -25,13 +22,6 @@ export async function saveProfile(next) {
     phone: next.phone ?? "",
   });
   return next;
-}
-
-export async function uploadAvatar(file) {
-  const formData = new FormData();
-  formData.append("photo", file);
-  const res = await api.put("/users/profile/photo", formData);
-  return res.data;
 }
 
 // ── Password ──────────────────────────────────────────────
@@ -92,11 +82,19 @@ export async function listAdmins() {
   return (res.data || []).map(normalizeAdmin).filter((u) => u.role === "admin");
 }
 
-// There is deliberately no grantAdmin here, and no user search to feed it. Admin access can be
-// removed from the panel but not handed out: revoking is an emergency action worth one click, while
-// granting somebody full access to refunds and user deletion should not be.
-// The server still accepts role: "admin" — it is reachable by an operator who means it, just not by
-// a mis-click in a user list.
+/** Find someone to promote. Returns non-admins only, since admins are already listed. */
+export async function searchNonAdmins(query) {
+  const q = String(query || "").trim();
+  if (q.length < 2) return [];
+  const params = new URLSearchParams({ search: q, limit: "10" });
+  const res = await api.get(`/admin/users?${params.toString()}`);
+  return (res.data || []).map(normalizeAdmin).filter((u) => u.role !== "admin");
+}
+
+export async function grantAdmin(userId) {
+  await api.put(`/admin/users/${userId}/role`, { role: "admin" });
+  return { ok: true };
+}
 
 export async function revokeAdmin(userId) {
   // The server also refuses self-demotion and removing the last admin; both would lock everyone out

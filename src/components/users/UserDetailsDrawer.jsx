@@ -419,7 +419,7 @@ export default function UserDetailsDrawer({ open, user, onClose, onChanged }) {
           {/* ── access ─────────────────────────────────────────────────────── */}
           <Section
             title="Access"
-            note="Manage account activation, ban restrictions, and admin privileges."
+            note="Manage account activation and ban restrictions. Admin access is managed in Settings."
           >
             <div className="flex flex-wrap gap-2">
               {current.status === "Banned" ? (
@@ -482,35 +482,10 @@ export default function UserDetailsDrawer({ open, user, onClose, onChanged }) {
                 </Button>
               ) : null}
 
-              {current.role === "admin" ? (
-                <Button
-                  variant="outline"
-                  disabled={Boolean(busy)}
-                  onClick={() =>
-                    run(
-                      "role",
-                      () => usersService.update(current.id, { role: "user" }),
-                      "Admin role removed",
-                    )
-                  }
-                >
-                  {busy === "role" ? "Saving..." : "Remove admin"}
-                </Button>
-              ) : (
-                <Button
-                  variant="outline"
-                  disabled={Boolean(busy)}
-                  onClick={() =>
-                    run(
-                      "role",
-                      () => usersService.update(current.id, { role: "admin" }),
-                      "Promoted to admin successfully",
-                    )
-                  }
-                >
-                  {busy === "role" ? "Saving..." : "Make admin"}
-                </Button>
-              )}
+              {/* No role control here. Admin access is managed in one place — Settings → Admin
+                  Access — so a single screen answers "who can get into this panel". A per-user
+                  switch in a details drawer is somewhere nobody thinks to audit. The Admin pill
+                  above still shows the state. */}
             </div>
           </Section>
         </div>
