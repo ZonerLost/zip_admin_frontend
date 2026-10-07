@@ -27,11 +27,11 @@ const NAV = [
     path: "/categories-products/overall-products",
     icon: FiBox,
   },
-  {
-    label: "City Development & Growth",
-    path: "/city-development-growth",
-    icon: FiMapPin,
-  },
+  // {
+  //   label: "City Development & Growth",
+  //   path: "/city-development-growth",
+  //   icon: FiMapPin,
+  // },
   // {
   //   label: "Insurances",
   //   path: "/insurances",
