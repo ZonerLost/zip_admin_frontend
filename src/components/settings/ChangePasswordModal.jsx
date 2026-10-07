@@ -7,22 +7,41 @@ export default function ChangePasswordModal({ open, onClose, onSubmit }) {
   const [newPassword, setNewPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [err, setErr] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [done, setDone] = useState("");
 
+  // Mirrors the server's rule exactly. Accepting a password here that the server then rejects just
+  // moves the error later and makes the form look broken.
+  const strongEnough =
+    newPassword.length >= 8 && /(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(newPassword);
   const can =
-    currentPassword.length >= 4 &&
-    newPassword.length >= 8 &&
-    confirm === newPassword;
+    currentPassword.length > 0 &&
+    strongEnough &&
+    confirm === newPassword &&
+    currentPassword !== newPassword &&
+    !busy;
 
   async function submit() {
     setErr("");
+    setDone("");
+    setBusy(true);
     try {
       await onSubmit({ currentPassword, newPassword });
       setCurrentPassword("");
       setNewPassword("");
       setConfirm("");
-      onClose();
+      // Say so before closing. Closing silently is indistinguishable from dismissing the dialog,
+      // which matters more than usual here: this screen used to claim success without changing
+      // anything at all.
+      setDone("Password updated.");
+      setTimeout(() => {
+        setDone("");
+        onClose();
+      }, 1200);
     } catch (e) {
       setErr(e?.message || "Failed to update password.");
+    } finally {
+      setBusy(false);
     }
   }
 
@@ -37,7 +56,7 @@ export default function ChangePasswordModal({ open, onClose, onSubmit }) {
             Cancel
           </Button>
           <Button disabled={!can} onClick={submit}>
-            Update
+            {busy ? "Updating..." : "Update"}
           </Button>
         </div>
       }
@@ -46,6 +65,12 @@ export default function ChangePasswordModal({ open, onClose, onSubmit }) {
         {err ? (
           <div className="rounded-2xl border border-red-200 bg-red-50 p-3 text-sm text-red-700">
             {err}
+          </div>
+        ) : null}
+
+        {done ? (
+          <div className="rounded-2xl border border-green-200 bg-green-50 p-3 text-sm text-green-700">
+            {done}
           </div>
         ) : null}
 
@@ -72,7 +97,10 @@ export default function ChangePasswordModal({ open, onClose, onSubmit }) {
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
             />
-            <p className="mt-1 text-xs text-neutral-500">Min 8 characters.</p>
+            <p className="mt-1 text-xs text-neutral-500">
+              At least 8 characters, with an uppercase letter, a lowercase
+              letter and a number.
+            </p>
           </div>
           <div>
             <label className="text-xs font-medium text-neutral-600">

@@ -6,6 +6,8 @@ export async function getProfile() {
   const res = await api.get("/users/profile");
   const u = res.data;
   return {
+    // Needed so the admin list can mark "you" and refuse self-demotion before the server has to.
+    id: u._id ?? u.id ?? "",
     name: `${u.firstName ?? ""} ${u.lastName ?? ""}`.trim() || "Admin",
     email: u.email ?? "",
     phone: u.phone ?? "",
@@ -22,78 +24,82 @@ export async function saveProfile(next) {
   return next;
 }
 
-// ── Preferences (local only — not in API) ────────────────
-
-const LS_PREFS = "zip_admin_prefs_v1";
-
-function readPrefs() {
-  try {
-    const raw = localStorage.getItem(LS_PREFS);
-    return raw ? JSON.parse(raw) : null;
-  } catch { return null; }
-}
-
-export async function getPreferences() {
-  return readPrefs() ?? { compactTables: false, showHelpHints: true, defaultPageSize: 10 };
-}
-
-export async function savePreferences(next) {
-  localStorage.setItem(LS_PREFS, JSON.stringify(next));
-  return next;
-}
-
 // ── Password ──────────────────────────────────────────────
 
+/**
+ * Really changes the password, via POST /auth/change-password.
+ *
+ * This used to validate the inputs, throw them away, and fire a forgot-password email instead — so
+ * the form said "password updated" while the password was unchanged and a reset link was sitting in
+ * the admin's inbox. The endpoint exists and always did.
+ *
+ * The rules below mirror the server's Joi schema so a bad password is rejected before a round trip,
+ * with the same wording.
+ */
 export async function changePassword({ currentPassword, newPassword }) {
-  if (!currentPassword || String(currentPassword).length < 4) {
-    throw new Error("Current password is invalid.");
+  if (!currentPassword) throw new Error("Enter your current password.");
+  if (!newPassword || newPassword.length < 8) {
+    throw new Error("Password must be at least 8 characters");
   }
-  if (!newPassword || String(newPassword).length < 8) {
-    throw new Error("New password must be at least 8 characters.");
+  if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(newPassword)) {
+    throw new Error("Password must contain uppercase, lowercase and number");
   }
-  // Trigger forgot-password flow since there is no direct change-password endpoint
-  const res = await api.get("/users/profile");
-  await api.post("/auth/forgot-password", { email: res.data.email });
-  return { ok: true, message: "Password reset link sent to your email." };
+  if (currentPassword === newPassword) {
+    throw new Error("The new password must be different from the current one.");
+  }
+  await api.post("/auth/change-password", { currentPassword, newPassword });
+  return { ok: true, message: "Password updated." };
 }
 
-// ── Roles (local only — managed via API admin endpoints) ──
+// ── Admin access ──────────────────────────────────────────
+//
+// There are no custom roles or permissions to manage. The backend models access as a single field on
+// the user, `role: "user" | "admin"`, with one endpoint to set it — so a "roles & permissions CRUD"
+// screen could only ever be a local-storage mock pretending otherwise, which is what was here
+// before: three invented roles with made-up permission strings that granted nothing.
+//
+// What follows is the access control that actually exists: who is an admin, and granting or
+// revoking it.
 
-const LS_ROLES = "zip_admin_roles_v1";
+const ADMIN_PAGE_LIMIT = 100;
 
-function readRoles() {
-  try {
-    const raw = localStorage.getItem(LS_ROLES);
-    return raw ? JSON.parse(raw) : null;
-  } catch { return null; }
+function normalizeAdmin(u) {
+  return {
+    id: u._id ?? u.id ?? "",
+    name: `${u.firstName ?? ""} ${u.lastName ?? ""}`.trim() || u.email || "(no name)",
+    email: u.email ?? "",
+    role: u.role ?? "user",
+    isBanned: Boolean(u.isBanned),
+    createdAt: u.createdAt ?? null,
+  };
 }
 
-export async function listRoles() {
-  return readRoles() ?? [
-    { id: "role_1", name: "Super Admin", permissions: ["*"] },
-    { id: "role_2", name: "Support Admin", permissions: ["disputes.manage", "reviews.moderate"] },
-    { id: "role_3", name: "Finance Admin", permissions: ["finance.view", "refunds.create"] },
-  ];
+export async function listAdmins() {
+  const params = new URLSearchParams({ role: "admin", limit: String(ADMIN_PAGE_LIMIT) });
+  const res = await api.get(`/admin/users?${params.toString()}`);
+  // The role filter is applied server-side, but re-check: a widened filter must never silently
+  // present ordinary users as administrators.
+  return (res.data || []).map(normalizeAdmin).filter((u) => u.role === "admin");
 }
 
-export async function createRole({ name, permissions }) {
-  const all = await listRoles();
-  const role = { id: `role_${Date.now()}`, name: String(name || "").trim(), permissions: permissions || [] };
-  localStorage.setItem(LS_ROLES, JSON.stringify([role, ...all]));
-  return role;
+/** Find someone to promote. Returns non-admins only, since admins are already listed. */
+export async function searchNonAdmins(query) {
+  const q = String(query || "").trim();
+  if (q.length < 2) return [];
+  const params = new URLSearchParams({ search: q, limit: "10" });
+  const res = await api.get(`/admin/users?${params.toString()}`);
+  return (res.data || []).map(normalizeAdmin).filter((u) => u.role !== "admin");
 }
 
-export async function updateRole(id, patch) {
-  const all = await listRoles();
-  const idx = all.findIndex((r) => r.id === id);
-  if (idx === -1) throw new Error("Role not found.");
-  all[idx] = { ...all[idx], ...patch };
-  localStorage.setItem(LS_ROLES, JSON.stringify(all));
-  return all[idx];
+export async function grantAdmin(userId) {
+  await api.put(`/admin/users/${userId}/role`, { role: "admin" });
+  return { ok: true };
 }
 
-export async function removeRole(id) {
-  const all = await listRoles();
-  localStorage.setItem(LS_ROLES, JSON.stringify(all.filter((r) => r.id !== id)));
+export async function revokeAdmin(userId) {
+  // The server also refuses self-demotion and removing the last admin; both would lock everyone out
+  // of the panel with no fix but a database edit. The UI blocks the first case too, so the common
+  // mistake never becomes a round trip.
+  await api.put(`/admin/users/${userId}/role`, { role: "user" });
   return { ok: true };
 }

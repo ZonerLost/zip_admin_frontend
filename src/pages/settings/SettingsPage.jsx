@@ -5,31 +5,44 @@ import Card from "../../components/shared/Card.jsx";
 import Button from "../../components/shared/Button.jsx";
 
 import SettingsProfileForm from "../../components/settings/SettingsProfileForm.jsx";
-import SettingsPreferencesForm from "../../components/settings/SettingsPreferencesForm.jsx";
-import TeamRolesSection from "../../components/settings/TeamRolesSection.jsx";
+import AdminAccessSection from "../../components/settings/AdminAccessSection.jsx";
 import ChangePasswordModal from "../../components/settings/ChangePasswordModal.jsx";
 
 import * as svc from "../../services/settings.service.js";
 
+/**
+ * Everything on this page is backed by a real endpoint.
+ *
+ * Two sections were removed rather than left looking functional:
+ *
+ *   - **Preferences** (compact tables, show hints, default page size) wrote to localStorage and
+ *     nothing anywhere read it back, so all three controls did nothing at all.
+ *   - **Team Roles**, a "CRUD roles & permissions" screen over three invented roles in localStorage.
+ *     The backend has no roles system — access is one field, `role: "user" | "admin"` — so it is now
+ *     Admin Access, which manages the thing that actually exists.
+ */
 export default function SettingsPage() {
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const [profile, setProfile] = useState(null);
-  const [prefs, setPrefs] = useState(null);
-  const [roles, setRoles] = useState([]);
+  const [admins, setAdmins] = useState([]);
 
   const [pwOpen, setPwOpen] = useState(false);
 
   async function load() {
     setLoading(true);
+    setError("");
     try {
-      const [p, pr, r] = await Promise.all([
-        svc.getProfile(),
-        svc.getPreferences(),
-        svc.listRoles(),
-      ]);
-      setProfile(p);
-      setPrefs(pr);
-      setRoles(r);
+      // Settled rather than all-or-nothing: a failure listing admins should not blank the profile
+      // form, and vice versa.
+      const [p, a] = await Promise.allSettled([svc.getProfile(), svc.listAdmins()]);
+      if (p.status === "fulfilled") setProfile(p.value);
+      if (a.status === "fulfilled") setAdmins(a.value);
+
+      const failed = [p, a].filter((r) => r.status === "rejected");
+      if (failed.length) {
+        setError(failed[0].reason?.message || "Some settings could not be loaded.");
+      }
     } finally {
       setLoading(false);
     }
@@ -44,27 +57,17 @@ export default function SettingsPage() {
     await load();
   }
 
-  async function savePrefs(next) {
-    await svc.savePreferences(next);
-    await load();
-  }
-
   async function changePassword(payload) {
-    await svc.changePassword(payload);
+    return svc.changePassword(payload);
   }
 
-  async function createRole(payload) {
-    await svc.createRole(payload);
+  async function grantAdmin(user) {
+    await svc.grantAdmin(user.id);
     await load();
   }
 
-  async function updateRole(role, patch) {
-    await svc.updateRole(role.id, patch);
-    await load();
-  }
-
-  async function deleteRole(role) {
-    await svc.removeRole(role.id);
+  async function revokeAdmin(user) {
+    await svc.revokeAdmin(user.id);
     await load();
   }
 
@@ -72,9 +75,15 @@ export default function SettingsPage() {
     <PageContainer>
       <PageHeader
         title="Settings"
-        subtitle="Profile, preferences, roles and security."
+        subtitle="Your profile, admin access and security."
         right={<Button onClick={() => setPwOpen(true)}>Change Password</Button>}
       />
+
+      {error ? (
+        <Card className="mb-3 border-red-200 bg-red-50 p-4">
+          <p className="text-sm text-red-700">{error}</p>
+        </Card>
+      ) : null}
 
       {loading ? (
         <Card className="p-6">
@@ -82,20 +91,18 @@ export default function SettingsPage() {
         </Card>
       ) : (
         <div className="space-y-3">
-          <div className="grid gap-3 lg:grid-cols-2">
-            {profile ? (
+          {profile ? (
+            <div className="grid gap-3 lg:grid-cols-2">
               <SettingsProfileForm value={profile} onSave={saveProfile} />
-            ) : null}
-            {prefs ? (
-              <SettingsPreferencesForm value={prefs} onSave={savePrefs} />
-            ) : null}
-          </div>
+            </div>
+          ) : null}
 
-          <TeamRolesSection
-            roles={roles}
-            onCreate={createRole}
-            onUpdate={updateRole}
-            onDelete={deleteRole}
+          <AdminAccessSection
+            admins={admins}
+            currentUserId={profile?.id ?? ""}
+            onSearch={svc.searchNonAdmins}
+            onGrant={grantAdmin}
+            onRevoke={revokeAdmin}
           />
         </div>
       )}
