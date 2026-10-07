@@ -11,7 +11,7 @@ import AtussaLogo from "../../components/brand/AtussaLogo.jsx";
 
 export default function LoginPage() {
   const nav = useNavigate();
-  const { startOtp, requestPasswordReset } = useAuth();
+  const { startOtp } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -36,16 +36,6 @@ export default function LoginPage() {
       setVerifyModalOpen(true);
     } catch (e) {
       setError(e?.message || "Login failed.");
-    } finally {
-      setBusy(false);
-    }
-  }
-
-  async function submitForgot(mail) {
-    setBusy(true);
-    try {
-      await requestPasswordReset(mail);
-      setForgotOpen(false);
     } finally {
       setBusy(false);
     }
@@ -141,7 +131,7 @@ export default function LoginPage() {
         open={forgotOpen}
         emailDefault={email}
         onClose={() => setForgotOpen(false)}
-        onSubmit={submitForgot}
+        onDone={(mail) => setEmail(mail)}
       />
 
       <VerifyCodeModal

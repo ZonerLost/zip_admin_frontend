@@ -33,7 +33,9 @@ export function AuthProvider({ children }) {
         return res;
       },
       async requestPasswordReset(email) {
-        return authService.requestPasswordReset({ email });
+        // Passed straight through. This used to wrap it as { email }, which the service then tried
+        // to read as a string — the request went out with no address and failed validation.
+        return authService.requestPasswordReset(email);
       },
       async resendOtp(email) {
         return authService.resendOtp({ email });

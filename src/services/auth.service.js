@@ -50,7 +50,42 @@ export async function resendOtp({ email }) {
   return { ok: true };
 }
 
-export async function requestPasswordReset({ email }) {
-  await api.post("/auth/forgot-password", { email });
+/**
+ * Asks the server to email a six-digit reset code.
+ *
+ * Takes the address directly. It used to destructure `{ email }` while its only caller passed a
+ * plain string, so `email` was undefined, the request failed validation, and the caller had a
+ * finally with no catch — you pressed "Send Reset" and absolutely nothing happened.
+ *
+ * The server answers the same way whether or not the account exists, on purpose, so there is
+ * nothing here to branch on.
+ */
+export async function requestPasswordReset(email) {
+  const address = String(email || "").trim();
+  if (!address) throw new Error("Enter your email address.");
+  await api.post("/auth/forgot-password", { email: address });
+  return { ok: true };
+}
+
+/**
+ * Completes the reset with the emailed code and a new password.
+ *
+ * The panel had no way to do this at all: it could ask for a code and then offered nowhere to type
+ * it. The rules below mirror the server so a password it would reject is caught before the trip.
+ */
+export async function resetPassword({ email, otp, newPassword }) {
+  const code = String(otp || "").trim();
+  if (!/^[0-9]{6}$/.test(code)) throw new Error("Enter the six-digit code from the email.");
+  if (!newPassword || newPassword.length < 8) {
+    throw new Error("Password must be at least 8 characters");
+  }
+  if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*d)/.test(newPassword)) {
+    throw new Error("Password must contain uppercase, lowercase and number");
+  }
+  await api.post("/auth/reset-password", {
+    email: String(email || "").trim(),
+    otp: code,
+    newPassword,
+  });
   return { ok: true };
 }

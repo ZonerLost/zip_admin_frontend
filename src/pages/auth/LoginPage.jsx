@@ -11,7 +11,7 @@ import AtussaLogo from "../../components/brand/AtussaLogo.jsx";
 
 export default function LoginPage() {
   const nav = useNavigate();
-  const { login, requestPasswordReset } = useAuth();
+  const { login } = useAuth();
 
   // Demo credentials — change these if you want different defaults
 
@@ -40,15 +40,9 @@ export default function LoginPage() {
       setBusy(false);
     }
   }
-  async function submitForgot(mail) {
-    setBusy(true);
-    try {
-      await requestPasswordReset(mail);
-      setForgotOpen(false);
-    } finally {
-      setBusy(false);
-    }
-  }
+  // The reset flow lives entirely in ForgotPasswordModal now: it asks for the code, takes the new
+  // password, and reports its own failures. This page only needs to know when it finished, so the
+  // email can be carried back into the sign-in field.
 
   return (
     <div className="min-h-screen bg-canvas flex items-center justify-center">
@@ -133,7 +127,7 @@ export default function LoginPage() {
         open={forgotOpen}
         emailDefault={email}
         onClose={() => setForgotOpen(false)}
-        onSubmit={submitForgot}
+        onDone={(mail) => setEmail(mail)}
       />
     </div>
   );
