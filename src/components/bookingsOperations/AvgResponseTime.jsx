@@ -37,10 +37,9 @@ export default function AvgResponseTime({
   }, [start, end]);
 
   useEffect(() => {
-    if (!comparePrev) return setPrevRows(null);
+    if (!comparePrev || !prevStart || !prevEnd) return;
     let alive = true;
     async function loadPrev() {
-      if (!prevStart || !prevEnd) return setPrevRows(null);
       const data = await svc.getAvgResponseTimeSeries(prevStart, prevEnd);
       if (!alive) return;
       setPrevRows(data);
@@ -50,6 +49,8 @@ export default function AvgResponseTime({
       alive = false;
     };
   }, [comparePrev, prevStart, prevEnd]);
+
+  const activePrevRows = comparePrev && prevStart && prevEnd ? prevRows : null;
 
   const summary = useMemo(() => {
     const avg = rows.length
@@ -67,10 +68,11 @@ export default function AvgResponseTime({
   const merged = useMemo(() => {
     if (!rows || !rows.length) return [];
     return rows.map((r, i) => {
-      const prevByLabel = prevRows
-        ? prevRows.find((p) => p.label === r.label)
+      const prevByLabel = activePrevRows
+        ? activePrevRows.find((p) => p.label === r.label)
         : null;
-      const prevByIndex = prevRows && prevRows[i] ? prevRows[i] : null;
+      const prevByIndex =
+        activePrevRows && activePrevRows[i] ? activePrevRows[i] : null;
       const prev = prevByLabel || prevByIndex || null;
       return {
         label: r.label,
@@ -78,7 +80,7 @@ export default function AvgResponseTime({
         prevAvgResponseMs: prev ? prev.avgResponseMs : null,
       };
     });
-  }, [rows, prevRows]);
+  }, [rows, activePrevRows]);
 
   return (
     <ChartCard
@@ -124,7 +126,7 @@ export default function AvgResponseTime({
                     fill={chart.current} fillOpacity={0.12}
                     dot={{ r: 4 }}
                   />
-                  {prevRows ? (
+                  {activePrevRows ? (
                     <Area
                       type="monotone"
                       dataKey="prevAvgResponseMs"

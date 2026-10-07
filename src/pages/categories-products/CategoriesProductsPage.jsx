@@ -372,7 +372,10 @@ function CategoriesProductsPageContent() {
 
   const currentSection = SECTION_CONFIG[section];
   const columns = useMemo(() => buildColumns(section), [section]);
-  const rows = currentSection ? analytics[currentSection.rowsKey] || [] : [];
+  const rows = useMemo(
+    () => (currentSection ? analytics[currentSection.rowsKey] || [] : []),
+    [currentSection, analytics],
+  );
   const viewSummary = useMemo(() => getViewSummary(rows), [rows]);
 
   useEffect(() => {

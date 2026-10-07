@@ -16,8 +16,7 @@ import {
 import { chart } from "../../theme/palette.js";
 
 export default function ViewsPctDifferenceBoostedVsNonBoosted() {
-  const { resolvedRange, comparePreviousYear, resolvePreviousYear } =
-    useDashboardRange();
+  const { resolvedRange } = useDashboardRange();
   const [rows, setRows] = useState([]);
 
   useEffect(() => {

@@ -37,10 +37,9 @@ export default function AmountOfRequests({
   }, [start, end]);
 
   useEffect(() => {
-    if (!comparePrev) return setPrevRows(null);
+    if (!comparePrev || !prevStart || !prevEnd) return;
     let alive = true;
     async function loadPrev() {
-      if (!prevStart || !prevEnd) return setPrevRows(null);
       const data = await svc.getAmountOfRequestsSeries(prevStart, prevEnd);
       if (!alive) return;
       setPrevRows(data);
@@ -51,6 +50,8 @@ export default function AmountOfRequests({
     };
   }, [comparePrev, prevStart, prevEnd]);
 
+  const activePrevRows = comparePrev && prevStart && prevEnd ? prevRows : null;
+
   const summary = useMemo(() => {
     const total = rows.reduce((a, r) => a + (r.requests || 0), 0);
     const avg = rows.length ? Math.round(total / rows.length) : 0;
@@ -60,10 +61,11 @@ export default function AmountOfRequests({
   const merged = useMemo(() => {
     if (!rows || !rows.length) return [];
     return rows.map((r, i) => {
-      const prevByLabel = prevRows
-        ? prevRows.find((p) => p.label === r.label)
+      const prevByLabel = activePrevRows
+        ? activePrevRows.find((p) => p.label === r.label)
         : null;
-      const prevByIndex = prevRows && prevRows[i] ? prevRows[i] : null;
+      const prevByIndex =
+        activePrevRows && activePrevRows[i] ? activePrevRows[i] : null;
       const prev = prevByLabel || prevByIndex || null;
       return {
         label: r.label,
@@ -71,7 +73,7 @@ export default function AmountOfRequests({
         prevRequests: prev ? prev.requests : null,
       };
     });
-  }, [rows, prevRows]);
+  }, [rows, activePrevRows]);
 
   return (
     <ChartCard title="Amount of requests" subtitle="Requests over time">
@@ -114,7 +116,7 @@ export default function AmountOfRequests({
                     fill={chart.current} fillOpacity={0.12}
                     dot={{ r: 4 }}
                   />
-                  {prevRows ? (
+                  {activePrevRows ? (
                     <Area
                       type="monotone"
                       dataKey="prevRequests"

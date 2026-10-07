@@ -36,10 +36,9 @@ export default function PctDiffBoostedVsNonBoosted({
   }, [start, end]);
 
   useEffect(() => {
-    if (!comparePrev) return void setPrevRows(null);
+    if (!comparePrev || !prevStart || !prevEnd) return;
     let alive = true;
     async function loadPrev() {
-      if (!prevStart || !prevEnd) return setPrevRows(null);
       const data = await svc.getPctDiffBoostedVsNonBoostedSeries(
         prevStart,
         prevEnd,
@@ -52,6 +51,8 @@ export default function PctDiffBoostedVsNonBoosted({
       alive = false;
     };
   }, [comparePrev, prevStart, prevEnd]);
+
+  const activePrevRows = comparePrev && prevStart && prevEnd ? prevRows : null;
 
   return (
     <ChartCard
@@ -69,11 +70,12 @@ export default function PctDiffBoostedVsNonBoosted({
                   label: r.label,
                   pctDiff: r.pctDiff,
                   prevPctDiff:
-                    prevRows &&
-                    (prevRows.find((p) => p.label === r.label) || prevRows[i])
+                    activePrevRows &&
+                    (activePrevRows.find((p) => p.label === r.label) ||
+                      activePrevRows[i])
                       ? (
-                          prevRows.find((p) => p.label === r.label) ||
-                          prevRows[i]
+                          activePrevRows.find((p) => p.label === r.label) ||
+                          activePrevRows[i]
                         ).pctDiff
                       : null,
                 }))}
@@ -92,7 +94,7 @@ export default function PctDiffBoostedVsNonBoosted({
                   fill={chart.current} fillOpacity={0.08}
                   dot={{ r: 4 }}
                 />
-                {prevRows ? (
+                {activePrevRows ? (
                   <Area
                     type="monotone"
                     dataKey="prevPctDiff"

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import EmptyState from "./EmptyState.jsx";
 import Pagination from "./Pagination.jsx";
 
@@ -9,28 +9,25 @@ export default function DataTable({
   paginated = false,
   pageSize = 10,
 }) {
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const safeRows = Array.isArray(rows) ? rows : [];
+  const safeRows = useMemo(() => (Array.isArray(rows) ? rows : []), [rows]);
 
   const [page, setPage] = useState(1);
 
-  const total = safeRows.length;
-  const totalPages = useMemo(
-    () => Math.max(1, Math.ceil(total / pageSize)),
-    [pageSize, total],
-  );
-
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+  const [prevPageDeps, setPrevPageDeps] = useState({ pageSize, safeRows });
+  if (
+    prevPageDeps.pageSize !== pageSize ||
+    prevPageDeps.safeRows !== safeRows
+  ) {
+    setPrevPageDeps({ pageSize, safeRows });
     setPage(1);
-  }, [pageSize, safeRows]);
+  }
 
-  useEffect(() => {
-    if (page > totalPages) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setPage(totalPages);
-    }
-  }, [page, totalPages]);
+  const total = safeRows.length;
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
+
+  if (page > totalPages) {
+    setPage(totalPages);
+  }
 
   const visibleRows = useMemo(() => {
     if (!paginated) return safeRows;

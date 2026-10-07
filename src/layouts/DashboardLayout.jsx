@@ -14,6 +14,10 @@ export default function DashboardLayout() {
     if (p === "/" || p.startsWith("/dashboard")) return "Dashboard";
     if (p.startsWith("/users")) return "Users";
     if (p.startsWith("/listings-discovery")) return "Listings & Discovery";
+    if (p.startsWith("/categories-products")) return "Categories & Products";
+    if (p.startsWith("/city-development-growth"))
+      return "City Development & Growth";
+    if (p.startsWith("/insurances")) return "Insurances";
     if (p.startsWith("/bookings-operations")) return "Bookings & Operations";
     if (p.startsWith("/payments-finance")) return "Payments & Finance";
     if (p.startsWith("/trust-support")) return "Trust & Support";
@@ -38,7 +42,7 @@ export default function DashboardLayout() {
               // click event finishes before the overlay is mounted.
               try {
                 e?.stopPropagation?.();
-              } catch (err) {
+              } catch {
                 // ignore
               }
               setTimeout(() => setSidebarOpen(true), 0);

@@ -85,25 +85,30 @@ function SidebarInner({ onNavigate, onLogout }) {
     ),
   );
 
-  useEffect(() => {
-    setExpandedGroups((current) => {
-      let changed = false;
-      const next = { ...current };
+  const [prevPathname, setPrevPathname] = useState(location.pathname);
+  if (prevPathname !== location.pathname) {
+    setPrevPathname(location.pathname);
+    let changed = false;
+    const next = { ...expandedGroups };
 
-      NAV.forEach((item) => {
-        const hasChildren =
-          Array.isArray(item.children) && item.children.length > 0;
-        if (!hasChildren) return;
+    NAV.forEach((item) => {
+      const hasChildren =
+        Array.isArray(item.children) && item.children.length > 0;
+      if (!hasChildren) return;
 
-        if (isNavItemActive(item, location.pathname) && !current[item.path]) {
-          next[item.path] = true;
-          changed = true;
-        }
-      });
-
-      return changed ? next : current;
+      if (
+        isNavItemActive(item, location.pathname) &&
+        !expandedGroups[item.path]
+      ) {
+        next[item.path] = true;
+        changed = true;
+      }
     });
-  }, [location.pathname]);
+
+    if (changed) {
+      setExpandedGroups(next);
+    }
+  }
 
   function toggleGroup(path) {
     setExpandedGroups((current) => ({

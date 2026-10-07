@@ -39,10 +39,9 @@ export default function AvgBookingPerListingNonBoosted({
   }, [start, end]);
 
   useEffect(() => {
-    if (!comparePrev) return setPrevRows(null);
+    if (!comparePrev || !prevStart || !prevEnd) return;
     let alive = true;
     async function loadPrev() {
-      if (!prevStart || !prevEnd) return setPrevRows(null);
       const data = await svc.getAvgBookingPerListingNonBoostedSeries(
         prevStart,
         prevEnd,
@@ -55,6 +54,8 @@ export default function AvgBookingPerListingNonBoosted({
       alive = false;
     };
   }, [comparePrev, prevStart, prevEnd]);
+
+  const activePrevRows = comparePrev && prevStart && prevEnd ? prevRows : null;
 
   const summary = useMemo(() => {
     const avg = rows.length
@@ -90,11 +91,12 @@ export default function AvgBookingPerListingNonBoosted({
                     label: r.label,
                     value: r.avgNonBoosted,
                     prevValue:
-                      prevRows &&
-                      (prevRows.find((p) => p.label === r.label) || prevRows[i])
+                      activePrevRows &&
+                      (activePrevRows.find((p) => p.label === r.label) ||
+                        activePrevRows[i])
                         ? (
-                            prevRows.find((p) => p.label === r.label) ||
-                            prevRows[i]
+                            activePrevRows.find((p) => p.label === r.label) ||
+                            activePrevRows[i]
                           ).avgNonBoosted
                         : null,
                   }))}
@@ -113,7 +115,7 @@ export default function AvgBookingPerListingNonBoosted({
                     fill={chart.current} fillOpacity={0.08}
                     dot={{ r: 4 }}
                   />
-                  {prevRows ? (
+                  {activePrevRows ? (
                     <Area
                       type="monotone"
                       dataKey="prevValue"

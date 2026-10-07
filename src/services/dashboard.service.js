@@ -2,7 +2,7 @@ import { api } from "./apiClient.js";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
-export async function getDashboardSummary(startIso, endIso) {
+export async function getDashboardSummary(_startIso, _endIso) {
   const res = await api.get("/admin/stats");
   const d = res.data;
   return {
@@ -38,7 +38,7 @@ export async function getLeaderboards() {
 }
 
 // Chart series — grouped from real payment/booking data
-export async function getRevenueSeries(startIso, endIso) {
+export async function getRevenueSeries(_startIso, _endIso) {
   const res = await api.get("/admin/payments?limit=100");
   const payments = (res.data || []).filter((p) => p.status === "completed");
   const grouped = {};
@@ -54,7 +54,7 @@ export async function getRevenueSeries(startIso, endIso) {
   return series.length ? series : [{ label: "No data", revenue: 0, bookings: 0 }];
 }
 
-export async function getBookingsSeries(startIso, endIso) {
+export async function getBookingsSeries(_startIso, _endIso) {
   const res = await api.get("/admin/bookings?limit=100");
   const bookings = res.data || [];
   const grouped = {};

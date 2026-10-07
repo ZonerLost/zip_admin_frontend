@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { FiChevronDown, FiChevronUp } from "react-icons/fi";
 import EmptyState from "./EmptyState.jsx";
 import Pagination from "./Pagination.jsx";
@@ -29,7 +29,7 @@ export default function SortableAnalyticsTable({
   paginated = false,
   pageSize = 10,
 }) {
-  const safeRows = Array.isArray(rows) ? rows : [];
+  const safeRows = useMemo(() => (Array.isArray(rows) ? rows : []), [rows]);
   const firstSortableColumn = columns.find(
     (column) => column.sortable !== false,
   );
@@ -45,13 +45,33 @@ export default function SortableAnalyticsTable({
   const [sortState, setSortState] = useState(initialSort);
   const [page, setPage] = useState(1);
 
-  useEffect(() => {
+  const [prevSortDeps, setPrevSortDeps] = useState({
+    defaultSort,
+    initialSort,
+    tableKey,
+  });
+  if (
+    prevSortDeps.defaultSort !== defaultSort ||
+    prevSortDeps.initialSort !== initialSort ||
+    prevSortDeps.tableKey !== tableKey
+  ) {
+    setPrevSortDeps({ defaultSort, initialSort, tableKey });
     setSortState(defaultSort || initialSort);
-  }, [defaultSort, initialSort, tableKey]);
+  }
 
-  useEffect(() => {
+  const [prevPageDeps, setPrevPageDeps] = useState({
+    pageSize,
+    safeRows,
+    tableKey,
+  });
+  if (
+    prevPageDeps.pageSize !== pageSize ||
+    prevPageDeps.safeRows !== safeRows ||
+    prevPageDeps.tableKey !== tableKey
+  ) {
+    setPrevPageDeps({ pageSize, safeRows, tableKey });
     setPage(1);
-  }, [pageSize, safeRows, tableKey]);
+  }
 
   const sortedRows = useMemo(() => {
     if (!sortState?.key) return safeRows;
@@ -94,11 +114,9 @@ export default function SortableAnalyticsTable({
   const total = sortedRows.length;
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
-  useEffect(() => {
-    if (page > totalPages) {
-      setPage(totalPages);
-    }
-  }, [page, totalPages]);
+  if (page > totalPages) {
+    setPage(totalPages);
+  }
 
   const visibleRows = useMemo(() => {
     if (!paginated) return sortedRows;
