@@ -17,6 +17,34 @@ function normalize(u) {
     identityVerified: u.isIdentityVerified ?? false,
     hasIdentityDocument: Boolean(u.identityDocument),
     isActive: u.isActive !== false,
+    phoneVerified: u.isPhoneVerified ?? false,
+    bio: u.bio ?? "",
+    language: u.language ?? null,
+    // email | google | facebook. Worth surfacing: a social account has no password, which changes
+    // what support can tell them, and explains a missing phone number.
+    authProvider: u.authProvider ?? "email",
+    rating: typeof u.averageRating === "number" ? u.averageRating : null,
+    reviewCount: u.totalReviews ?? 0,
+    city: u.location?.city ?? null,
+    province: u.location?.province ?? null,
+    country: u.location?.country ?? null,
+    // Payout state, straight from the connected account as the webhook last left it. Without this
+    // the only answer to "why has this owner not been paid" was to open the Stripe dashboard.
+    payout: u.stripeAccount?.id
+      ? {
+          accountId: u.stripeAccount.id,
+          chargesEnabled: Boolean(u.stripeAccount.chargesEnabled),
+          payoutsEnabled: Boolean(u.stripeAccount.payoutsEnabled),
+          detailsSubmitted: Boolean(u.stripeAccount.detailsSubmitted),
+          requirementsDue: u.stripeAccount.requirementsDue ?? [],
+          disabledReason: u.stripeAccount.disabledReason ?? null,
+          bank: u.stripeAccount.bankLast4
+            ? `${u.stripeAccount.bankName || "Bank"} ····${u.stripeAccount.bankLast4}`
+            : null,
+          country: u.stripeAccount.country ?? null,
+          syncedAt: u.stripeAccount.syncedAt ?? null,
+        }
+      : null,
     isOwner: (u.lendingHistory?.length ?? 0) > 0,
     listingsCount: u.lendingHistory?.length ?? 0,
     bookingsCount: u.rentalHistory?.length ?? 0,
