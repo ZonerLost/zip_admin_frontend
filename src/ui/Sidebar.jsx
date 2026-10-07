@@ -17,6 +17,7 @@ import {
 } from "react-icons/fi";
 import { cn } from "../utils/cn.js";
 import AtussaLogo from "../components/brand/AtussaLogo.jsx";
+import { useAuth } from "../context/AuthContext.jsx";
 
 const NAV = [
   { label: "Dashboard", path: "/dashboard", icon: FiHome },
@@ -66,6 +67,7 @@ function isNavItemActive(item, pathname) {
 }
 
 function SidebarInner({ onNavigate, onLogout }) {
+  const { user } = useAuth();
   const location = useLocation();
   const [expandedGroups, setExpandedGroups] = useState(() =>
     Object.fromEntries(
@@ -223,11 +225,37 @@ function SidebarInner({ onNavigate, onLogout }) {
         </div>
       </nav>
 
-      <div className="px-3 pb-6">
-        <div className="mt-auto px-1">
+      <div className="border-t border-neutral-100 px-3 pb-6 pt-3">
+        <div className="mt-auto px-1 space-y-2">
+          <NavLink
+            to="/settings"
+            onClick={() => onNavigate?.()}
+            className="flex items-center gap-3 rounded-2xl p-2 transition hover:bg-neutral-50"
+          >
+            {user?.profilePhoto ? (
+              <img
+                src={user.profilePhoto}
+                alt=""
+                className="h-9 w-9 rounded-full object-cover shrink-0"
+              />
+            ) : (
+              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-soft text-sm font-semibold text-brand shrink-0">
+                {((user?.name || user?.firstName || "A")[0] || "A").toUpperCase()}
+              </div>
+            )}
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-sm font-medium text-neutral-900">
+                {user?.name || "Admin"}
+              </p>
+              <p className="truncate text-xs text-neutral-500">
+                {user?.email || "Administrator"}
+              </p>
+            </div>
+          </NavLink>
+
           <button
             onClick={() => onLogout?.()}
-            className="w-full flex items-center gap-3 rounded-2xl px-3 py-3 text-sm font-medium text-neutral-700 hover:bg-neutral-50"
+            className="w-full flex items-center gap-3 rounded-2xl px-3 py-2.5 text-sm font-medium text-neutral-700 hover:bg-neutral-50"
           >
             <FiLogOut className="h-5 w-5" />
             <span>Logout</span>

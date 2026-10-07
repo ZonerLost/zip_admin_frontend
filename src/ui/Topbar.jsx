@@ -356,7 +356,17 @@ export default function Topbar({
               className="hidden items-center gap-2 rounded-2xl border bg-white px-3 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-50 sm:inline-flex"
               onClick={() => navigate("/settings")}
             >
-              <span className="h-7 w-7 rounded-full bg-brand-soft" />
+              {user?.profilePhoto ? (
+                <img
+                  src={user.profilePhoto}
+                  alt=""
+                  className="h-7 w-7 rounded-full object-cover shrink-0"
+                />
+              ) : (
+                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-brand-soft text-xs font-bold text-brand shrink-0">
+                  {((user?.name || user?.firstName || "A")[0] || "A").toUpperCase()}
+                </span>
+              )}
               <span className="max-w-35 truncate">{user?.name || "Admin"}</span>
             </button>
           </div>

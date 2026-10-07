@@ -66,16 +66,20 @@ export async function apiRequest(path, options = {}) {
 
   const token = localStorage.getItem("zip_admin_token");
 
+  const isFormData = typeof FormData !== "undefined" && body instanceof FormData;
+
   const doFetch = (accessToken) =>
     withTimeout(
       fetch(buildUrl(path), {
         method,
         headers: {
-          "Content-Type": "application/json",
+          ...(isFormData ? {} : { "Content-Type": "application/json" }),
           ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
           ...headers,
         },
-        ...(body !== undefined ? { body: JSON.stringify(body) } : {}),
+        ...(body !== undefined
+          ? { body: isFormData ? body : JSON.stringify(body) }
+          : {}),
       }),
       timeoutMs
     );

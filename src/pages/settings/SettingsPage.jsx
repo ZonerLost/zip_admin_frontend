@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import PageContainer from "../../components/shared/PageContainer.jsx";
 import PageHeader from "../../components/shared/PageHeader.jsx";
 import Card from "../../components/shared/Card.jsx";
@@ -7,6 +8,7 @@ import Button from "../../components/shared/Button.jsx";
 import SettingsProfileForm from "../../components/settings/SettingsProfileForm.jsx";
 import AdminAccessSection from "../../components/settings/AdminAccessSection.jsx";
 import ChangePasswordModal from "../../components/settings/ChangePasswordModal.jsx";
+import { useAuth } from "../../context/AuthContext.jsx";
 
 import * as svc from "../../services/settings.service.js";
 
@@ -22,6 +24,7 @@ import * as svc from "../../services/settings.service.js";
  *     Admin Access, which manages the thing that actually exists.
  */
 export default function SettingsPage() {
+  const { updateUser } = useAuth();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [profile, setProfile] = useState(null);
@@ -53,17 +56,56 @@ export default function SettingsPage() {
   }, []);
 
   async function saveProfile(next) {
-    await svc.saveProfile(next);
-    await load();
+    const tid = toast.loading("Saving profile...");
+    try {
+      await svc.saveProfile(next);
+      toast.success("Profile saved successfully", { id: tid });
+      updateUser?.({ name: next.name, phone: next.phone });
+      await load();
+    } catch (e) {
+      toast.error(e?.message || "Failed to save profile", { id: tid });
+      throw e;
+    }
+  }
+
+  async function uploadAvatar(file) {
+    const tid = toast.loading("Uploading avatar...");
+    try {
+      const res = await svc.uploadAvatar(file);
+      const photoUrl = res?.profilePhoto || res?.data?.profilePhoto;
+      toast.success("Avatar updated successfully", { id: tid });
+      if (photoUrl) {
+        updateUser?.({ profilePhoto: photoUrl });
+      }
+      await load();
+      return photoUrl;
+    } catch (e) {
+      toast.error(e?.message || "Failed to upload avatar", { id: tid });
+      throw e;
+    }
   }
 
   async function changePassword(payload) {
-    return svc.changePassword(payload);
+    const tid = toast.loading("Updating password...");
+    try {
+      const res = await svc.changePassword(payload);
+      toast.success("Password changed successfully", { id: tid });
+      return res;
+    } catch (e) {
+      toast.error(e?.message || "Failed to change password", { id: tid });
+      throw e;
+    }
   }
 
   async function revokeAdmin(user) {
-    await svc.revokeAdmin(user.id);
-    await load();
+    const tid = toast.loading("Revoking admin access...");
+    try {
+      await svc.revokeAdmin(user.id);
+      toast.success("Admin access revoked", { id: tid });
+      await load();
+    } catch (e) {
+      toast.error(e?.message || "Failed to revoke admin access", { id: tid });
+    }
   }
 
   return (
@@ -88,7 +130,11 @@ export default function SettingsPage() {
         <div className="space-y-3">
           {profile ? (
             <div className="grid gap-3 lg:grid-cols-2">
-              <SettingsProfileForm value={profile} onSave={saveProfile} />
+              <SettingsProfileForm
+                value={profile}
+                onSave={saveProfile}
+                onUploadAvatar={uploadAvatar}
+              />
             </div>
           ) : null}
 

@@ -9,8 +9,11 @@ export async function getProfile() {
     // Needed so the admin list can mark "you" and refuse self-demotion before the server has to.
     id: u._id ?? u.id ?? "",
     name: `${u.firstName ?? ""} ${u.lastName ?? ""}`.trim() || "Admin",
+    firstName: u.firstName ?? "",
+    lastName: u.lastName ?? "",
     email: u.email ?? "",
     phone: u.phone ?? "",
+    profilePhoto: u.profilePhoto ?? null,
   };
 }
 
@@ -22,6 +25,13 @@ export async function saveProfile(next) {
     phone: next.phone ?? "",
   });
   return next;
+}
+
+export async function uploadAvatar(file) {
+  const formData = new FormData();
+  formData.append("photo", file);
+  const res = await api.put("/users/profile/photo", formData);
+  return res.data;
 }
 
 // ── Password ──────────────────────────────────────────────

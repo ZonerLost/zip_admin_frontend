@@ -40,6 +40,17 @@ export function AuthProvider({ children }) {
       async resendOtp(email) {
         return authService.resendOtp({ email });
       },
+      updateUser(partial) {
+        setUser((prev) => {
+          const updated = { ...(prev || {}), ...partial };
+          try {
+            localStorage.setItem("zip_admin_user", JSON.stringify(updated));
+          } catch {
+            /* ignore */
+          }
+          return updated;
+        });
+      },
     };
   }, [user, booting]);
 

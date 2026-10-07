@@ -4,22 +4,7 @@ import DataTable from "../shared/DataTable.jsx";
 import StatusPill from "../shared/StatusPill.jsx";
 import { FiEye, FiXCircle, FiDollarSign } from "react-icons/fi";
 
-/**
- * The bookings table.
- *
- * Two things were removed rather than restyled:
- *
- *   - **Approve / Reject.** The handlers returned a plain object without calling the API, so a row
- *     flipped to "Approved" and reverted on the next refresh. They are not reimplemented: deciding
- *     whether to rent out an item belongs to its owner, and an administrator accepting on their
- *     behalf would commit them to a rental they never agreed to.
- *   - **"Quick tools"**, a button whose handler was an empty block with a `/* reserved *‍/` comment.
- *
- * Responsiveness: the shared DataTable scrolls horizontally rather than compressing, so percentage
- * widths no longer mean anything — a `min-w-max` table sizes to content. Columns therefore carry
- * explicit minimum widths, and the three that only repeat what the drawer shows are hidden below
- * `lg` so a phone gets a readable four-column table instead of a very wide scroll.
- */
+
 export default function BookingsTable({ rows, onView, onCancel, onRefund, busy }) {
   const columns = useMemo(() => {
     return [
@@ -34,8 +19,6 @@ export default function BookingsTable({ rows, onView, onCancel, onRefund, busy }
             <p className="truncate text-xs text-neutral-500">
               {r.listingCity || ""}
             </p>
-            {/* On narrow screens the renter column is hidden, so surface the renter here instead of
-                leaving the row without a person attached to it. */}
             <p className="truncate text-xs text-neutral-500 lg:hidden">
               {r.renterName || ""}
             </p>
@@ -103,8 +86,6 @@ export default function BookingsTable({ rows, onView, onCancel, onRefund, busy }
         render: (r) => (
           <div className="min-w-28">
             <StatusPill value={r.status} />
-            {/* Payment is independent of status — a paid booking is still "Approved" — and knowing
-                which is which is the difference between a refund being possible or not. */}
             {r.refunded ? (
               <p className="mt-1 text-xs text-neutral-500">refunded</p>
             ) : r.isPaid ? (
@@ -140,9 +121,6 @@ export default function BookingsTable({ rows, onView, onCancel, onRefund, busy }
               >
                 <FiEye />
               </button>
-
-              {/* Shown only when there is money to return. It used to appear on every row,
-                  including bookings nobody had paid for. */}
               {canRefund ? (
                 <button
                   className="rounded-xl p-2 text-neutral-700 hover:bg-neutral-100 disabled:text-neutral-300"
@@ -155,7 +133,6 @@ export default function BookingsTable({ rows, onView, onCancel, onRefund, busy }
                 </button>
               ) : null}
 
-              {/* Only a live booking can be cancelled; the server refuses the rest anyway. */}
               {canCancel ? (
                 <button
                   className="rounded-xl p-2 text-red-700 hover:bg-red-50 disabled:text-neutral-300"

@@ -19,7 +19,7 @@ import AvgBookingPerListingNonBoosted from "./AvgBookingPerListingNonBoosted.jsx
 import AvgBookingPerBoosted from "./AvgBookingPerBoosted.jsx";
 import PctDiffBoostedVsNonBoosted from "./PctDiffBoostedVsNonBoosted.jsx";
 
-// Two-way split as whole percentages that always add up to 100.
+
 function splitCard(splits, a, b) {
   if (!splits) return { displayValue: "—", helperText: "Loading…" };
   if (splits.error) return { displayValue: "—", helperText: "Unavailable" };
