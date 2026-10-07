@@ -43,11 +43,11 @@ const NAV = [
     path: "/city-development-growth",
     icon: FiMapPin,
   },
-  {
-    label: "Insurances",
-    path: "/insurances",
-    icon: FiShield,
-  },
+  // {
+  //   label: "Insurances",
+  //   path: "/insurances",
+  //   icon: FiShield,
+  // },
   {
     label: "Bookings & Operations",
     path: "/bookings-operations",

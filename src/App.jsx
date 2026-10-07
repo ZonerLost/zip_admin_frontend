@@ -15,9 +15,9 @@ const CategoriesProductsPage = lazy(
 const CityDevelopmentGrowthPage = lazy(
   () => import("./pages/city-development-growth/CityDevelopmentGrowthPage.jsx"),
 );
-const InsurancesPage = lazy(
-  () => import("./pages/insurances/InsurancesPage.jsx"),
-);
+// const InsurancesPage = lazy(
+//   () => import("./pages/insurances/InsurancesPage.jsx"),
+// );
 const BookingsOperationsPage = lazy(
   () => import("./pages/bookings-operations/BookingsOperationsPage.jsx"),
 );
@@ -73,7 +73,7 @@ export default function App() {
               path="/city-development-growth"
               element={<CityDevelopmentGrowthPage />}
             />
-            <Route path="/insurances" element={<InsurancesPage />} />
+            {/* <Route path="/insurances" element={<InsurancesPage />} /> */}
             <Route
               path="/bookings-operations"
               element={<BookingsOperationsPage />}
