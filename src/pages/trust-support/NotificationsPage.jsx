@@ -106,9 +106,11 @@ export default function NotificationsPage() {
               className="w-full rounded-full border bg-white px-4 py-3 text-sm outline-none sm:w-50"
             >
               <option value="all">All Types</option>
-              <option value="PhotoUploadReminder">PhotoUploadReminder</option>
-              <option value="CaseProgressUpdate">CaseProgressUpdate</option>
-              <option value="SettingsUpdate">SettingsUpdate</option>
+              <option value="booking">Booking Updates</option>
+              <option value="dispute">Dispute Alerts</option>
+              <option value="payment">Payment Events</option>
+              <option value="Photo reminder">Photo Reminders</option>
+              <option value="Case update">Case Updates</option>
             </select>
           </div>
         }

@@ -1,13 +1,55 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import Sidebar from "../ui/Sidebar.jsx";
 import Topbar from "../ui/Topbar.jsx";
 import { useAuth } from "../context/AuthContext.jsx";
+import * as notifService from "../services/notifications.service.js";
 
 export default function DashboardLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [notifications, setNotifications] = useState([]);
   const { user } = useAuth();
   const location = useLocation();
+
+  useEffect(() => {
+    let alive = true;
+    async function fetchNotifs() {
+      try {
+        const data = await notifService.getNotifications();
+        if (!alive) return;
+        setNotifications(data);
+      } catch (err) {
+        console.warn("Failed to load notifications:", err);
+      }
+    }
+    fetchNotifs();
+    const interval = setInterval(fetchNotifs, 60000);
+    return () => {
+      alive = false;
+      clearInterval(interval);
+    };
+  }, []);
+
+  const refreshNotifications = async () => {
+    try {
+      const data = await notifService.getNotifications();
+      setNotifications(data);
+    } catch (err) {
+      console.warn("Failed to refresh notifications:", err);
+    }
+  };
+
+  const handleMarkRead = async (id) => {
+    setNotifications((prev) =>
+      prev.map((n) => (n.id === id ? { ...n, unread: false } : n)),
+    );
+    await notifService.markNotificationAsRead(id);
+  };
+
+  const handleMarkAllRead = async () => {
+    setNotifications((prev) => prev.map((n) => ({ ...n, unread: false })));
+    await notifService.markAllNotificationsAsRead(notifications);
+  };
 
   const title = useMemo(() => {
     const p = location.pathname || "/";
@@ -48,6 +90,10 @@ export default function DashboardLayout() {
               setTimeout(() => setSidebarOpen(true), 0);
             }}
             user={user}
+            notifications={notifications}
+            onMarkRead={handleMarkRead}
+            onMarkAllRead={handleMarkAllRead}
+            onOpenNotifications={refreshNotifications}
           />
 
           <main className="pt-4">

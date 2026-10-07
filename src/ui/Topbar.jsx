@@ -24,35 +24,6 @@ function useOnClickOutside(ref, handler, when = true) {
   }, [ref, handler, when]);
 }
 
-function defaultNotifications() {
-  return [
-    {
-      id: "n1",
-      title: "Photo upload reminder",
-      description: "Booking ended — request user to upload evidence photos.",
-      time: "2m ago",
-      type: "reminder",
-      unread: true,
-    },
-    {
-      id: "n2",
-      title: "Case status updated",
-      description: "Dispute moved to Investigating.",
-      time: "1h ago",
-      type: "case",
-      unread: false,
-    },
-    {
-      id: "n3",
-      title: "New report received",
-      description: "A listing was reported for policy review.",
-      time: "Yesterday",
-      type: "moderation",
-      unread: true,
-    },
-  ];
-}
-
 function isPhoneViewport() {
   return typeof window !== "undefined" && window.innerWidth < 640;
 }
@@ -64,9 +35,7 @@ function NotificationItem({ notification, onClick, compact = false }) {
     <button
       className={cn(
         "w-full rounded-2xl text-left transition hover:bg-neutral-50",
-        compact
-          ? "border bg-white px-3 py-3"
-          : "p-3",
+        compact ? "border bg-white px-3 py-3" : "p-3",
         unread && "bg-brand-soft/60",
       )}
       onClick={onClick}
@@ -104,9 +73,11 @@ export default function Topbar({
   title = "Dashboard",
   subtitle,
   onMenuClick,
-  notifications,
+  notifications = [],
   user,
   onOpenNotifications,
+  onMarkRead,
+  onMarkAllRead,
 }) {
   const [notifOpen, setNotifOpen] = useState(false);
   const [mobilePanel, setMobilePanel] = useState(false);
@@ -115,15 +86,12 @@ export default function Topbar({
   const dropdownRef = useRef(null);
 
   const list = useMemo(() => {
-    const src = Array.isArray(notifications)
-      ? notifications
-      : defaultNotifications();
-    return src.slice(0, 8);
+    return Array.isArray(notifications) ? notifications.slice(0, 10) : [];
   }, [notifications]);
 
   const unreadCount = useMemo(
     () => list.filter((x) => x.unread).length,
-    [list]
+    [list],
   );
 
   useOnClickOutside(dropdownRef, () => setNotifOpen(false), notifOpen);
@@ -167,6 +135,15 @@ export default function Topbar({
     if (next) onOpenNotifications?.();
   };
 
+  const handleNotificationClick = (notification) => {
+    onMarkRead?.(notification.id);
+    setNotifOpen(false);
+    setMobilePanel(false);
+    if (notification.url) {
+      navigate(notification.url);
+    }
+  };
+
   const mobileNotificationsPanel =
     mobilePanel && typeof document !== "undefined"
       ? createPortal(
@@ -187,13 +164,24 @@ export default function Topbar({
                     {unreadCount ? `${unreadCount} unread` : "All caught up"}
                   </p>
                 </div>
-                <button
-                  className="rounded-xl p-2 hover:bg-neutral-100"
-                  onClick={() => setMobilePanel(false)}
-                  aria-label="Close"
-                >
-                  <FiX />
-                </button>
+                <div className="flex items-center gap-2">
+                  {unreadCount > 0 && onMarkAllRead ? (
+                    <button
+                      type="button"
+                      onClick={() => onMarkAllRead?.()}
+                      className="text-xs font-medium text-brand hover:underline"
+                    >
+                      Mark read
+                    </button>
+                  ) : null}
+                  <button
+                    className="rounded-xl p-2 hover:bg-neutral-100"
+                    onClick={() => setMobilePanel(false)}
+                    aria-label="Close"
+                  >
+                    <FiX />
+                  </button>
+                </div>
               </div>
 
               <div className="max-h-[60vh] overflow-auto px-3 pb-3">
@@ -214,14 +202,24 @@ export default function Topbar({
                         key={notification.id}
                         notification={notification}
                         compact
-                        onClick={() => setMobilePanel(false)}
+                        onClick={() => handleNotificationClick(notification)}
                       />
                     ))}
                   </div>
                 )}
               </div>
 
-              <div className="border-t px-4 py-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+              <div className="flex flex-col gap-2 border-t px-4 py-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+                <Button
+                  variant="primary"
+                  className="w-full"
+                  onClick={() => {
+                    setMobilePanel(false);
+                    navigate("/trust-support/notifications");
+                  }}
+                >
+                  View all in Trust & Support
+                </Button>
                 <Button
                   variant="outline"
                   className="w-full"
@@ -291,18 +289,27 @@ export default function Topbar({
                         Notifications
                       </p>
                       <p className="text-xs text-neutral-500">
-                        {unreadCount
-                          ? `${unreadCount} unread`
-                          : "All caught up"}
+                        {unreadCount ? `${unreadCount} unread` : "All caught up"}
                       </p>
                     </div>
-                    <button
-                      className="rounded-xl p-2 hover:bg-neutral-100"
-                      onClick={() => setNotifOpen(false)}
-                      aria-label="Close notifications"
-                    >
-                      <FiX />
-                    </button>
+                    <div className="flex items-center gap-2">
+                      {unreadCount > 0 && onMarkAllRead ? (
+                        <button
+                          type="button"
+                          onClick={() => onMarkAllRead?.()}
+                          className="text-xs font-medium text-brand hover:underline"
+                        >
+                          Mark all read
+                        </button>
+                      ) : null}
+                      <button
+                        className="rounded-xl p-2 hover:bg-neutral-100"
+                        onClick={() => setNotifOpen(false)}
+                        aria-label="Close notifications"
+                      >
+                        <FiX />
+                      </button>
+                    </div>
                   </div>
 
                   <div className="max-h-85 overflow-auto p-2">
@@ -322,7 +329,7 @@ export default function Topbar({
                           <NotificationItem
                             key={notification.id}
                             notification={notification}
-                            onClick={() => setNotifOpen(false)}
+                            onClick={() => handleNotificationClick(notification)}
                           />
                         ))}
                       </div>
@@ -333,9 +340,12 @@ export default function Topbar({
                     <Button
                       variant="outline"
                       className="w-full py-2 text-xs"
-                      onClick={() => setNotifOpen(false)}
+                      onClick={() => {
+                        setNotifOpen(false);
+                        navigate("/trust-support/notifications");
+                      }}
                     >
-                      View all notifications
+                      View all in Trust & Support
                     </Button>
                   </div>
                 </div>

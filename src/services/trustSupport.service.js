@@ -216,12 +216,4 @@ export async function saveNotificationSettings(next) {
   return next;
 }
 
-export async function listNotificationLogs({
-  _q = "",
-  _page = 1,
-  _pageSize = 10,
-  _type = "all",
-} = {}) {
-  // Not available via API — return empty
-  return { rows: [], total: 0 };
-}
+export { listNotificationLogs } from "./notifications.service.js";

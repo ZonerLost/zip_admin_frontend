@@ -8,6 +8,17 @@ function formatNotificationType(value) {
     PhotoUploadReminder: "Photo reminder",
     CaseProgressUpdate: "Case update",
     SettingsUpdate: "Settings update",
+    booking_request: "Booking request",
+    booking_accepted: "Booking accepted",
+    booking_declined: "Booking declined",
+    booking_cancelled: "Booking cancelled",
+    booking_completed: "Booking completed",
+    dispute_opened: "Dispute opened",
+    dispute_resolved: "Dispute resolved",
+    payment_received: "Payment received",
+    item_added: "Item listed",
+    identity_verified: "Identity verified",
+    account_created: "Account created",
   };
 
   return map[value] || value || "-";

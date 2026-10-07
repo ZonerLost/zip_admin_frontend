@@ -139,4 +139,5 @@ export const api = {
   patch: (path, body, options) =>
     apiRequest(path, { ...options, method: "PATCH", body }),
   del: (path, options) => apiRequest(path, { ...options, method: "DELETE" }),
+  delete: (path, options) => apiRequest(path, { ...options, method: "DELETE" }),
 };
