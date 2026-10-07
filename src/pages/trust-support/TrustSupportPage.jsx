@@ -221,94 +221,6 @@ export default function TrustSupportPage() {
     }
   }
 
-  async function approveEvidence(dispute, evidence) {
-    try {
-      await svc.updateEvidence(dispute.id, evidence.id, { status: "Approved" });
-      toast.success("Evidence approved");
-
-      setSelected((prev) =>
-        prev?.id === dispute.id
-          ? {
-              ...prev,
-              evidence: (prev.evidence || []).map((item) =>
-                item.id === evidence.id ? { ...item, status: "Approved" } : item,
-              ),
-            }
-          : prev,
-      );
-
-      await Promise.all([loadDisputesTable(), loadMetrics()]);
-    } catch (e) {
-      toast.error(e?.message || "Failed to approve evidence");
-    }
-  }
-
-  async function rejectEvidence(dispute, evidence) {
-    try {
-      await svc.updateEvidence(dispute.id, evidence.id, { status: "Rejected" });
-      toast.success("Evidence rejected");
-
-      setSelected((prev) =>
-        prev?.id === dispute.id
-          ? {
-              ...prev,
-              evidence: (prev.evidence || []).map((item) =>
-                item.id === evidence.id ? { ...item, status: "Rejected" } : item,
-              ),
-            }
-          : prev,
-      );
-
-      await Promise.all([loadDisputesTable(), loadMetrics()]);
-    } catch (e) {
-      toast.error(e?.message || "Failed to reject evidence");
-    }
-  }
-
-  async function hideMessage(dispute, message) {
-    try {
-      await svc.updateMessage(dispute.id, message.id, { status: "Hidden" });
-      toast.success("Message hidden");
-
-      setSelected((prev) =>
-        prev?.id === dispute.id
-          ? {
-              ...prev,
-              messages: (prev.messages || []).map((item) =>
-                item.id === message.id ? { ...item, status: "Hidden" } : item,
-              ),
-            }
-          : prev,
-      );
-
-      await loadDisputesTable();
-    } catch (e) {
-      toast.error(e?.message || "Failed to hide message");
-    }
-  }
-
-  async function showMessage(dispute, message) {
-    try {
-      await svc.updateMessage(dispute.id, message.id, { status: "Visible" });
-      toast.success("Message visible");
-
-      setSelected((prev) =>
-        prev?.id === dispute.id
-          ? {
-              ...prev,
-              messages: (prev.messages || []).map((item) =>
-                item.id === message.id ? { ...item, status: "Visible" } : item,
-              ),
-            }
-          : prev,
-      );
-
-      await loadDisputesTable();
-    } catch (e) {
-      toast.error(e?.message || "Failed to show message");
-    }
-  }
-
   async function hideReview(review) {
     try {
       await svc.updateReview(review.id, { status: "Hidden" });
@@ -525,18 +437,13 @@ export default function TrustSupportPage() {
         onClose={() => setDrawerOpen(false)}
         onStatusChange={updateStatus}
         EvidencePanel={({ dispute }) => (
-          <EvidenceReviewPanel
-            dispute={dispute}
-            onApprove={approveEvidence}
-            onReject={rejectEvidence}
-          />
+          // Evidence is read, not approved: there is no approval state on the dispute to write.
+          <EvidenceReviewPanel dispute={dispute} />
         )}
         MessagingPanel={({ dispute }) => (
-          <MessagingReviewPanel
-            dispute={dispute}
-            onHide={hideMessage}
-            onShow={showMessage}
-          />
+          // Keyed on the dispute: the panel fetches the conversation itself, and remounting is
+          // how it resets cleanly for a different one. Read-only.
+          <MessagingReviewPanel key={dispute?.id} dispute={dispute} />
         )}
       />
 

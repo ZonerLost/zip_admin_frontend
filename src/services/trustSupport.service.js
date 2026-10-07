@@ -27,15 +27,17 @@ function normalizeDispute(d) {
     createdAt: d.createdAt,
     notes: d.description ?? "",
     adminNote: d.adminNote ?? "",
+    // The URLs arrive pre-signed from the server. The panel used to ignore them and render a
+    // placeholder, and "status" was hardcoded to "Approved" for every item — which is why the
+    // Approve/Reject buttons, gated on "Pending", never appeared at all.
     evidence: (d.evidence || []).map((url, i) => ({
       id: `ev_${i}`,
-      type: "Photo",
       label: `Evidence ${i + 1}`,
-      status: "Approved",
       url,
       uploadedAt: d.createdAt,
     })),
-    messages: [],
+    // So the panel can say "the link expired" instead of showing a broken image.
+    evidenceUrlsExpireAt: d.evidenceUrlsExpireAt ?? null,
   };
 }
 
@@ -141,15 +143,42 @@ export async function removeDispute(id) {
   return { ok: true };
 }
 
-export async function updateEvidence(disputeId, evidenceId, patch) {
-  // Evidence moderation not available via API — return mock update
-  return { id: evidenceId, ...patch };
+/**
+ * The conversation between the two parties to a dispute.
+ *
+ * Replaces `messages: []`, which is why the Messaging Review panel said "No messages" for every
+ * dispute ever opened. A dispute has no messages of its own; the reporter and the person reported
+ * have a chat, and that is the record an adjudicator needs.
+ */
+export async function getDisputeMessages(disputeId) {
+  const res = await api.get(`/admin/disputes/${disputeId}/messages`);
+  const d = res.data || {};
+  return {
+    conversationId: d.conversationId ?? null,
+    participants: d.participants ?? null,
+    truncated: Boolean(d.truncated),
+    messages: (d.messages || []).map((m) => {
+      const sender = m.sender && typeof m.sender === "object" ? m.sender : null;
+      const name = sender
+        ? `${sender.firstName ?? ""} ${sender.lastName ?? ""}`.trim()
+        : "";
+      return {
+        id: String(m._id || m.id),
+        senderId: String(sender?._id ?? m.sender ?? ""),
+        author: name || sender?.email || "(deleted user)",
+        text: m.content ?? "",
+        imageUrl: m.imageUrl ?? null,
+        createdAt: m.createdAt,
+      };
+    }),
+  };
 }
 
-export async function updateMessage(disputeId, messageId, patch) {
-  // Message moderation not available via API — return mock update
-  return { id: messageId, ...patch };
-}
+// There is deliberately no updateEvidence or updateMessage here. Both existed and both returned a
+// fabricated object without calling anything — evidence is a plain list of URLs with no approval
+// state to write, and the chat service does not let a third party alter a participant's message.
+// Neither is worth inventing: evidence in a dispute is weighed, and the weighing belongs in the
+// resolution note.
 
 // ── Reviews ───────────────────────────────────────────────
 
