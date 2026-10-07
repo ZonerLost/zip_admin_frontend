@@ -133,7 +133,6 @@ export default function ListingsTable({
   const [categoryId, setCategoryId] = useState(categories?.[0]?.id || "");
   const [status, setStatus] = useState("Paused");
   const [featured, setFeatured] = useState(false);
-  const [co2Kg, setCo2Kg] = useState(0);
 
   function openCreate() {
     setEditing(null);
@@ -143,7 +142,6 @@ export default function ListingsTable({
     setCategoryId(categories?.[0]?.id || "");
     setStatus("Paused");
     setFeatured(false);
-    setCo2Kg(0);
     setEditorOpen(true);
   }
 
@@ -156,7 +154,6 @@ export default function ListingsTable({
       setCategoryId(item.categoryId || categories?.[0]?.id || "");
       setStatus(item.status || "Paused");
       setFeatured(Boolean(item.featured));
-      setCo2Kg(Number(item.co2Kg || 0));
       setEditorOpen(true);
     },
     [categories],
@@ -178,7 +175,6 @@ export default function ListingsTable({
       categoryId,
       status,
       featured,
-      co2Kg: Number(co2Kg || 0),
     };
 
     if (!editing) await onCreate(payload);
@@ -354,20 +350,6 @@ export default function ListingsTable({
                 </p>
               </div>
             </label>
-
-            <div>
-              <label className="text-xs font-medium text-neutral-600">
-                CO₂ (kg)
-              </label>
-              <input
-                type="number"
-                step="0.1"
-                className="mt-1 w-full rounded-2xl border px-4 py-3 text-sm outline-none focus:border-brand focus:ring-4 focus:ring-brand/12"
-                value={co2Kg}
-                onChange={(e) => setCo2Kg(e.target.value)}
-                placeholder="0.0"
-              />
-            </div>
           </div>
         </div>
       </Modal>

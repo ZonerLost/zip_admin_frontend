@@ -11,31 +11,9 @@ export async function getDashboardSummary(_startIso, _endIso) {
     bookings: d.bookings?.total ?? 0,
     disputes: d.bookings?.pending ?? 0,
     revenue: d.revenue?.total ?? 0,
-    co2SavedKg: d.eco?.totalCO2Saved ?? 0,
   };
 }
 
-export async function getLeaderboards() {
-  const [usersRes, citiesRes] = await Promise.all([
-    api.get("/eco/leaderboard/users?limit=10"),
-    api.get("/eco/leaderboard/cities?limit=10"),
-  ]);
-
-  const topUsers = (usersRes.data || []).map((u, i) => ({
-    id: u._id || String(i),
-    name: `${u.user?.firstName ?? ""} ${u.user?.lastName ?? ""}`.trim() || "—",
-    city: u.user?.location?.city ?? "—",
-    co2Kg: u.totalCO2 ?? 0,
-  }));
-
-  const topCities = (citiesRes.data || []).map((c, i) => ({
-    id: String(i),
-    name: c.city ?? "—",
-    co2Kg: c.totalCO2 ?? 0,
-  }));
-
-  return { topUsers, topCities };
-}
 
 // Chart series — grouped from real payment/booking data
 export async function getRevenueSeries(_startIso, _endIso) {

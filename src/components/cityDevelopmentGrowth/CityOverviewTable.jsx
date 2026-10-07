@@ -16,17 +16,6 @@ function formatPercent(value) {
   return `${sign}${numeric.toFixed(1)}%`;
 }
 
-function formatCo2(value) {
-  const numeric = Number(value || 0);
-  if (numeric >= 1000) {
-    return `${(numeric / 1000).toFixed(1)} t`;
-  }
-  return `${numeric.toFixed(0)} kg`;
-}
-
-function formatCo2PerUnit(value) {
-  return `${Number(value || 0).toFixed(2)} kg`;
-}
 
 function GrowthCell({ value }) {
   const numeric = Number(value || 0);
@@ -132,27 +121,6 @@ function buildColumns() {
       sortValue: (row) => row.bookingGrowthPct,
       render: (row) => <GrowthCell value={row.bookingGrowthPct} />,
     },
-    {
-      key: "totalCo2SavedKg",
-      header: "Total CO2 saved",
-      align: "right",
-      sortValue: (row) => row.totalCo2SavedKg,
-      render: (row) => formatCo2(row.totalCo2SavedKg),
-    },
-    {
-      key: "avgCo2SavedPerUserKg",
-      header: "Avg CO2 / user",
-      align: "right",
-      sortValue: (row) => row.avgCo2SavedPerUserKg,
-      render: (row) => formatCo2PerUnit(row.avgCo2SavedPerUserKg),
-    },
-    {
-      key: "avgCo2SavedPerBookingKg",
-      header: "Avg CO2 / booking",
-      align: "right",
-      sortValue: (row) => row.avgCo2SavedPerBookingKg,
-      render: (row) => formatCo2PerUnit(row.avgCo2SavedPerBookingKg),
-    },
   ];
 }
 
@@ -168,8 +136,7 @@ export default function CityOverviewTable({
       <div className="border-b p-4">
         <p className="text-sm font-semibold text-neutral-900">City overview</p>
         <p className="mt-1 text-xs text-neutral-500">
-          One row per city with adoption, growth, popularity, and sustainability
-          metrics.
+          One row per city with adoption, growth, and popularity metrics.
         </p>
       </div>
 

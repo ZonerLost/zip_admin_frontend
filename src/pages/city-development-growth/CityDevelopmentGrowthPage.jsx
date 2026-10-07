@@ -44,7 +44,7 @@ function CityDevelopmentGrowthPageContent() {
     <PageContainer>
       <PageHeader
         title="City Development & Growth"
-        subtitle="Simple city overview table for growth and sustainability."
+        subtitle="Simple city overview table for growth and platform adoption."
         right={<RangeSelector showCompare={false} />}
       />
 

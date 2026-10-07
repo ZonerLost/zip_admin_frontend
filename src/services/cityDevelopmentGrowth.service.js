@@ -341,13 +341,6 @@ function clamp(value, min, max) {
   return Math.max(min, Math.min(max, value));
 }
 
-function round1(value) {
-  return Math.round((Number(value) || 0) * 10) / 10;
-}
-
-function round2(value) {
-  return Math.round((Number(value) || 0) * 100) / 100;
-}
 
 function toDate(value, fallback) {
   const next = value instanceof Date ? new Date(value) : new Date(value || fallback);
@@ -451,12 +444,6 @@ function buildCityBase(city, meta) {
     0,
     totalUsers,
   );
-  const totalCo2SavedKg = round1(
-    totalBookings *
-      city.co2PerBookingKg *
-      city.sustainabilityBias *
-      (0.94 + seasonalFactor * 0.06),
-  );
 
   return {
     totalUsers,
@@ -467,9 +454,6 @@ function buildCityBase(city, meta) {
     topCategories: getTopThree(city.categories, city, meta),
     topSubCategories: getTopThree(city.subCategories, city, meta),
     topProducts: getTopThree(city.products, city, meta),
-    totalCo2SavedKg,
-    avgCo2SavedPerUserKg: round2(totalCo2SavedKg / totalUsers),
-    avgCo2SavedPerBookingKg: round2(totalCo2SavedKg / totalBookings),
   };
 }
 
@@ -500,7 +484,6 @@ function buildSummary(rows) {
     totalUsers: rows.reduce((sum, row) => sum + row.totalUsers, 0),
     totalBookings: rows.reduce((sum, row) => sum + row.totalBookings, 0),
     totalListings: rows.reduce((sum, row) => sum + row.totalListings, 0),
-    totalCo2SavedKg: rows.reduce((sum, row) => sum + row.totalCo2SavedKg, 0),
   };
 }
 

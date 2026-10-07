@@ -3,12 +3,10 @@ import { useDashboardRange } from "../../context/useDashboardRange.js";
 import PageContainer from "../../components/shared/PageContainer.jsx";
 import PageHeader from "../../components/shared/PageHeader.jsx";
 import DashboardMetrics from "../../components/dashboard/DashboardMetrics.jsx";
-import SustainabilitySnapshot from "../../components/dashboard/SustainabilitySnapshot.jsx";
 import Card from "../../components/shared/Card.jsx";
 
 import BookingsRevenueChart from "../../components/dashboard/BookingsRevenueChart.jsx";
 import DisputesTrendChart from "../../components/dashboard/bookings.jsx";
-import LeaderboardTable from "../../components/dashboard/LeaderboardTable.jsx";
 import { DashboardRangeProvider } from "../../context/DashboardRangeContext.jsx";
 import RangeSelector from "../../components/dashboard/RangeSelector.jsx";
 
@@ -41,26 +39,20 @@ function DashboardContent() {
     async function load() {
       // when no resolvedRange available, fall back to legacy summary
       if (!resolvedRange) {
-        const [summary, leaderboards] = await Promise.all([
-          dashboardService.getDashboardSummary(),
-          dashboardService.getLeaderboards(),
-        ]);
+        const summary = await dashboardService.getDashboardSummary();
         if (!alive) return;
-        setData({ ...summary, leaderboards });
+        setData(summary);
         setPrevData(null);
         return;
       }
 
-      const [summary, leaderboards] = await Promise.all([
-        dashboardService.getDashboardSummary(
-          resolvedRange.start,
-          resolvedRange.end,
-        ),
-        dashboardService.getLeaderboards(),
-      ]);
+      const summary = await dashboardService.getDashboardSummary(
+        resolvedRange.start,
+        resolvedRange.end,
+      );
 
       if (!alive) return;
-      setData({ ...summary, leaderboards });
+      setData(summary);
 
       if (comparePreviousYear) {
         const prev = resolvePreviousYear();
@@ -102,25 +94,6 @@ function DashboardContent() {
             <div className="lg:col-span-1 h-full">
               <DisputesTrendChart />
             </div>
-          </div>
-
-          <div className="grid gap-3 lg:grid-cols-1">
-            <SustainabilitySnapshot co2SavedKg={data.co2SavedKg} />
-          </div>
-
-          <div className="grid gap-3 grid-cols-1 lg:grid-cols-2">
-            <LeaderboardTable
-              title="Top Users"
-              rows={data.leaderboards.topUsers}
-            />
-            <LeaderboardTable
-              title="Top Cities"
-              rows={data.leaderboards.topCities.map((c) => ({
-                ...c,
-                city: c.name,
-                name: c.name,
-              }))}
-            />
           </div>
         </div>
       )}

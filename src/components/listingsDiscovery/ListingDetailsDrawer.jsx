@@ -2,7 +2,7 @@ import React from "react";
 import Drawer from "../shared/Drawer.jsx";
 import StatusPill from "../shared/StatusPill.jsx";
 import { formatDate } from "../../utils/formatters.js";
-import { FiMapPin, FiTag, FiUser, FiStar } from "react-icons/fi";
+import { FiMapPin, FiTag, FiUser } from "react-icons/fi";
 
 export default function ListingDetailsDrawer({
   open,
@@ -40,13 +40,6 @@ export default function ListingDetailsDrawer({
                 <FiTag className="text-neutral-400" />
                 <span className="text-neutral-500">Category:</span>
                 <span className="font-medium">{categoryName || "-"}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <FiStar className="text-neutral-400" />
-                <span className="text-neutral-500">CO₂:</span>
-                <span className="font-medium">
-                  {Number(listing.co2Kg || 0).toFixed(1)} kg
-                </span>
               </div>
               <div className="text-xs text-neutral-500">
                 Created: {formatDate(listing.createdAt)}

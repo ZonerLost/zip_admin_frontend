@@ -8,7 +8,6 @@ import {
   FiCalendar,
   FiAlertTriangle,
   FiDollarSign,
-  FiGlobe,
 } from "react-icons/fi";
 
 export default function DashboardMetrics({ data, prevData }) {
@@ -66,19 +65,6 @@ export default function DashboardMetrics({ data, prevData }) {
         prefix="$"
         decimals={2}
         onClick={go("/payments-finance")}
-      />
-      <MetricCard
-        title="CO₂ Saved"
-        value={data.co2SavedKg}
-        helperText={
-          prevData
-            ? formatDelta(prevData.co2SavedKg, data.co2SavedKg, true)
-            : undefined
-        }
-        icon={FiGlobe}
-        suffix=" kg"
-        decimals={1}
-        onClick={go("/listings-discovery")}
       />
     </MetricsGrid>
   );
