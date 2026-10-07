@@ -57,8 +57,8 @@ export default function DashboardLayout() {
     if (p.startsWith("/users")) return "Users";
     if (p.startsWith("/listings-discovery")) return "Listings & Discovery";
     if (p.startsWith("/categories-products")) return "Categories & Products";
-    if (p.startsWith("/city-development-growth"))
-      return "City Development & Growth";
+    // if (p.startsWith("/city-development-growth"))
+    //   return "City Development & Growth";
     // if (p.startsWith("/insurances")) return "Insurances";
     if (p.startsWith("/bookings-operations")) return "Bookings & Operations";
     if (p.startsWith("/payments-finance")) return "Payments & Finance";

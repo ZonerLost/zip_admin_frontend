@@ -38,11 +38,11 @@ const NAV = [
       },
     ],
   },
-  {
-    label: "City Development & Growth",
-    path: "/city-development-growth",
-    icon: FiMapPin,
-  },
+  // {
+  //   label: "City Development & Growth",
+  //   path: "/city-development-growth",
+  //   icon: FiMapPin,
+  // },
   // {
   //   label: "Insurances",
   //   path: "/insurances",

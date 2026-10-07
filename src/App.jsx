@@ -12,9 +12,9 @@ const ListingsDiscoveryPage = lazy(
 const CategoriesProductsPage = lazy(
   () => import("./pages/categories-products/CategoriesProductsPage.jsx"),
 );
-const CityDevelopmentGrowthPage = lazy(
-  () => import("./pages/city-development-growth/CityDevelopmentGrowthPage.jsx"),
-);
+// const CityDevelopmentGrowthPage = lazy(
+//   () => import("./pages/city-development-growth/CityDevelopmentGrowthPage.jsx"),
+// );
 // const InsurancesPage = lazy(
 //   () => import("./pages/insurances/InsurancesPage.jsx"),
 // );
@@ -69,10 +69,10 @@ export default function App() {
               path="/categories-products/:section"
               element={<CategoriesProductsPage />}
             />
-            <Route
+            {/* <Route
               path="/city-development-growth"
               element={<CityDevelopmentGrowthPage />}
-            />
+            /> */}
             {/* <Route path="/insurances" element={<InsurancesPage />} /> */}
             <Route
               path="/bookings-operations"
