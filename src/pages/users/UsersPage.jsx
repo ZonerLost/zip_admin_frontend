@@ -35,6 +35,7 @@ function UsersPageContent() {
   const [verifyOpen, setVerifyOpen] = useState(false);
 
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+  const [actionError, setActionError] = useState("");
   const [toDelete, setToDelete] = useState(null);
 
   const [serviceMetrics, setServiceMetrics] = useState(null);
@@ -164,10 +165,17 @@ function UsersPageContent() {
   async function confirmDelete() {
     if (!toDelete) return;
 
-    await usersService.remove(toDelete.id);
-    setConfirmDeleteOpen(false);
-    setToDelete(null);
-    await refreshUsers();
+    setActionError("");
+    try {
+      await usersService.deactivate(toDelete.id);
+      setConfirmDeleteOpen(false);
+      setToDelete(null);
+      await refreshUsers();
+    } catch (e) {
+      // Used to be unhandled: the request failed, the dialog stayed open, and nothing said why.
+      setActionError(e?.message || "That user could not be deactivated.");
+      setConfirmDeleteOpen(false);
+    }
   }
 
   function openVerify(user) {
@@ -178,6 +186,7 @@ function UsersPageContent() {
   async function confirmVerify(user) {
     if (!user) return;
 
+    // Throws on failure so the modal can show it; it stays open until this resolves.
     await usersService.setVerified(user.id, !user.identityVerified);
     setVerifyOpen(false);
     await refreshUsers();
@@ -203,6 +212,20 @@ function UsersPageContent() {
           </div>
         }
       />
+
+      {actionError ? (
+        <Card className="mt-3 border-red-200 bg-red-50 p-4">
+          <div className="flex items-start justify-between gap-3">
+            <p className="text-sm text-red-700">{actionError}</p>
+            <button
+              className="shrink-0 rounded-lg px-2 text-sm text-red-700 hover:bg-red-100"
+              onClick={() => setActionError("")}
+            >
+              Dismiss
+            </button>
+          </div>
+        </Card>
+      ) : null}
 
       <UsersMetrics
         stats={serviceMetrics}
@@ -260,7 +283,7 @@ function UsersPageContent() {
 
       <Modal
         open={confirmDeleteOpen}
-        title="Delete User"
+        title="Deactivate User"
         onClose={() => setConfirmDeleteOpen(false)}
         footer={
           <div className="flex items-center justify-end gap-2">
@@ -272,14 +295,19 @@ function UsersPageContent() {
               Cancel
             </Button>
             <Button type="button" onClick={confirmDelete}>
-              Delete
+              Deactivate
             </Button>
           </div>
         }
       >
         <p className="text-sm text-neutral-600">
-          Are you sure you want to delete{" "}
-          <span className="font-semibold">{toDelete?.name}</span>?
+          Deactivate <span className="font-semibold">{toDelete?.name}</span>?
+        </p>
+        <p className="mt-2 text-xs text-neutral-500">
+          Nothing is erased. The account is marked inactive, keeps its email
+          address, and still appears here as Deactivated. This is what the
+          server&rsquo;s delete endpoint does — it was labelled &ldquo;Delete&rdquo;,
+          which implied otherwise.
         </p>
       </Modal>
     </>

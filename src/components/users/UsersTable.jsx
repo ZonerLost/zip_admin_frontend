@@ -161,7 +161,17 @@ export default function UsersTable({
         key: "verified",
         header: "Verification",
         render: (r) => (
-          <StatusPill value={r.verified ? "Verified" : "Unverified"} />
+          // Two separate facts, and the Verify action controls the second one. This column used to
+          // show only the email flag, so approving an identity changed nothing visible here and the
+          // action looked broken.
+          <div className="min-w-28 space-y-1">
+            <StatusPill
+              value={r.identityVerified ? "ID verified" : "ID not verified"}
+            />
+            <p className="text-xs text-neutral-500">
+              {r.emailVerified ? "email verified" : "email unverified"}
+            </p>
+          </div>
         ),
       },
       {
