@@ -1,78 +1,99 @@
-import React, { useState } from "react";
+import React from "react";
 import Card from "../shared/Card.jsx";
-import Button from "../shared/Button.jsx";
-import { FiSettings } from "react-icons/fi";
+import { FiPercent } from "react-icons/fi";
 
-export default function FeeSettingsForm({ value, onSave }) {
-  const [local, setLocal] = useState(value);
+/**
+ * What the platform charges — read-only.
+ *
+ * This was an editable form with a Save button, populated from a hardcoded `{ platformFeePercent: 5
+ * }`, and the save was a no-op. So it displayed a number that was both unsaveable and **wrong**: the
+ * real model is a 15% owner commission plus a 3% renter fee with a $3.99 minimum, and taxes on both.
+ * An administrator could edit "5", press Save, see no error, and reasonably believe the platform now
+ * took 5%.
+ *
+ * The rates are compile-time constants in the backend pricing helper, deliberately: changing a
+ * commission alters every quote from that moment on, needs the pricing invariant re-checked, and
+ * belongs in a release rather than a text box. So this reports them instead of pretending to set
+ * them.
+ */
+function Row({ label, value, hint }) {
+  return (
+    <div className="flex items-start justify-between gap-3 border-b py-2 last:border-b-0">
+      <div className="min-w-0">
+        <p className="text-sm text-neutral-900">{label}</p>
+        {hint ? <p className="text-xs text-neutral-500">{hint}</p> : null}
+      </div>
+      <p className="shrink-0 text-sm font-semibold text-neutral-900">{value}</p>
+    </div>
+  );
+}
 
-  function update(patch) {
-    setLocal((s) => ({ ...s, ...patch }));
-  }
+export default function FeeSettingsForm({ value }) {
+  const v = value || {};
+  const pct = (n) => (n === null || n === undefined ? "—" : `${n}%`);
+  const money = (n) =>
+    n === null || n === undefined ? "—" : `$${Number(n).toFixed(2)}`;
+
+  const unavailable =
+    v.ownerCommissionPercent === null && v.renterFeePercent === null;
 
   return (
-    <Card className="p-5">
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <p className="text-sm font-semibold text-neutral-900">Fee Settings</p>
-          <p className="mt-1 text-sm text-neutral-500">
-            Platform fee + payout scheduling.
-          </p>
-        </div>
+    <Card className="p-0">
+      <div className="flex items-center gap-2 border-b p-4">
         <div className="rounded-2xl bg-brand-soft p-2 text-brand">
-          <FiSettings className="h-5 w-5" />
+          <FiPercent className="h-4 w-4" />
+        </div>
+        <div>
+          <p className="text-sm font-semibold text-neutral-900">Pricing</p>
+          <p className="text-xs text-neutral-500">
+            What the platform charges. Set in code, not here.
+          </p>
         </div>
       </div>
 
-      <div className="mt-4 space-y-3">
-        <div className="grid gap-3 sm:grid-cols-2">
-          <div>
-            <label className="text-xs font-medium text-neutral-600">
-              Platform Fee (%)
-            </label>
-            <input
-              type="number"
-              step="0.5"
-              className="mt-1 w-full rounded-2xl border px-4 py-3 text-sm outline-none focus:border-brand focus:ring-4 focus:ring-brand/12"
-              value={local.platformFeePercent}
-              onChange={(e) =>
-                update({ platformFeePercent: Number(e.target.value || 0) })
-              }
+      <div className="p-4">
+        {unavailable ? (
+          <p className="text-sm text-neutral-500">
+            The server did not report its pricing configuration.
+          </p>
+        ) : (
+          <>
+            <Row
+              label="Owner commission"
+              value={pct(v.ownerCommissionPercent)}
+              hint="Taken from the owner's rental amount"
             />
-          </div>
-          <div>
-            <label className="text-xs font-medium text-neutral-600">
-              Fixed Fee ($)
-            </label>
-            <input
-              type="number"
-              step="0.5"
-              className="mt-1 w-full rounded-2xl border px-4 py-3 text-sm outline-none"
-              value={local.fixedFee}
-              onChange={(e) =>
-                update({ fixedFee: Number(e.target.value || 0) })
-              }
+            <Row
+              label="Renter fee"
+              value={pct(v.renterFeePercent)}
+              hint={`Minimum ${money(v.renterFeeMinimum)} per transaction`}
             />
-          </div>
-        </div>
+            {(v.taxes || []).map((t) => (
+              <Row
+                key={t.code}
+                label={t.label || t.code}
+                value={pct(
+                  typeof t.rate === "number"
+                    ? Math.round(t.rate * 100000) / 1000
+                    : null,
+                )}
+                hint="Charged on the commission and the renter fee"
+              />
+            ))}
+            <Row label="Currency" value={v.currency || "CAD"} />
 
-        <div>
-          <label className="text-xs font-medium text-neutral-600">
-            Payout Delay (days)
-          </label>
-          <input
-            type="number"
-            className="mt-1 w-full rounded-2xl border px-4 py-3 text-sm outline-none"
-            value={local.payoutDelayDays}
-            onChange={(e) =>
-              update({ payoutDelayDays: Number(e.target.value || 0) })
-            }
-          />
-        </div>
+            {v.explainer ? (
+              <p className="mt-3 rounded-2xl border bg-neutral-50 p-3 text-xs text-neutral-600">
+                {v.explainer}
+              </p>
+            ) : null}
 
-        <div className="flex justify-end">
-          <Button onClick={() => onSave(local)}>Save</Button>
-        </div>
+            <p className="mt-3 text-xs text-neutral-500">
+              Changing a rate alters every quote from that moment on, so it is a
+              release rather than a setting.
+            </p>
+          </>
+        )}
       </div>
     </Card>
   );

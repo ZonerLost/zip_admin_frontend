@@ -14,6 +14,11 @@ function normalize(p) {
     payeeName: `${payee.firstName ?? ""} ${payee.lastName ?? ""}`.trim() || "—",
     type: p.status === "refunded" ? "Refund" : "Charge",
     status: mapStatus(p.status),
+    // The table needs to know whether a row can be refunded. "refunded" used to map to "Succeeded",
+    // which reads as a successful charge, and nothing distinguished a payment that could still be
+    // refunded from one that could not — so the action was offered on every row.
+    isRefunded: p.status === "refunded",
+    canRefund: p.status === "completed",
     amount: p.amount ?? 0,
     currency: p.currency ?? "CAD",
     method: p.method ?? "—",
@@ -103,18 +108,47 @@ export async function listTransactions({
   return { rows, total };
 }
 
-export async function createRefund(payload) {
-  const targetId = payload.paymentId || payload.id || payload.bookingId;
-  const res = await api.put(`/admin/payments/${targetId}/refund`, {
-    reason: payload.reason || "Admin initiated refund",
-  });
+/**
+ * Refunds one payment, in full.
+ *
+ * The endpoint takes a payment id (and resolves a booking id to that booking's completed payment).
+ * It reverses the transfer to the owner and the application fee, so the platform and the owner each
+ * give back their share.
+ *
+ * There is no partial refund: the server never sends an `amount` to Stripe, so the whole intent is
+ * refunded. The old modal collected an Amount and a User and sent neither — an administrator could
+ * type 50 against a $200 charge and move the full $200.
+ */
+export async function createRefund({ paymentId, reason }) {
+  if (!paymentId) throw new Error("No payment selected.");
+  const trimmed = String(reason || "").trim();
+  if (trimmed.length < 3) throw new Error("Give a reason for the refund.");
+  const res = await api.put(`/admin/payments/${paymentId}/refund`, { reason: trimmed });
   return normalize(res.data);
 }
 
+/**
+ * The live pricing the platform charges, read from the server.
+ *
+ * This used to return a hardcoded `{ platformFeePercent: 5 }` and the save was a no-op, so the form
+ * showed an editable 5% that was both unsaveable and **wrong** — the real model is 15% owner
+ * commission plus a 3% renter fee with a $3.99 minimum, and taxes on both. Showing a made-up number
+ * next to a Save button is worse than showing nothing.
+ *
+ * Reported read-only: these are compile-time constants in the backend pricing helper, deliberately,
+ * because changing a commission rate changes every quote from that moment on and belongs in a
+ * release rather than a text box.
+ */
 export async function getFeeSettings() {
-  return { platformFeePercent: 5 };
-}
-
-export async function saveFeeSettings(_next) {
-  return _next;
+  const res = await api.get("/payments/config");
+  const p = res.data?.pricing || {};
+  return {
+    readOnly: true,
+    currency: res.data?.currency || "CAD",
+    ownerCommissionPercent: p.ownerCommissionPercent ?? null,
+    renterFeePercent: p.renterFeePercent ?? null,
+    renterFeeMinimum: p.renterFeeMinimum ?? null,
+    taxes: Array.isArray(p.taxes) ? p.taxes : [],
+    explainer: p.atussaFeeExplainer || "",
+  };
 }

@@ -46,6 +46,9 @@ function PaymentsFinancePageContent() {
   const [feesLoading, setFeesLoading] = useState(true);
 
   const [refundOpen, setRefundOpen] = useState(false);
+  // Refunding is a per-row action now, so the modal needs to know which payment it is confirming.
+  const [refundTarget, setRefundTarget] = useState(null);
+  const [refundBusyId, setRefundBusyId] = useState("");
 
   const rangeStart = resolvedRange?.start ?? null;
   const rangeEnd = resolvedRange?.end ?? null;
@@ -157,15 +160,21 @@ function PaymentsFinancePageContent() {
     };
   }, [statsRows]);
 
-  async function createRefund(payload) {
-    await svc.createRefund(payload);
-    setRefundOpen(false);
-    await Promise.all([loadTable(), loadAnalytics()]);
+  function askRefund(payment) {
+    setRefundTarget(payment);
+    setRefundOpen(true);
   }
 
-  async function saveFees(next) {
-    await svc.saveFeeSettings(next);
-    await loadFees();
+  async function createRefund(payload) {
+    setRefundBusyId(payload.paymentId);
+    try {
+      // Errors propagate to the modal, which keeps itself open and shows them — a refund that
+      // failed quietly would leave an admin believing the renter had their money back.
+      await svc.createRefund(payload);
+      await Promise.all([loadTable(), loadAnalytics()]);
+    } finally {
+      setRefundBusyId("");
+    }
   }
 
   return (
@@ -291,7 +300,8 @@ function PaymentsFinancePageContent() {
                 >
                   <TransactionsTable
                     rows={rows}
-                    onRefund={() => setRefundOpen(true)}
+                    onRefund={askRefund}
+                    busyId={refundBusyId}
                   />
                 </div>
               )}
@@ -323,7 +333,7 @@ function PaymentsFinancePageContent() {
                 </p>
               </Card>
             ) : fees ? (
-              <FeeSettingsForm value={fees} onSave={saveFees} />
+              <FeeSettingsForm value={fees} />
             ) : null}
           </div>
         </div>
@@ -332,7 +342,11 @@ function PaymentsFinancePageContent() {
 
       <RefundModal
         open={refundOpen}
-        onClose={() => setRefundOpen(false)}
+        payment={refundTarget}
+        onClose={() => {
+          setRefundOpen(false);
+          setRefundTarget(null);
+        }}
         onSubmit={createRefund}
       />
     </PageContainer>
