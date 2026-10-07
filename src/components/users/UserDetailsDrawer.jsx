@@ -214,8 +214,8 @@ export default function UserDetailsDrawer({ open, user, onClose, onChanged }) {
           <div className="rounded-2xl border bg-white p-4">
             <p className="text-xs font-semibold text-neutral-700">Access</p>
             <p className="mt-1 text-xs text-neutral-500">
-              Banning blocks sign-in immediately. Admin access grants every
-              module, including refunds and user deletion.
+              Banning blocks sign-in immediately. Admin access cannot be granted
+              from here — only removed.
             </p>
             <div className="mt-3 flex flex-wrap gap-2">
               {current.status === "Banned" ? (
@@ -240,6 +240,9 @@ export default function UserDetailsDrawer({ open, user, onClose, onChanged }) {
                 </Button>
               )}
 
+              {/* Granting admin is deliberately not available from the panel. Revoking is, so
+                  access can be pulled immediately if an account is compromised; handing it out is
+                  an action that should take more thought than one click in a user list. */}
               {current.role === "admin" ? (
                 <Button
                   variant="outline"
@@ -252,19 +255,7 @@ export default function UserDetailsDrawer({ open, user, onClose, onChanged }) {
                 >
                   {busy === "role" ? "Saving..." : "Remove admin"}
                 </Button>
-              ) : (
-                <Button
-                  variant="outline"
-                  disabled={Boolean(busy)}
-                  onClick={() =>
-                    run("role", () =>
-                      usersService.update(current.id, { role: "admin" }),
-                    )
-                  }
-                >
-                  {busy === "role" ? "Saving..." : "Make admin"}
-                </Button>
-              )}
+              ) : null}
             </div>
             {/* The server refuses self-demotion and removing the last admin, and says which; the
                 message surfaces in the banner above rather than failing silently. */}

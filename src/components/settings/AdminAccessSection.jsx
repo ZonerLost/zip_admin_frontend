@@ -14,52 +14,9 @@ import { FiPlus, FiShield, FiUserMinus } from "react-icons/fi";
  * shows and changes. There is nothing finer-grained to offer, and pretending otherwise is worse than
  * offering less.
  */
-export default function AdminAccessSection({
-  admins,
-  currentUserId,
-  onSearch,
-  onGrant,
-  onRevoke,
-}) {
-  const [open, setOpen] = useState(false);
-  const [query, setQuery] = useState("");
-  const [results, setResults] = useState([]);
-  const [searching, setSearching] = useState(false);
+export default function AdminAccessSection({ admins, currentUserId, onRevoke }) {
   const [busyId, setBusyId] = useState("");
   const [err, setErr] = useState("");
-
-  async function runSearch(next) {
-    setQuery(next);
-    setErr("");
-    if (next.trim().length < 2) {
-      setResults([]);
-      return;
-    }
-    setSearching(true);
-    try {
-      setResults(await onSearch(next));
-    } catch (e) {
-      setErr(e?.message || "Search failed.");
-      setResults([]);
-    } finally {
-      setSearching(false);
-    }
-  }
-
-  async function grant(user) {
-    setErr("");
-    setBusyId(user.id);
-    try {
-      await onGrant(user);
-      setOpen(false);
-      setQuery("");
-      setResults([]);
-    } catch (e) {
-      setErr(e?.message || "Could not grant admin access.");
-    } finally {
-      setBusyId("");
-    }
-  }
 
   async function revoke(user) {
     setErr("");
@@ -146,15 +103,12 @@ export default function AdminAccessSection({
               Admin Access
             </p>
             <p className="text-xs text-neutral-500">
-              Who can sign in to this panel. Access is all or nothing — there
-              are no scoped permissions.
+              Who can sign in to this panel. Access is all or nothing, and can
+              only be removed here — not granted.
             </p>
           </div>
         </div>
-        <Button onClick={() => setOpen(true)}>
-          <FiPlus className="h-4 w-4" />
-          Grant Admin
-        </Button>
+
       </div>
 
       {err ? (
@@ -171,79 +125,6 @@ export default function AdminAccessSection({
         />
       </div>
 
-      <Modal
-        open={open}
-        title="Grant Admin Access"
-        onClose={() => {
-          setOpen(false);
-          setQuery("");
-          setResults([]);
-        }}
-        footer={
-          <div className="flex items-center justify-end gap-2">
-            <Button
-              variant="outline"
-              onClick={() => {
-                setOpen(false);
-                setQuery("");
-                setResults([]);
-              }}
-            >
-              Close
-            </Button>
-          </div>
-        }
-      >
-        <div className="space-y-3">
-          <div>
-            <label className="text-xs font-medium text-neutral-600">
-              Find a user by name or email
-            </label>
-            <input
-              className="mt-1 w-full rounded-2xl border px-4 py-3 text-sm outline-none"
-              value={query}
-              onChange={(e) => runSearch(e.target.value)}
-              placeholder="at least 2 characters"
-            />
-            <p className="mt-1 text-xs text-neutral-500">
-              Granting admin gives full access to every module, including
-              refunds and user deletion.
-            </p>
-          </div>
-
-          {searching ? (
-            <p className="text-sm text-neutral-500">Searching...</p>
-          ) : null}
-
-          {!searching && query.trim().length >= 2 && results.length === 0 ? (
-            <p className="text-sm text-neutral-500">
-              No matching users who are not already admins.
-            </p>
-          ) : null}
-
-          <div className="space-y-2">
-            {results.map((u) => (
-              <div
-                key={u.id}
-                className="flex items-center justify-between gap-3 rounded-2xl border p-3"
-              >
-                <div className="min-w-0">
-                  <p className="truncate text-sm font-medium text-neutral-900">
-                    {u.name}
-                  </p>
-                  <p className="truncate text-xs text-neutral-500">{u.email}</p>
-                </div>
-                <Button
-                  disabled={busyId === u.id}
-                  onClick={() => grant(u)}
-                >
-                  {busyId === u.id ? "Granting..." : "Make admin"}
-                </Button>
-              </div>
-            ))}
-          </div>
-        </div>
-      </Modal>
     </Card>
   );
 }

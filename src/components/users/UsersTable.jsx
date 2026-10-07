@@ -113,7 +113,6 @@ export default function UsersTable({
   // changed through a different action entirely, so it is not state here any more.
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
-  const [systemRole, setSystemRole] = useState("user");
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState("");
 
@@ -122,7 +121,6 @@ export default function UsersTable({
     setName(user.name || "");
     setEmail(user.email || "");
     setPhone(user.phone || "");
-    setSystemRole(user.role ?? "user");
     setSaveError("");
     setEditorOpen(true);
   }
@@ -359,7 +357,7 @@ export default function UsersTable({
     setSaveError("");
     setSaving(true);
     try {
-      await onUpdate(editing, { name, phone, role: systemRole });
+      await onUpdate(editing, { name, phone });
       setEditorOpen(false);
     } catch (e) {
       // Role changes can legitimately be refused — self-demotion and removing the last admin are
@@ -565,17 +563,9 @@ export default function UsersTable({
             </p>
           </div>
 
-          <div>
-            <label className="text-xs font-medium text-neutral-600">System Role</label>
-            <select
-              className="mt-1 w-full rounded-2xl border px-4 py-3 text-sm outline-none focus:border-brand focus:ring-4 focus:ring-brand/12"
-              value={systemRole}
-              onChange={(e) => setSystemRole(e.target.value)}
-            >
-              <option value="user">User</option>
-              <option value="admin">Admin</option>
-            </select>
-          </div>
+          {/* The System Role select is gone: it was a second, quieter way to hand out full admin
+              access from a dropdown in an edit form. Admin access is removed from the user details
+              panel and granted nowhere in the UI. */}
 
           {/* Acts-as, last active, listings and bookings counts were editable inputs here. All four
               are derived server-side from the user's own activity, so typing a number changed

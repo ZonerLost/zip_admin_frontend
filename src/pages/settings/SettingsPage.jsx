@@ -61,11 +61,6 @@ export default function SettingsPage() {
     return svc.changePassword(payload);
   }
 
-  async function grantAdmin(user) {
-    await svc.grantAdmin(user.id);
-    await load();
-  }
-
   async function revokeAdmin(user) {
     await svc.revokeAdmin(user.id);
     await load();
@@ -100,8 +95,6 @@ export default function SettingsPage() {
           <AdminAccessSection
             admins={admins}
             currentUserId={profile?.id ?? ""}
-            onSearch={svc.searchNonAdmins}
-            onGrant={grantAdmin}
             onRevoke={revokeAdmin}
           />
         </div>
