@@ -225,6 +225,10 @@ export async function unbanUser(id) {
   return getById(id);
 }
 
+export async function reactivate(id) {
+  return unbanUser(id);
+}
+
 /**
  * Approves or rejects a user's identity document.
  *

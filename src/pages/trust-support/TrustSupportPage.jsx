@@ -12,6 +12,7 @@ import DisputeDetailsDrawer from "../../components/trustSupport/DisputeDetailsDr
 import EvidenceReviewPanel from "../../components/trustSupport/EvidenceReviewPanel.jsx";
 import MessagingReviewPanel from "../../components/trustSupport/MessagingReviewPanel.jsx";
 import ReviewsModerationTable from "../../components/trustSupport/ReviewsModerationTable.jsx";
+import toast from "react-hot-toast";
 
 import * as svc from "../../services/trustSupport.service.js";
 
@@ -208,94 +209,134 @@ export default function TrustSupportPage() {
   }
 
   async function updateStatus(dispute, nextStatus) {
-    await svc.updateDispute(dispute.id, { status: nextStatus });
-    await Promise.all([loadDisputesTable(), loadMetrics()]);
-    setSelected((prev) =>
-      prev?.id === dispute.id ? { ...prev, status: nextStatus } : prev,
-    );
+    try {
+      await svc.updateDispute(dispute.id, { status: nextStatus });
+      toast.success(`Dispute marked as ${nextStatus}`);
+      await Promise.all([loadDisputesTable(), loadMetrics()]);
+      setSelected((prev) =>
+        prev?.id === dispute.id ? { ...prev, status: nextStatus } : prev,
+      );
+    } catch (e) {
+      toast.error(e?.message || "Failed to update dispute status");
+    }
   }
 
   async function approveEvidence(dispute, evidence) {
-    await svc.updateEvidence(dispute.id, evidence.id, { status: "Approved" });
+    try {
+      await svc.updateEvidence(dispute.id, evidence.id, { status: "Approved" });
+      toast.success("Evidence approved");
 
-    setSelected((prev) =>
-      prev?.id === dispute.id
-        ? {
-            ...prev,
-            evidence: (prev.evidence || []).map((item) =>
-              item.id === evidence.id ? { ...item, status: "Approved" } : item,
-            ),
-          }
-        : prev,
-    );
+      setSelected((prev) =>
+        prev?.id === dispute.id
+          ? {
+              ...prev,
+              evidence: (prev.evidence || []).map((item) =>
+                item.id === evidence.id ? { ...item, status: "Approved" } : item,
+              ),
+            }
+          : prev,
+      );
 
-    await Promise.all([loadDisputesTable(), loadMetrics()]);
+      await Promise.all([loadDisputesTable(), loadMetrics()]);
+    } catch (e) {
+      toast.error(e?.message || "Failed to approve evidence");
+    }
   }
 
   async function rejectEvidence(dispute, evidence) {
-    await svc.updateEvidence(dispute.id, evidence.id, { status: "Rejected" });
+    try {
+      await svc.updateEvidence(dispute.id, evidence.id, { status: "Rejected" });
+      toast.success("Evidence rejected");
 
-    setSelected((prev) =>
-      prev?.id === dispute.id
-        ? {
-            ...prev,
-            evidence: (prev.evidence || []).map((item) =>
-              item.id === evidence.id ? { ...item, status: "Rejected" } : item,
-            ),
-          }
-        : prev,
-    );
+      setSelected((prev) =>
+        prev?.id === dispute.id
+          ? {
+              ...prev,
+              evidence: (prev.evidence || []).map((item) =>
+                item.id === evidence.id ? { ...item, status: "Rejected" } : item,
+              ),
+            }
+          : prev,
+      );
 
-    await Promise.all([loadDisputesTable(), loadMetrics()]);
+      await Promise.all([loadDisputesTable(), loadMetrics()]);
+    } catch (e) {
+      toast.error(e?.message || "Failed to reject evidence");
+    }
   }
 
   async function hideMessage(dispute, message) {
-    await svc.updateMessage(dispute.id, message.id, { status: "Hidden" });
+    try {
+      await svc.updateMessage(dispute.id, message.id, { status: "Hidden" });
+      toast.success("Message hidden");
 
-    setSelected((prev) =>
-      prev?.id === dispute.id
-        ? {
-            ...prev,
-            messages: (prev.messages || []).map((item) =>
-              item.id === message.id ? { ...item, status: "Hidden" } : item,
-            ),
-          }
-        : prev,
-    );
+      setSelected((prev) =>
+        prev?.id === dispute.id
+          ? {
+              ...prev,
+              messages: (prev.messages || []).map((item) =>
+                item.id === message.id ? { ...item, status: "Hidden" } : item,
+              ),
+            }
+          : prev,
+      );
 
-    await loadDisputesTable();
+      await loadDisputesTable();
+    } catch (e) {
+      toast.error(e?.message || "Failed to hide message");
+    }
   }
 
   async function showMessage(dispute, message) {
-    await svc.updateMessage(dispute.id, message.id, { status: "Visible" });
+    try {
+      await svc.updateMessage(dispute.id, message.id, { status: "Visible" });
+      toast.success("Message visible");
 
-    setSelected((prev) =>
-      prev?.id === dispute.id
-        ? {
-            ...prev,
-            messages: (prev.messages || []).map((item) =>
-              item.id === message.id ? { ...item, status: "Visible" } : item,
-            ),
-          }
-        : prev,
-    );
+      setSelected((prev) =>
+        prev?.id === dispute.id
+          ? {
+              ...prev,
+              messages: (prev.messages || []).map((item) =>
+                item.id === message.id ? { ...item, status: "Visible" } : item,
+              ),
+            }
+          : prev,
+      );
 
-    await loadDisputesTable();
+      await loadDisputesTable();
+    } catch (e) {
+      toast.error(e?.message || "Failed to show message");
+    }
   }
 
   async function hideReview(review) {
-    await svc.updateReview(review.id, { status: "Hidden" });
-    await loadReviewsTable();
+    try {
+      await svc.updateReview(review.id, { status: "Hidden" });
+      toast.success("Review hidden");
+      await loadReviewsTable();
+    } catch (e) {
+      toast.error(e?.message || "Failed to hide review");
+    }
   }
 
   async function showReview(review) {
-    await svc.updateReview(review.id, { status: "Visible" });
-    await loadReviewsTable();
+    try {
+      await svc.updateReview(review.id, { status: "Visible" });
+      toast.success("Review visible");
+      await loadReviewsTable();
+    } catch (e) {
+      toast.error(e?.message || "Failed to show review");
+    }
   }
 
   async function removeReview(review) {
-    await svc.updateReview(review.id, { status: "Removed" });
-    await loadReviewsTable();
+    try {
+      await svc.updateReview(review.id, { status: "Removed" });
+      toast.success("Review removed");
+      await loadReviewsTable();
+    } catch (e) {
+      toast.error(e?.message || "Failed to remove review");
+    }
   }
 
   return (

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import Drawer from "../shared/Drawer.jsx";
 import StatusPill from "../shared/StatusPill.jsx";
 import Button from "../shared/Button.jsx";
@@ -138,15 +139,19 @@ export default function UserDetailsDrawer({ open, user, onClose, onChanged }) {
     };
   }, [open, user?.id]);
 
-  async function run(label, fn) {
+  async function run(label, fn, successMsg) {
     setErr("");
     setBusy(label);
+    const tid = toast.loading("Processing request...");
     try {
       const updated = await fn();
       if (updated) setCurrent(updated);
+      toast.success(successMsg || "Action completed successfully", { id: tid });
       onChanged?.();
     } catch (e) {
-      setErr(e?.message || "That action could not be completed.");
+      const msg = e?.message || "That action could not be completed.";
+      setErr(msg);
+      toast.error(msg, { id: tid });
     } finally {
       setBusy("");
     }
@@ -163,7 +168,9 @@ export default function UserDetailsDrawer({ open, user, onClose, onChanged }) {
       // not belong inline in a page that might be screenshotted whole.
       window.open(result.url, "_blank", "noopener,noreferrer");
     } catch (e) {
-      setErr(e?.message || "The identity document could not be opened.");
+      const msg = e?.message || "The identity document could not be opened.";
+      setErr(msg);
+      toast.error(msg);
     } finally {
       setBusy("");
     }
@@ -371,8 +378,10 @@ export default function UserDetailsDrawer({ open, user, onClose, onChanged }) {
                       variant="outline"
                       disabled={Boolean(busy)}
                       onClick={() =>
-                        run("id", () =>
-                          usersService.setVerified(current.id, false),
+                        run(
+                          "id",
+                          () => usersService.setVerified(current.id, false),
+                          "Identity verification revoked",
                         )
                       }
                     >
@@ -382,8 +391,10 @@ export default function UserDetailsDrawer({ open, user, onClose, onChanged }) {
                     <Button
                       disabled={Boolean(busy)}
                       onClick={() =>
-                        run("id", () =>
-                          usersService.setVerified(current.id, true),
+                        run(
+                          "id",
+                          () => usersService.setVerified(current.id, true),
+                          "Identity approved successfully",
                         )
                       }
                     >
@@ -408,7 +419,7 @@ export default function UserDetailsDrawer({ open, user, onClose, onChanged }) {
           {/* ── access ─────────────────────────────────────────────────────── */}
           <Section
             title="Access"
-            note="Banning blocks sign-in immediately. Admin access cannot be granted from here — only removed."
+            note="Manage account activation, ban restrictions, and admin privileges."
           >
             <div className="flex flex-wrap gap-2">
               {current.status === "Banned" ? (
@@ -416,7 +427,11 @@ export default function UserDetailsDrawer({ open, user, onClose, onChanged }) {
                   variant="outline"
                   disabled={Boolean(busy)}
                   onClick={() =>
-                    run("ban", () => usersService.unbanUser(current.id))
+                    run(
+                      "ban",
+                      () => usersService.unbanUser(current.id),
+                      "Ban lifted successfully",
+                    )
                   }
                 >
                   {busy === "ban" ? "Saving..." : "Lift ban"}
@@ -426,26 +441,76 @@ export default function UserDetailsDrawer({ open, user, onClose, onChanged }) {
                   variant="outline"
                   disabled={Boolean(busy)}
                   onClick={() =>
-                    run("ban", () => usersService.banUser(current.id))
+                    run(
+                      "ban",
+                      () => usersService.banUser(current.id),
+                      "User banned successfully",
+                    )
                   }
                 >
                   {busy === "ban" ? "Saving..." : "Ban user"}
                 </Button>
               )}
 
+              {current.status === "Deactivated" || current.isActive === false ? (
+                <Button
+                  variant="outline"
+                  disabled={Boolean(busy)}
+                  onClick={() =>
+                    run(
+                      "reactivate",
+                      () => usersService.reactivate(current.id),
+                      "Account reactivated successfully",
+                    )
+                  }
+                >
+                  {busy === "reactivate" ? "Saving..." : "Reactivate account"}
+                </Button>
+              ) : current.status !== "Banned" ? (
+                <Button
+                  variant="outline"
+                  disabled={Boolean(busy)}
+                  onClick={() =>
+                    run(
+                      "deactivate",
+                      () => usersService.deactivate(current.id),
+                      "Account deactivated successfully",
+                    )
+                  }
+                >
+                  {busy === "deactivate" ? "Saving..." : "Deactivate account"}
+                </Button>
+              ) : null}
+
               {current.role === "admin" ? (
                 <Button
                   variant="outline"
                   disabled={Boolean(busy)}
                   onClick={() =>
-                    run("role", () =>
-                      usersService.update(current.id, { role: "user" }),
+                    run(
+                      "role",
+                      () => usersService.update(current.id, { role: "user" }),
+                      "Admin role removed",
                     )
                   }
                 >
                   {busy === "role" ? "Saving..." : "Remove admin"}
                 </Button>
-              ) : null}
+              ) : (
+                <Button
+                  variant="outline"
+                  disabled={Boolean(busy)}
+                  onClick={() =>
+                    run(
+                      "role",
+                      () => usersService.update(current.id, { role: "admin" }),
+                      "Promoted to admin successfully",
+                    )
+                  }
+                >
+                  {busy === "role" ? "Saving..." : "Make admin"}
+                </Button>
+              )}
             </div>
           </Section>
         </div>

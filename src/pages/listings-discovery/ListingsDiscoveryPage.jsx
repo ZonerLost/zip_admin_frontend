@@ -17,6 +17,7 @@ import ListingsMetrics, {
 } from "../../components/listingsDiscovery/ListingsMetrics.jsx";
 import ListingsTable from "../../components/listingsDiscovery/ListingsTable.jsx";
 import ListingDetailsDrawer from "../../components/listingsDiscovery/ListingDetailsDrawer.jsx";
+import toast from "react-hot-toast";
 import * as svc from "../../services/listingsDiscovery.service.js";
 import { DashboardRangeProvider } from "../../context/DashboardRangeContext.jsx";
 import { useDashboardRange } from "../../context/useDashboardRange.js";
@@ -166,12 +167,18 @@ function ListingsDiscoveryPageContent() {
   }
 
   async function update(item, patch) {
-    await svc.updateListing(item.id, patch);
-    await Promise.all([loadListings(), loadAnalytics()]);
+    const tid = toast.loading("Updating listing...");
+    try {
+      await svc.updateListing(item.id, patch);
+      toast.success("Listing updated successfully", { id: tid });
+      await Promise.all([loadListings(), loadAnalytics()]);
 
-    setSelected((prev) =>
-      prev?.id === item.id ? { ...prev, ...patch } : prev,
-    );
+      setSelected((prev) =>
+        prev?.id === item.id ? { ...prev, ...patch } : prev,
+      );
+    } catch (e) {
+      toast.error(e?.message || "Failed to update listing", { id: tid });
+    }
   }
 
   function askDelete(item) {
@@ -182,25 +189,44 @@ function ListingsDiscoveryPageContent() {
   async function confirmDelete() {
     if (!toDelete) return;
 
-    await svc.removeListing(toDelete.id);
-    setConfirmDeleteOpen(false);
-    setToDelete(null);
+    const tid = toast.loading("Deactivating listing...");
+    try {
+      await svc.removeListing(toDelete.id);
+      toast.success("Listing deactivated successfully", { id: tid });
+      setConfirmDeleteOpen(false);
+      setToDelete(null);
 
-    if (selected?.id === toDelete.id) {
-      setDrawerOpen(false);
-      setSelected(null);
+      if (selected?.id === toDelete.id) {
+        setDrawerOpen(false);
+        setSelected(null);
+      }
+
+      await Promise.all([loadListings(), loadAnalytics()]);
+    } catch (e) {
+      toast.error(e?.message || "Failed to deactivate listing", { id: tid });
+      setConfirmDeleteOpen(false);
     }
-
-    await Promise.all([loadListings(), loadAnalytics()]);
   }
 
   async function toggleFeatured(item) {
-    await svc.updateListing(item.id, { featured: !item.featured });
-    await Promise.all([loadListings(), loadAnalytics()]);
-
-    setSelected((prev) =>
-      prev?.id === item.id ? { ...prev, featured: !item.featured } : prev,
+    const nextFeatured = !item.featured;
+    const tid = toast.loading(
+      nextFeatured ? "Featuring listing..." : "Unfeaturing listing...",
     );
+    try {
+      await svc.updateListing(item.id, { featured: nextFeatured });
+      toast.success(
+        nextFeatured ? "Listing featured successfully" : "Listing unfeatured",
+        { id: tid },
+      );
+      await Promise.all([loadListings(), loadAnalytics()]);
+
+      setSelected((prev) =>
+        prev?.id === item.id ? { ...prev, featured: nextFeatured } : prev,
+      );
+    } catch (e) {
+      toast.error(e?.message || "Failed to update featured status", { id: tid });
+    }
   }
 
   return (

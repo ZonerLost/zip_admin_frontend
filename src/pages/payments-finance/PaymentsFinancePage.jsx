@@ -16,6 +16,7 @@ import RevenueBoosted from "../../components/paymentsFinance/RevenueBoosted.jsx"
 import RevenueInsurance from "../../components/paymentsFinance/RevenueInsurance.jsx";
 import RevenueFees from "../../components/paymentsFinance/RevenueFees.jsx";
 import RefundsChart from "../../components/paymentsFinance/RefundsChart.jsx";
+import toast from "react-hot-toast";
 
 import * as svc from "../../services/paymentsFinance.service.js";
 
@@ -167,11 +168,16 @@ function PaymentsFinancePageContent() {
 
   async function createRefund(payload) {
     setRefundBusyId(payload.paymentId);
+    const tid = toast.loading("Processing refund...");
     try {
       // Errors propagate to the modal, which keeps itself open and shows them — a refund that
       // failed quietly would leave an admin believing the renter had their money back.
       await svc.createRefund(payload);
+      toast.success("Refund processed successfully", { id: tid });
       await Promise.all([loadTable(), loadAnalytics()]);
+    } catch (e) {
+      toast.error(e?.message || "Failed to process refund", { id: tid });
+      throw e;
     } finally {
       setRefundBusyId("");
     }

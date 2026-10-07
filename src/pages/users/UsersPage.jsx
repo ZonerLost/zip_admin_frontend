@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
+import toast from "react-hot-toast";
 import PageContainer from "../../components/shared/PageContainer.jsx";
 import PageHeader from "../../components/shared/PageHeader.jsx";
 import UsersMetrics, {
@@ -37,6 +38,7 @@ function UsersPageContent() {
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
   const [actionError, setActionError] = useState("");
   const [toDelete, setToDelete] = useState(null);
+  const [deleting, setDeleting] = useState(false);
 
   const [serviceMetrics, setServiceMetrics] = useState(null);
   const [prevServiceMetrics, setPrevServiceMetrics] = useState(null);
@@ -117,7 +119,7 @@ function UsersPageContent() {
   }, [resolvedRange, comparePreviousYear, resolvePreviousYear]);
 
   const stats = useMemo(() => {
-    const verified = rows.filter((u) => u.verified).length;
+    const verified = rows.filter((u) => u.identityVerified || u.verified).length;
 
     return {
       total,
@@ -142,14 +144,27 @@ function UsersPageContent() {
   }
 
   async function createUser(payload) {
-    await usersService.create(payload);
-    setPage(1);
-    await refreshUsers();
+    try {
+      await usersService.create(payload);
+      toast.success("User created successfully");
+      setPage(1);
+      await refreshUsers();
+    } catch (e) {
+      toast.error(e?.message || "Failed to create user");
+      throw e;
+    }
   }
 
   async function updateUser(user, patch) {
-    await usersService.update(user.id, patch);
-    await refreshUsers();
+    const tid = toast.loading("Updating user...");
+    try {
+      await usersService.update(user.id, patch);
+      toast.success("User updated successfully", { id: tid });
+      await refreshUsers();
+    } catch (e) {
+      toast.error(e?.message || "Failed to update user", { id: tid });
+      throw e;
+    }
   }
 
   function viewUser(user) {
@@ -166,15 +181,38 @@ function UsersPageContent() {
     if (!toDelete) return;
 
     setActionError("");
+    setDeleting(true);
+    const tid = toast.loading("Deactivating user...");
     try {
       await usersService.deactivate(toDelete.id);
+      toast.success(`${toDelete.name || "User"} deactivated successfully`, {
+        id: tid,
+      });
       setConfirmDeleteOpen(false);
       setToDelete(null);
       await refreshUsers();
     } catch (e) {
-      // Used to be unhandled: the request failed, the dialog stayed open, and nothing said why.
+      toast.error(e?.message || "That user could not be deactivated.", {
+        id: tid,
+      });
       setActionError(e?.message || "That user could not be deactivated.");
       setConfirmDeleteOpen(false);
+    } finally {
+      setDeleting(false);
+    }
+  }
+
+  async function reactivateUser(user) {
+    if (!user) return;
+    const tid = toast.loading("Reactivating user...");
+    try {
+      await usersService.reactivate(user.id);
+      toast.success(`${user.name || "User"} reactivated successfully`, {
+        id: tid,
+      });
+      await refreshUsers();
+    } catch (e) {
+      toast.error(e?.message || "Failed to reactivate user", { id: tid });
     }
   }
 
@@ -186,10 +224,24 @@ function UsersPageContent() {
   async function confirmVerify(user) {
     if (!user) return;
 
-    // Throws on failure so the modal can show it; it stays open until this resolves.
-    await usersService.setVerified(user.id, !user.identityVerified);
-    setVerifyOpen(false);
-    await refreshUsers();
+    const willVerify = !user.identityVerified;
+    const tid = toast.loading(
+      willVerify ? "Approving identity..." : "Revoking identity verification...",
+    );
+    try {
+      await usersService.setVerified(user.id, willVerify);
+      toast.success(
+        willVerify
+          ? `${user.name || "User"} identity approved`
+          : `${user.name || "User"} identity verification revoked`,
+        { id: tid },
+      );
+      setVerifyOpen(false);
+      await refreshUsers();
+    } catch (e) {
+      toast.error(e?.message || "Failed to update verification", { id: tid });
+      throw e;
+    }
   }
 
   return (
@@ -252,6 +304,7 @@ function UsersPageContent() {
               onCreate={createUser}
               onUpdate={updateUser}
               onDelete={askDelete}
+              onReactivate={reactivateUser}
               onVerify={openVerify}
             />
 
@@ -284,18 +337,19 @@ function UsersPageContent() {
       <Modal
         open={confirmDeleteOpen}
         title="Deactivate User"
-        onClose={() => setConfirmDeleteOpen(false)}
+        onClose={() => !deleting && setConfirmDeleteOpen(false)}
         footer={
           <div className="flex items-center justify-end gap-2">
             <Button
               type="button"
               variant="outline"
+              disabled={deleting}
               onClick={() => setConfirmDeleteOpen(false)}
             >
               Cancel
             </Button>
-            <Button type="button" onClick={confirmDelete}>
-              Deactivate
+            <Button type="button" disabled={deleting} onClick={confirmDelete}>
+              {deleting ? "Deactivating..." : "Deactivate"}
             </Button>
           </div>
         }

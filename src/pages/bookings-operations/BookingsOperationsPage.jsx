@@ -11,7 +11,7 @@ import BookingsMetrics, {
 } from "../../components/bookingsOperations/BookingsMetrics.jsx";
 import BookingsTable from "../../components/bookingsOperations/BookingsTable.jsx";
 import BookingDetailsDrawer from "../../components/bookingsOperations/BookingDetailsDrawer.jsx";
-
+import toast from "react-hot-toast";
 import * as svc from "../../services/bookingsOperations.service.js";
 
 export default function BookingsOperationsPage() {
@@ -217,8 +217,10 @@ export default function BookingsOperationsPage() {
 
     setActionError("");
     setActionBusy(true);
+    const tid = toast.loading("Processing refund...");
     try {
       await svc.refundBooking(booking.id);
+      toast.success("Refund issued successfully", { id: tid });
       await Promise.all([loadTable(), loadAnalytics()]);
       setSelected((current) =>
         current && current.id === booking.id
@@ -226,6 +228,7 @@ export default function BookingsOperationsPage() {
           : current,
       );
     } catch (e) {
+      toast.error(e?.message || "The refund could not be issued.", { id: tid });
       setActionError(e?.message || "The refund could not be issued.");
     } finally {
       setActionBusy(false);
@@ -247,6 +250,7 @@ export default function BookingsOperationsPage() {
 
     setActionError("");
     setActionBusy(true);
+    const tid = toast.loading("Cancelling booking...");
     try {
       // The internal note stays local to this screen — the server takes one reason, and it shows
       // that reason to both the renter and the owner.
@@ -255,6 +259,7 @@ export default function BookingsOperationsPage() {
         cancelReason,
       );
 
+      toast.success("Booking cancelled successfully", { id: tid });
       setConfirmCancelOpen(false);
       setToCancel(null);
       setCancelInternalNote("");
@@ -268,6 +273,7 @@ export default function BookingsOperationsPage() {
         );
       }
     } catch (e) {
+      toast.error(e?.message || "The booking could not be cancelled.", { id: tid });
       setActionError(e?.message || "The booking could not be cancelled.");
     } finally {
       setActionBusy(false);

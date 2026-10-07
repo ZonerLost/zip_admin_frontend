@@ -6,6 +6,7 @@ import Pagination from "../../components/shared/Pagination.jsx";
 
 import NotificationsSettingsForm from "../../components/trustSupport/NotificationsSettingsForm.jsx";
 import NotificationLogsTable from "../../components/trustSupport/NotificationLogsTable.jsx";
+import toast from "react-hot-toast";
 
 import * as svc from "../../services/trustSupport.service.js";
 
@@ -106,9 +107,16 @@ export default function NotificationsPage() {
   }, [q, type, page, pageSize]);
 
   async function save(next) {
-    // Any failure propagates to the form, which renders it next to the Save button.
-    const saved = await svc.saveNotificationSettings(next);
-    setSettings(saved);
+    const tid = toast.loading("Saving settings...");
+    try {
+      // Any failure propagates to the form, which renders it next to the Save button.
+      const saved = await svc.saveNotificationSettings(next);
+      setSettings(saved);
+      toast.success("Notification settings saved successfully", { id: tid });
+    } catch (e) {
+      toast.error(e?.message || "Failed to save settings", { id: tid });
+      throw e;
+    }
   }
 
   return (

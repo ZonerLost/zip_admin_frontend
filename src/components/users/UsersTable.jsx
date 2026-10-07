@@ -1,10 +1,12 @@
 import React, { useMemo, useState, useEffect } from "react";
+import toast from "react-hot-toast";
 import DataTable from "../shared/DataTable.jsx";
 import Card from "../shared/Card.jsx";
 import Button from "../shared/Button.jsx";
 import Modal from "../shared/Modal.jsx";
 import StatusPill from "../shared/StatusPill.jsx";
 import {
+  FiCheckCircle,
   FiEdit2,
   FiEye,
   FiMoreVertical,
@@ -13,7 +15,7 @@ import {
 } from "react-icons/fi";
 import * as usersService from "../../services/users.service.js";
 
-function ActionsMenu({ row, onView, onEdit, onVerify, onDelete }) {
+function ActionsMenu({ row, onView, onEdit, onVerify, onDelete, onReactivate }) {
   const [open, setOpen] = React.useState(false);
   const ref = React.useRef(null);
 
@@ -25,6 +27,8 @@ function ActionsMenu({ row, onView, onEdit, onVerify, onDelete }) {
     document.addEventListener("mousedown", handleClick);
     return () => document.removeEventListener("mousedown", handleClick);
   }, [open]);
+
+  const isDeactivated = row.status === "Deactivated" || row.isActive === false;
 
   return (
     <div className="relative inline-block" ref={ref}>
@@ -41,7 +45,7 @@ function ActionsMenu({ row, onView, onEdit, onVerify, onDelete }) {
         <FiMoreVertical />
       </button>
       {open && (
-        <div className="absolute right-0 z-50 mt-1 w-40 rounded-2xl border bg-white shadow-lg py-1">
+        <div className="absolute right-0 z-50 mt-1 w-44 rounded-2xl border bg-white shadow-lg py-1">
           <button
             type="button"
             className="flex w-full items-center gap-2 px-4 py-2 text-sm hover:bg-neutral-50"
@@ -52,7 +56,7 @@ function ActionsMenu({ row, onView, onEdit, onVerify, onDelete }) {
               onView(row);
             }}
           >
-            <FiEye className="h-4 w-4" /> View
+            <FiEye className="h-4 w-4" /> View Details
           </button>
           <button
             type="button"
@@ -76,20 +80,36 @@ function ActionsMenu({ row, onView, onEdit, onVerify, onDelete }) {
               onVerify(row);
             }}
           >
-            <FiUserCheck className="h-4 w-4" /> Verify
+            <FiUserCheck className="h-4 w-4" />{" "}
+            {row.identityVerified ? "Revoke ID" : "Verify ID"}
           </button>
-          <button
-            type="button"
-            className="flex w-full items-center gap-2 px-4 py-2 text-sm text-rose-600 hover:bg-rose-50"
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              setOpen(false);
-              onDelete(row);
-            }}
-          >
-            <FiTrash2 className="h-4 w-4" /> Delete
-          </button>
+          {isDeactivated ? (
+            <button
+              type="button"
+              className="flex w-full items-center gap-2 px-4 py-2 text-sm font-medium text-emerald-600 hover:bg-emerald-50"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setOpen(false);
+                onReactivate?.(row);
+              }}
+            >
+              <FiCheckCircle className="h-4 w-4" /> Reactivate
+            </button>
+          ) : (
+            <button
+              type="button"
+              className="flex w-full items-center gap-2 px-4 py-2 text-sm text-rose-600 hover:bg-rose-50"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setOpen(false);
+                onDelete(row);
+              }}
+            >
+              <FiTrash2 className="h-4 w-4" /> Deactivate
+            </button>
+          )}
         </div>
       )}
     </div>
@@ -102,6 +122,7 @@ export default function UsersTable({
   onCreate: _onCreate, // no admin signup endpoint; the create path is gone
   onUpdate,
   onDelete,
+  onReactivate,
   onVerify,
 }) {
   const [editorOpen, setEditorOpen] = useState(false);
@@ -182,11 +203,12 @@ export default function UsersTable({
             onEdit={openEdit}
             onVerify={onVerify}
             onDelete={onDelete}
+            onReactivate={onReactivate}
           />
         ),
       },
     ];
-  }, [onView, onDelete, onVerify]);
+  }, [onView, onDelete, onVerify, onReactivate]);
 
   // Whatever the server returned, including nothing. There used to be a MOCK_USERS fallback here:
   // an empty or failed list silently rendered five invented people — Alice Johnson, Bob Martin and
@@ -297,6 +319,7 @@ export default function UsersTable({
     setMinListings(0);
     setMinBookings(0);
     setFilteredRows(displayRows);
+    toast.success("Filters reset to default");
     try {
       localStorage.removeItem("usersTableFilters");
     } catch {
@@ -305,43 +328,49 @@ export default function UsersTable({
   }
 
   async function exportFiltered() {
-    const res = await usersService.list({
-      q: "",
-      page: 1,
-      pageSize: 10000,
-      role: roleFilter === "all" ? null : roleFilter,
-      minListings: minListings > 0 ? minListings : null,
-      minBookings: minBookings > 0 ? minBookings : null,
-      inactiveMonths: inactiveMonths > 0 ? inactiveMonths : null,
-    });
-    const rowsToExport = res.rows || [];
-    const headers = [
-      "id",
-      "name",
-      "email",
-      "status",
-      "verified",
-      "isOwner",
-      "listingsCount",
-      "bookingsCount",
-      "lastActive",
-    ];
-    const csv = [headers.join(",")]
-      .concat(
-        rowsToExport.map((r) =>
-          headers.map((h) => JSON.stringify(r[h] ?? "")).join(","),
-        ),
-      )
-      .join("\n");
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `users-export-${Date.now()}.csv`;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(url);
+    const tid = toast.loading("Generating users export...");
+    try {
+      const res = await usersService.list({
+        q: "",
+        page: 1,
+        pageSize: 10000,
+        role: roleFilter === "all" ? null : roleFilter,
+        minListings: minListings > 0 ? minListings : null,
+        minBookings: minBookings > 0 ? minBookings : null,
+        inactiveMonths: inactiveMonths > 0 ? inactiveMonths : null,
+      });
+      const rowsToExport = res.rows || [];
+      const headers = [
+        "id",
+        "name",
+        "email",
+        "status",
+        "verified",
+        "isOwner",
+        "listingsCount",
+        "bookingsCount",
+        "lastActive",
+      ];
+      const csv = [headers.join(",")]
+        .concat(
+          rowsToExport.map((r) =>
+            headers.map((h) => JSON.stringify(r[h] ?? "")).join(","),
+          ),
+        )
+        .join("\n");
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `users-export-${Date.now()}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      toast.success("Users exported successfully", { id: tid });
+    } catch (e) {
+      toast.error(e?.message || "Failed to export users", { id: tid });
+    }
   }
 
   async function save() {
@@ -370,6 +399,17 @@ export default function UsersTable({
 
   // fetch filtered rows whenever filters or displayRows change
   useEffect(() => {
+    const hasActiveFilters =
+      roleFilter !== "all" ||
+      inactiveMonths > 0 ||
+      minListings > 0 ||
+      minBookings > 0;
+
+    if (!hasActiveFilters) {
+      setFilteredRows(displayRows);
+      return;
+    }
+
     let mounted = true;
     (async () => {
       try {
