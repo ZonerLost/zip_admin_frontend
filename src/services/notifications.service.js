@@ -178,7 +178,15 @@ export async function deleteNotification(id) {
 }
 
 /**
- * Audit log feed for the NotificationsPage table.
+ * Platform-wide notification log for the NotificationsPage table.
+ *
+ * This used to call `GET /notifications`, which is the *signed-in admin's own* feed — so the table
+ * showed only their notifications and every "recipient" read "System Admin", because that endpoint
+ * has no other user to report. Filtering and search were applied to whatever page had already been
+ * fetched, so a match on page two did not exist as far as the UI was concerned.
+ *
+ * `GET /admin/notifications` is the real log: every notification, recipient populated, with the
+ * type filter and search applied by the server across the whole set.
  */
 export async function listNotificationLogs({
   q = "",
@@ -186,39 +194,35 @@ export async function listNotificationLogs({
   page = 1,
   pageSize = 10,
 } = {}) {
-  try {
-    const res = await api.get(`/notifications?page=${page}&limit=${pageSize}`);
-    const rawList = Array.isArray(res.data) ? res.data : [];
-    const total = res.pagination?.total ?? rawList.length;
+  const params = new URLSearchParams();
+  params.set("page", String(page));
+  params.set("limit", String(pageSize));
+  if (type && type !== "all") params.set("type", type);
+  if (q) params.set("search", q);
 
-    let rows = rawList.map((n) => {
-      const typeMeta = mapNotificationType(n.type);
-      return {
-        id: String(n._id || n.id),
-        type: typeMeta.label,
-        recipient: n.user?.email || n.user?.name || "System Admin",
-        channel: "In-app Push",
-        status: n.isRead ? "Read" : "Delivered",
-        createdAt: n.createdAt,
-      };
-    });
+  // Deliberately not wrapped in a catch that returns an empty list: swallowing the error made a
+  // failed request indistinguishable from "no notifications have ever been sent". The page shows
+  // the message instead.
+  const res = await api.get(`/admin/notifications?${params.toString()}`);
+  const rawList = Array.isArray(res.data) ? res.data : [];
 
-    if (q) {
-      const query = q.toLowerCase();
-      rows = rows.filter(
-        (r) =>
-          r.type.toLowerCase().includes(query) ||
-          r.recipient.toLowerCase().includes(query) ||
-          r.status.toLowerCase().includes(query),
-      );
-    }
+  const rows = rawList.map((n) => {
+    const user = n.user && typeof n.user === "object" ? n.user : null;
+    const name = user ? `${user.firstName ?? ""} ${user.lastName ?? ""}`.trim() : "";
+    return {
+      id: String(n._id || n.id),
+      type: mapNotificationType(n.type).label,
+      rawType: n.type,
+      recipient: name || user?.email || "(deleted user)",
+      recipientEmail: user?.email || "",
+      // In-app is the only channel that exists; FCM push is still a stub server-side and there is
+      // no email or SMS notification path at all. Naming it honestly beats implying three channels.
+      channel: "In-app",
+      status: n.isRead ? "Read" : "Unread",
+      title: n.title || "",
+      createdAt: n.createdAt,
+    };
+  });
 
-    if (type && type !== "all") {
-      rows = rows.filter((r) => r.type.toLowerCase() === type.toLowerCase());
-    }
-
-    return { rows, total };
-  } catch {
-    return { rows: [], total: 0 };
-  }
+  return { rows, total: res.pagination?.total ?? rows.length };
 }

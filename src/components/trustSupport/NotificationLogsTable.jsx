@@ -3,27 +3,6 @@ import Card from "../shared/Card.jsx";
 import DataTable from "../shared/DataTable.jsx";
 import StatusPill from "../shared/StatusPill.jsx";
 
-function formatNotificationType(value) {
-  const map = {
-    PhotoUploadReminder: "Photo reminder",
-    CaseProgressUpdate: "Case update",
-    SettingsUpdate: "Settings update",
-    booking_request: "Booking request",
-    booking_accepted: "Booking accepted",
-    booking_declined: "Booking declined",
-    booking_cancelled: "Booking cancelled",
-    booking_completed: "Booking completed",
-    dispute_opened: "Dispute opened",
-    dispute_resolved: "Dispute resolved",
-    payment_received: "Payment received",
-    item_added: "Item listed",
-    identity_verified: "Identity verified",
-    account_created: "Account created",
-  };
-
-  return map[value] || value || "-";
-}
-
 function formatNotificationTime(value) {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return { date: "-", time: "" };
@@ -46,31 +25,54 @@ export default function NotificationLogsTable({ rows }) {
     return [
       {
         key: "type",
-        header: "Type",
-        width: "24%",
+        header: "Notification",
         render: (r) => (
-          <span title={r.type}>
-            <StatusPill value={formatNotificationType(r.type)} />
-          </span>
+          // The service already resolves the label; re-mapping it here was a second copy of the
+          // same table that could only drift. The raw type stays available as a tooltip.
+          <div className="min-w-44 max-w-72" title={r.rawType || r.type}>
+            <StatusPill value={r.type} />
+            {r.title ? (
+              <p className="mt-1 truncate text-xs text-neutral-500">{r.title}</p>
+            ) : null}
+          </div>
         ),
       },
       {
         key: "recipient",
         header: "Recipient",
-        width: "18%",
-        render: (r) => <span className="whitespace-nowrap">{r.recipient}</span>,
+        render: (r) => (
+          <div className="min-w-36 max-w-56">
+            <p className="truncate text-sm text-neutral-900">{r.recipient}</p>
+            {r.recipientEmail ? (
+              <p className="truncate text-xs text-neutral-500">
+                {r.recipientEmail}
+              </p>
+            ) : null}
+          </div>
+        ),
       },
-      { key: "channel", header: "Channel", width: "14%" },
+      {
+        key: "channel",
+        header: "Channel",
+        // Only ever "In-app": FCM push is a stub server-side and there is no email or SMS path, so
+        // this column says the same thing on every row. Hidden on narrow screens for that reason.
+        mobileHidden: true,
+        headerClassName: "hidden lg:table-cell",
+        cellClassName: "hidden lg:table-cell",
+        render: (r) => (
+          <span className="whitespace-nowrap text-sm text-neutral-500">
+            {r.channel}
+          </span>
+        ),
+      },
       {
         key: "status",
         header: "Status",
-        width: "14%",
         render: (r) => <StatusPill value={r.status} />,
       },
       {
         key: "createdAt",
-        header: "Time",
-        width: "30%",
+        header: "Sent",
         render: (r) => {
           const parts = formatNotificationTime(r.createdAt);
           return (
@@ -92,10 +94,10 @@ export default function NotificationLogsTable({ rows }) {
     <Card className="p-0">
       <div className="border-b p-4">
         <p className="text-sm font-semibold text-neutral-900">
-          Notification Logs
+          Notification Log
         </p>
         <p className="text-xs text-neutral-500">
-          Audit trail of reminders and updates.
+          Every notification sent on the platform, newest first.
         </p>
       </div>
       <div className="p-2 sm:p-4">

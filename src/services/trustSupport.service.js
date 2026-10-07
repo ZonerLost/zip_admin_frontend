@@ -188,32 +188,41 @@ export async function removeReview(_id) {
 
 // ── Notification settings ─────────────────────────────────
 
+/**
+ * Notification settings, from the server.
+ *
+ * This used to return a hardcoded object describing email and SMS channels, editable subject/body
+ * templates and a "photo reminder N hours after end" rule — none of which exist in the backend.
+ * Notifications are in-app only, their wording is hardcoded server-side, and there is no scheduler.
+ * Save returned its own argument, so the form reported success and changed nothing.
+ *
+ * What the server can genuinely honour is a master switch and per-type muting, both read by the
+ * notification sender before it creates anything. That is what this returns.
+ */
 export async function getNotificationSettings() {
+  const res = await api.get("/admin/notifications/settings");
+  const d = res.data || {};
   return {
-    enabled: true,
-    channels: { email: true, push: true, sms: false },
-    templates: {
-      photoUploadReminder: {
-        enabled: true,
-        subject: "Reminder: Upload photos for your booking",
-        body: "Please upload required photos to complete your booking flow.",
-      },
-      caseProgressUpdate: {
-        enabled: true,
-        subject: "Update: Your case status changed",
-        body: "Your dispute case status has been updated.",
-      },
-    },
-    rules: {
-      photoReminderHoursAfterEnd: 6,
-      sendCaseUpdatesOnStatusChange: true,
-    },
+    enabled: d.enabled !== false,
+    mutedTypes: Array.isArray(d.mutedTypes) ? d.mutedTypes : [],
+    // Derived from the server's code, so the list cannot drift from the types that exist.
+    availableTypes: Array.isArray(d.availableTypes) ? d.availableTypes : [],
+    updatedAt: d.updatedAt ?? null,
   };
 }
 
 export async function saveNotificationSettings(next) {
-  // Not configurable via API currently
-  return next;
+  const res = await api.put("/admin/notifications/settings", {
+    enabled: Boolean(next.enabled),
+    mutedTypes: Array.isArray(next.mutedTypes) ? next.mutedTypes : [],
+  });
+  const d = res.data || {};
+  return {
+    enabled: d.enabled !== false,
+    mutedTypes: Array.isArray(d.mutedTypes) ? d.mutedTypes : [],
+    availableTypes: Array.isArray(d.availableTypes) ? d.availableTypes : [],
+    updatedAt: d.updatedAt ?? null,
+  };
 }
 
 export { listNotificationLogs } from "./notifications.service.js";

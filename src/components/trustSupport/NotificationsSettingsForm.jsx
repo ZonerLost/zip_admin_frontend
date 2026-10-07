@@ -1,222 +1,207 @@
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Card from "../shared/Card.jsx";
 import Button from "../shared/Button.jsx";
-import { FiBell } from "react-icons/fi";
+import { FiBell, FiBellOff } from "react-icons/fi";
+
+/**
+ * Which notifications the platform sends.
+ *
+ * What was here before described a notification system that does not exist: email and SMS channel
+ * toggles, editable subject/body templates for a "photo upload reminder" and a "case progress
+ * update", and a rule for sending a reminder N hours after a booking ends. The backend has none of
+ * it — notifications are in-app only, their wording is hardcoded server-side, and there is no
+ * scheduler. Save returned its own argument, so every control reported success and changed nothing.
+ *
+ * This is what the server actually honours: a master switch and per-type muting, both read by the
+ * notification sender before it creates a notification. Muting a type stops it being created at
+ * all, rather than hiding it — a stored-but-hidden notification would still drive unread counts.
+ */
+
+// Human labels for the server's type keys. A type the server knows but this map does not still
+// renders, using its raw key, rather than disappearing from the list.
+const TYPE_LABELS = {
+  booking_request: "Booking request",
+  booking_accepted: "Booking accepted",
+  booking_declined: "Booking declined",
+  booking_cancelled: "Booking cancelled",
+  booking_completed: "Booking completed",
+  review_received: "Review received",
+  message_received: "New chat message",
+  dispute_opened: "Dispute opened",
+  dispute_resolved: "Dispute resolved",
+  payment_received: "Payment received",
+  item_added: "Item listed",
+  account_created: "Account created",
+  identity_verified: "Identity verified",
+};
+
+function labelFor(type) {
+  return TYPE_LABELS[type] || type;
+}
 
 export default function NotificationsSettingsForm({ value, onSave }) {
-  const [local, setLocal] = useState(value);
+  const [enabled, setEnabled] = useState(value?.enabled !== false);
+  const [muted, setMuted] = useState(() => new Set(value?.mutedTypes || []));
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState("");
+  const [done, setDone] = useState("");
 
-  function update(patch) {
-    setLocal((s) => ({ ...s, ...patch }));
+  // Reset when the server sends a fresh copy, so a reload is not quietly overwritten by stale state.
+  useEffect(() => {
+    setEnabled(value?.enabled !== false);
+    setMuted(new Set(value?.mutedTypes || []));
+  }, [value]);
+
+  const types = useMemo(() => value?.availableTypes || [], [value]);
+
+  const dirty = useMemo(() => {
+    const was = new Set(value?.mutedTypes || []);
+    if ((value?.enabled !== false) !== enabled) return true;
+    if (was.size !== muted.size) return true;
+    for (const t of muted) if (!was.has(t)) return true;
+    return false;
+  }, [value, enabled, muted]);
+
+  function toggle(type) {
+    setDone("");
+    setMuted((current) => {
+      const next = new Set(current);
+      if (next.has(type)) next.delete(type);
+      else next.add(type);
+      return next;
+    });
   }
 
-  function updateTemplate(key, patch) {
-    setLocal((s) => ({
-      ...s,
-      templates: {
-        ...s.templates,
-        [key]: { ...(s.templates?.[key] || {}), ...patch },
-      },
-    }));
+  async function save() {
+    setErr("");
+    setDone("");
+    setBusy(true);
+    try {
+      await onSave({ enabled, mutedTypes: [...muted] });
+      setDone("Saved.");
+    } catch (e) {
+      setErr(e?.message || "Could not save notification settings.");
+    } finally {
+      setBusy(false);
+    }
   }
 
   return (
-    <Card className="p-5">
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <p className="text-sm font-semibold text-neutral-900">
-            Notifications Settings
-          </p>
-          <p className="mt-1 text-sm text-neutral-500">
-            Templates + rules for reminders and case updates.
-          </p>
-        </div>
-        <div className="rounded-2xl bg-brand-soft p-2 text-brand">
-          <FiBell className="h-5 w-5" />
-        </div>
-      </div>
-
-      <div className="mt-4 space-y-4">
-        <label className="flex items-center gap-3 rounded-2xl border bg-white p-4">
-          <input
-            type="checkbox"
-            checked={Boolean(local.enabled)}
-            onChange={(e) => update({ enabled: e.target.checked })}
-            className="h-4 w-4 accent-brand"
-          />
+    <Card className="p-0">
+      <div className="flex items-center justify-between gap-3 border-b p-4">
+        <div className="flex items-center gap-2">
+          <div className="rounded-2xl bg-brand-soft p-2 text-brand">
+            {enabled ? (
+              <FiBell className="h-4 w-4" />
+            ) : (
+              <FiBellOff className="h-4 w-4" />
+            )}
+          </div>
           <div>
-            <p className="text-sm font-medium text-neutral-900">
-              Enable Notifications
+            <p className="text-sm font-semibold text-neutral-900">
+              Notification Delivery
             </p>
             <p className="text-xs text-neutral-500">
-              Global notifications switch.
+              In-app notifications. Muting a type stops it being sent.
             </p>
           </div>
+        </div>
+        <Button disabled={!dirty || busy} onClick={save}>
+          {busy ? "Saving..." : "Save"}
+        </Button>
+      </div>
+
+      {err ? (
+        <div className="border-b bg-red-50 px-4 py-2 text-sm text-red-700">{err}</div>
+      ) : null}
+      {done ? (
+        <div className="border-b bg-green-50 px-4 py-2 text-sm text-green-700">
+          {done}
+        </div>
+      ) : null}
+
+      <div className="space-y-4 p-4">
+        <label className="flex items-start justify-between gap-3 rounded-2xl border p-3">
+          <span className="min-w-0">
+            <span className="block text-sm font-medium text-neutral-900">
+              Send notifications
+            </span>
+            <span className="block text-xs text-neutral-500">
+              Off stops every in-app notification across the platform. Nothing
+              is stored while this is off, so turning it back on does not
+              deliver a backlog.
+            </span>
+          </span>
+          <input
+            type="checkbox"
+            className="mt-1 h-4 w-4 shrink-0"
+            checked={enabled}
+            onChange={(e) => {
+              setDone("");
+              setEnabled(e.target.checked);
+            }}
+          />
         </label>
 
-        <div className="grid gap-3 sm:grid-cols-3">
-          {["email", "push", "sms"].map((k) => (
-            <label
-              key={k}
-              className="flex items-center gap-3 rounded-2xl border bg-white p-4"
+        <div>
+          <div className="mb-2 flex items-baseline justify-between gap-2">
+            <p className="text-xs font-semibold text-neutral-700">
+              Types ({types.length})
+            </p>
+            <p className="text-xs text-neutral-500">
+              Counts are the last 30 days
+            </p>
+          </div>
+
+          {types.length === 0 ? (
+            <p className="text-sm text-neutral-500">
+              No notification types reported by the server.
+            </p>
+          ) : (
+            <div
+              className={
+                "space-y-2 " + (enabled ? "" : "pointer-events-none opacity-50")
+              }
             >
-              <input
-                type="checkbox"
-                checked={Boolean(local.channels?.[k])}
-                onChange={(e) =>
-                  update({
-                    channels: { ...local.channels, [k]: e.target.checked },
-                  })
-                }
-                className="h-4 w-4 accent-brand"
-              />
-              <div>
-                <p className="text-sm font-medium text-neutral-900">
-                  {k.toUpperCase()}
-                </p>
-                <p className="text-xs text-neutral-500">Channel</p>
-              </div>
-            </label>
-          ))}
+              {types.map((t) => {
+                const isMuted = muted.has(t.type);
+                return (
+                  <label
+                    key={t.type}
+                    className="flex items-center justify-between gap-3 rounded-2xl border p-3"
+                  >
+                    <span className="min-w-0">
+                      <span className="block truncate text-sm text-neutral-900">
+                        {labelFor(t.type)}
+                      </span>
+                      <span className="block text-xs text-neutral-500">
+                        {t.last30Days} sent
+                        {isMuted ? " · muted" : ""}
+                      </span>
+                    </span>
+                    <input
+                      type="checkbox"
+                      className="h-4 w-4 shrink-0"
+                      checked={!isMuted}
+                      onChange={() => toggle(t.type)}
+                      aria-label={`Send ${labelFor(t.type)}`}
+                    />
+                  </label>
+                );
+              })}
+            </div>
+          )}
         </div>
 
-        <div className="rounded-2xl border bg-white p-4">
-          <p className="text-sm font-semibold text-neutral-900">
-            Template: Photo Upload Reminder
+        {value?.updatedAt ? (
+          <p className="text-xs text-neutral-500">
+            Last changed {new Date(value.updatedAt).toLocaleString()}
           </p>
-          <label className="mt-3 flex items-center gap-3">
-            <input
-              type="checkbox"
-              checked={Boolean(local.templates?.photoUploadReminder?.enabled)}
-              onChange={(e) =>
-                updateTemplate("photoUploadReminder", {
-                  enabled: e.target.checked,
-                })
-              }
-              className="h-4 w-4 accent-brand"
-            />
-            <span className="text-sm text-neutral-700">Enabled</span>
-          </label>
-          <div className="mt-3 grid gap-3 sm:grid-cols-2">
-            <div>
-              <label className="text-xs font-medium text-neutral-600">
-                Subject
-              </label>
-              <input
-                className="mt-1 w-full rounded-2xl border px-4 py-3 text-sm outline-none"
-                value={local.templates?.photoUploadReminder?.subject || ""}
-                onChange={(e) =>
-                  updateTemplate("photoUploadReminder", {
-                    subject: e.target.value,
-                  })
-                }
-              />
-            </div>
-            <div>
-              <label className="text-xs font-medium text-neutral-600">
-                Rule: Hours after booking end
-              </label>
-              <input
-                type="number"
-                className="mt-1 w-full rounded-2xl border px-4 py-3 text-sm outline-none"
-                value={local.rules?.photoReminderHoursAfterEnd ?? 0}
-                onChange={(e) =>
-                  update({
-                    rules: {
-                      ...local.rules,
-                      photoReminderHoursAfterEnd: Number(e.target.value || 0),
-                    },
-                  })
-                }
-              />
-            </div>
-          </div>
-          <div className="mt-3">
-            <label className="text-xs font-medium text-neutral-600">Body</label>
-            <textarea
-              rows={3}
-              className="mt-1 w-full rounded-2xl border px-4 py-3 text-sm outline-none"
-              value={local.templates?.photoUploadReminder?.body || ""}
-              onChange={(e) =>
-                updateTemplate("photoUploadReminder", { body: e.target.value })
-              }
-            />
-          </div>
-        </div>
-
-        <div className="rounded-2xl border bg-white p-4">
-          <p className="text-sm font-semibold text-neutral-900">
-            Template: Case Progress Update
+        ) : (
+          <p className="text-xs text-neutral-500">
+            Never changed — everything is sent by default.
           </p>
-          <label className="mt-3 flex items-center gap-3">
-            <input
-              type="checkbox"
-              checked={Boolean(local.templates?.caseProgressUpdate?.enabled)}
-              onChange={(e) =>
-                updateTemplate("caseProgressUpdate", {
-                  enabled: e.target.checked,
-                })
-              }
-              className="h-4 w-4 accent-brand"
-            />
-            <span className="text-sm text-neutral-700">Enabled</span>
-          </label>
-
-          <label className="mt-3 flex items-center gap-3 rounded-2xl bg-neutral-50 p-3">
-            <input
-              type="checkbox"
-              checked={Boolean(local.rules?.sendCaseUpdatesOnStatusChange)}
-              onChange={(e) =>
-                update({
-                  rules: {
-                    ...local.rules,
-                    sendCaseUpdatesOnStatusChange: e.target.checked,
-                  },
-                })
-              }
-              className="h-4 w-4 accent-brand"
-            />
-            <div>
-              <p className="text-sm font-medium text-neutral-900">
-                Send on status change
-              </p>
-              <p className="text-xs text-neutral-500">
-                Auto notify users when dispute status changes.
-              </p>
-            </div>
-          </label>
-
-          <div className="mt-3 grid gap-3 sm:grid-cols-2">
-            <div>
-              <label className="text-xs font-medium text-neutral-600">
-                Subject
-              </label>
-              <input
-                className="mt-1 w-full rounded-2xl border px-4 py-3 text-sm outline-none"
-                value={local.templates?.caseProgressUpdate?.subject || ""}
-                onChange={(e) =>
-                  updateTemplate("caseProgressUpdate", {
-                    subject: e.target.value,
-                  })
-                }
-              />
-            </div>
-            <div>
-              <label className="text-xs font-medium text-neutral-600">Body</label>
-              <input
-                className="mt-1 w-full rounded-2xl border px-4 py-3 text-sm outline-none"
-                value={local.templates?.caseProgressUpdate?.body || ""}
-                onChange={(e) =>
-                  updateTemplate("caseProgressUpdate", { body: e.target.value })
-                }
-              />
-            </div>
-          </div>
-        </div>
-
-        <div className="flex justify-end">
-          <Button onClick={() => onSave(local)}>Save</Button>
-        </div>
+        )}
       </div>
     </Card>
   );

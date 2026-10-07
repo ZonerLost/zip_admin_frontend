@@ -4,7 +4,7 @@ import Button from "../shared/Button.jsx";
 import Modal from "../shared/Modal.jsx";
 import DataTable from "../shared/DataTable.jsx";
 import StatusPill from "../shared/StatusPill.jsx";
-import { FiEye, FiPlus, FiTrash2, FiEdit2 } from "react-icons/fi";
+import { FiEye, FiTrash2, FiEdit2 } from "react-icons/fi";
 
 const STATUSES = ["Open", "Investigating", "Resolved", "Rejected"];
 const PRIORITIES = ["Low", "Medium", "High"];
@@ -12,7 +12,7 @@ const PRIORITIES = ["Low", "Medium", "High"];
 export default function DisputesTable({
   rows,
   onView,
-  onCreate,
+  onCreate: _onCreate,
   onUpdate,
   onDelete,
 }) {
@@ -28,18 +28,18 @@ export default function DisputesTable({
   const [priority, setPriority] = useState("Medium");
   const [notes, setNotes] = useState("");
 
-  function openCreate() {
-    setEditing(null);
-    setTitle("");
-    setBookingId("");
-    setListingTitle("");
-    setReporter("Owner");
-    setReportedUser("");
-    setStatus("Open");
-    setPriority("Medium");
-    setNotes("");
-    setOpen(true);
-  }
+  // function openCreate() {
+  //   setEditing(null);
+  //   setTitle("");
+  //   setBookingId("");
+  //   setListingTitle("");
+  //   setReporter("Owner");
+  //   setReportedUser("");
+  //   setStatus("Open");
+  //   setPriority("Medium");
+  //   setNotes("");
+  //   setOpen(true);
+  // }
 
   function openEdit(row) {
     setEditing(row);
@@ -72,8 +72,7 @@ export default function DisputesTable({
       priority,
       notes,
     };
-    if (!editing) await onCreate(payload);
-    else await onUpdate(editing, payload);
+    if (editing) await onUpdate(editing, payload);
     setOpen(false);
   }
 
@@ -133,10 +132,10 @@ export default function DisputesTable({
             CRUD disputes + evidence and message moderation.
           </p>
         </div>
-        <Button onClick={openCreate}>
+        {/* <Button onClick={openCreate}>
           <FiPlus className="h-4 w-4" />
           New Dispute
-        </Button>
+        </Button> */}
       </div>
 
       <div className="p-2 sm:p-4">
@@ -149,7 +148,7 @@ export default function DisputesTable({
 
       <Modal
         open={open}
-        title={editing ? "Edit Dispute" : "Create Dispute"}
+        title="Edit Dispute"
         onClose={() => setOpen(false)}
         centered={true}
         footer={
@@ -158,7 +157,7 @@ export default function DisputesTable({
               Cancel
             </Button>
             <Button disabled={!canSave} onClick={save}>
-              {editing ? "Save" : "Create"}
+              Save
             </Button>
           </div>
         }
