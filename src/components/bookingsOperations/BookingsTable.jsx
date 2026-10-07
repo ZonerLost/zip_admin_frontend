@@ -2,29 +2,42 @@ import React, { useMemo } from "react";
 import Card from "../shared/Card.jsx";
 import DataTable from "../shared/DataTable.jsx";
 import StatusPill from "../shared/StatusPill.jsx";
-import { FiCheckCircle, FiEye, FiXCircle, FiDollarSign } from "react-icons/fi";
-import Button from "../shared/Button.jsx";
+import { FiEye, FiXCircle, FiDollarSign } from "react-icons/fi";
 
-export default function BookingsTable({
-  rows,
-  onView,
-  onApproveReject,
-  onCancel,
-  onRefund,
-}) {
+/**
+ * The bookings table.
+ *
+ * Two things were removed rather than restyled:
+ *
+ *   - **Approve / Reject.** The handlers returned a plain object without calling the API, so a row
+ *     flipped to "Approved" and reverted on the next refresh. They are not reimplemented: deciding
+ *     whether to rent out an item belongs to its owner, and an administrator accepting on their
+ *     behalf would commit them to a rental they never agreed to.
+ *   - **"Quick tools"**, a button whose handler was an empty block with a `/* reserved *‍/` comment.
+ *
+ * Responsiveness: the shared DataTable scrolls horizontally rather than compressing, so percentage
+ * widths no longer mean anything — a `min-w-max` table sizes to content. Columns therefore carry
+ * explicit minimum widths, and the three that only repeat what the drawer shows are hidden below
+ * `lg` so a phone gets a readable four-column table instead of a very wide scroll.
+ */
+export default function BookingsTable({ rows, onView, onCancel, onRefund, busy }) {
   const columns = useMemo(() => {
     return [
       {
         key: "listingTitle",
         header: "Listing",
-        width: "40%",
         render: (r) => (
-          <div className="min-w-0">
+          <div className="min-w-50 max-w-80">
             <p className="truncate text-sm font-medium text-neutral-900">
-              {r.listingTitle || r.listing || "-"}
+              {r.listingTitle || "-"}
             </p>
-            <p className="text-xs text-neutral-500">
-              {r.listingCity || r.city || r.listingSubtitle || ""}
+            <p className="truncate text-xs text-neutral-500">
+              {r.listingCity || ""}
+            </p>
+            {/* On narrow screens the renter column is hidden, so surface the renter here instead of
+                leaving the row without a person attached to it. */}
+            <p className="truncate text-xs text-neutral-500 lg:hidden">
+              {r.renterName || ""}
             </p>
           </div>
         ),
@@ -32,11 +45,16 @@ export default function BookingsTable({
       {
         key: "ownerName",
         header: "Owner",
-        width: "15%",
+        mobileHidden: true,
+        headerClassName: "hidden lg:table-cell",
+        cellClassName: "hidden lg:table-cell",
         render: (r) => (
-          <div className="min-w-0">
+          <div className="min-w-32 max-w-48">
             <p className="truncate text-sm text-neutral-900">
-              {r.ownerName || r.owner || "-"}
+              {r.ownerName || "-"}
+            </p>
+            <p className="truncate text-xs text-neutral-500">
+              {r.ownerEmail || ""}
             </p>
           </div>
         ),
@@ -44,27 +62,29 @@ export default function BookingsTable({
       {
         key: "renterName",
         header: "Renter",
-        width: "25%",
+        mobileHidden: true,
+        headerClassName: "hidden lg:table-cell",
+        cellClassName: "hidden lg:table-cell",
         render: (r) => {
-          const name = r.renterName || r.user || "";
-          const email = r.renterEmail || r.email || "";
-          const parts = (name || "").split(/\s+/).filter(Boolean);
+          const name = r.renterName || "";
+          const email = r.renterEmail || "";
+          const parts = name.split(/\s+/).filter(Boolean);
           let initials = parts
             .slice(0, 2)
-            .map((s) => s[0] || "")
+            .map((x) => x[0] || "")
             .join("")
             .toUpperCase();
-          if (!initials) initials = (email && email[0]?.toUpperCase()) || "?";
+          if (!initials) initials = email[0]?.toUpperCase() || "?";
           return (
-            <div className="flex items-center gap-3 min-w-0">
-              <div className="h-8 w-8 shrink-0 rounded-full bg-neutral-100 flex items-center justify-center text-sm font-semibold text-neutral-700">
+            <div className="flex min-w-40 max-w-56 items-center gap-3">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-neutral-100 text-sm font-semibold text-neutral-700">
                 {initials}
               </div>
               <div className="min-w-0">
                 <p className="truncate text-sm font-medium text-neutral-900">
                   {name || "-"}
                 </p>
-                <p className="text-xs text-neutral-500">{email}</p>
+                <p className="truncate text-xs text-neutral-500">{email}</p>
               </div>
             </div>
           );
@@ -73,79 +93,86 @@ export default function BookingsTable({
       {
         key: "deliveryMethod",
         header: "Method",
-        width: "10%",
-        render: (r) => (
-          <StatusPill
-            value={r.deliveryMethod || r.method || r.delivery || "Unknown"}
-          />
-        ),
+        headerClassName: "hidden md:table-cell",
+        cellClassName: "hidden md:table-cell",
+        render: (r) => <StatusPill value={r.deliveryMethod || "Unknown"} />,
       },
       {
         key: "status",
         header: "Status",
-        width: "10%",
-        render: (r) => <StatusPill value={r.status} />,
+        render: (r) => (
+          <div className="min-w-28">
+            <StatusPill value={r.status} />
+            {/* Payment is independent of status — a paid booking is still "Approved" — and knowing
+                which is which is the difference between a refund being possible or not. */}
+            {r.refunded ? (
+              <p className="mt-1 text-xs text-neutral-500">refunded</p>
+            ) : r.isPaid ? (
+              <p className="mt-1 text-xs text-green-700">paid</p>
+            ) : (
+              <p className="mt-1 text-xs text-neutral-400">unpaid</p>
+            )}
+          </div>
+        ),
       },
       {
         key: "amount",
         header: "Amount",
-        width: "10%",
-        render: (r) => `$${Number(r.amount || 0).toFixed(2)}`,
-      },
-      {
-        key: "refund",
-        header: "Refund",
-        width: "10%",
-        render: (r) =>
-          r.refunded ? (
-            <StatusPill value="Refunded" />
-          ) : (
-            <button
-              className="rounded-xl p-2 hover:bg-neutral-100"
-              onClick={() => onRefund?.(r)}
-              aria-label="Issue refund"
-            >
-              <FiDollarSign />
-            </button>
-          ),
+        render: (r) => (
+          <span className="whitespace-nowrap text-sm">
+            ${Number(r.amount || 0).toFixed(2)}
+          </span>
+        ),
       },
       {
         key: "actions",
         header: "Actions",
-        render: (r) => (
-          <div className="flex items-center gap-2">
-            <button
-              className="rounded-xl p-2 hover:bg-neutral-100"
-              onClick={() => onView(r)}
-              aria-label="View"
-            >
-              <FiEye />
-            </button>
-
-            {r.status === "Pending" ? (
+        render: (r) => {
+          const canRefund = r.isPaid;
+          const canCancel = ["Pending", "Approved"].includes(r.status);
+          return (
+            <div className="flex min-w-32 items-center gap-1">
               <button
                 className="rounded-xl p-2 hover:bg-neutral-100"
-                onClick={() => onApproveReject(r)}
-                aria-label="Approve/Reject"
+                onClick={() => onView(r)}
+                aria-label="View booking"
+                title="View booking"
               >
-                <FiCheckCircle />
+                <FiEye />
               </button>
-            ) : null}
 
-            {r.status !== "Cancelled" ? (
-              <button
-                className="rounded-xl p-2 hover:bg-neutral-100"
-                onClick={() => onCancel(r)}
-                aria-label="Cancel"
-              >
-                <FiXCircle />
-              </button>
-            ) : null}
-          </div>
-        ),
+              {/* Shown only when there is money to return. It used to appear on every row,
+                  including bookings nobody had paid for. */}
+              {canRefund ? (
+                <button
+                  className="rounded-xl p-2 text-neutral-700 hover:bg-neutral-100 disabled:text-neutral-300"
+                  onClick={() => onRefund?.(r)}
+                  disabled={busy}
+                  aria-label="Issue refund"
+                  title="Issue refund"
+                >
+                  <FiDollarSign />
+                </button>
+              ) : null}
+
+              {/* Only a live booking can be cancelled; the server refuses the rest anyway. */}
+              {canCancel ? (
+                <button
+                  className="rounded-xl p-2 text-red-700 hover:bg-red-50 disabled:text-neutral-300"
+                  onClick={() => onCancel(r)}
+                  disabled={busy}
+                  aria-label="Cancel booking"
+                  title="Cancel booking"
+                >
+                  <FiXCircle />
+                </button>
+              ) : null}
+            </div>
+          );
+        },
       },
     ];
-  }, [onView, onApproveReject, onCancel, onRefund]);
+  }, [onView, onCancel, onRefund, busy]);
 
   return (
     <Card className="p-0">
@@ -153,24 +180,14 @@ export default function BookingsTable({
         <div>
           <p className="text-sm font-semibold text-neutral-900">Bookings</p>
           <p className="text-xs text-neutral-500">
-            Approve, reject, cancel — clean operations flow.
+            View, cancel and refund. Accepting or declining a request is the
+            owner&rsquo;s decision.
           </p>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            onClick={() => {
-              /* reserved */
-            }}
-          >
-            Quick tools
-          </Button>
         </div>
       </div>
 
       <div className="p-2 sm:p-4">
-        <DataTable columns={columns} rows={rows} />
+        <DataTable columns={columns} rows={rows} emptyText="No bookings." />
       </div>
     </Card>
   );

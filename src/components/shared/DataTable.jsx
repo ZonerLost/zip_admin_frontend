@@ -48,7 +48,9 @@ export default function DataTable({
             className="rounded-2xl border bg-white p-4"
           >
             {columns
-              .filter((c) => c.key !== "actions")
+              // The cap stays: a card with ten rows is not a card. mobileHidden lets a table choose
+              // WHICH five, instead of whatever happens to come first.
+              .filter((c) => c.key !== "actions" && !c.mobileHidden)
               .slice(0, 5)
               .map((c) => (
                 <div
@@ -83,7 +85,8 @@ export default function DataTable({
                     key={c.key}
                     className={
                       "border-b bg-white px-4 py-3 text-xs font-semibold wrap-break-word whitespace-normal text-neutral-600 " +
-                      (c.key === "actions" ? "text-right w-36" : "text-left")
+                      (c.key === "actions" ? "text-right w-36" : "text-left") +
+                      (c.headerClassName ? " " + c.headerClassName : "")
                     }
                     style={c.width ? { width: c.width } : undefined}
                   >
@@ -100,7 +103,8 @@ export default function DataTable({
                       key={c.key}
                       className={
                         "border-b px-4 py-3 align-top text-sm wrap-break-word whitespace-normal text-neutral-900 " +
-                        (c.key === "actions" ? "text-right" : "text-left")
+                        (c.key === "actions" ? "text-right" : "text-left") +
+                        (c.cellClassName ? " " + c.cellClassName : "")
                       }
                       style={c.width ? { width: c.width } : undefined}
                     >

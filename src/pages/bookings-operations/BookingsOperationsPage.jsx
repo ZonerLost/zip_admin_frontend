@@ -11,7 +11,6 @@ import BookingsMetrics, {
 } from "../../components/bookingsOperations/BookingsMetrics.jsx";
 import BookingsTable from "../../components/bookingsOperations/BookingsTable.jsx";
 import BookingDetailsDrawer from "../../components/bookingsOperations/BookingDetailsDrawer.jsx";
-import ApproveRejectBookingModal from "../../components/bookingsOperations/ApproveRejectBookingModal.jsx";
 
 import * as svc from "../../services/bookingsOperations.service.js";
 
@@ -49,7 +48,10 @@ export default function BookingsOperationsPage() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selected, setSelected] = useState(null);
 
-  const [approveModalOpen, setApproveModalOpen] = useState(false);
+  // Approve/reject is gone: it never worked, and accepting a rental on an owner's behalf is not an
+  // administrator's call. See the note in bookingsOperations.service.js.
+  const [actionError, setActionError] = useState("");
+  const [actionBusy, setActionBusy] = useState(false);
 
   const [confirmCancelOpen, setConfirmCancelOpen] = useState(false);
   const [toCancel, setToCancel] = useState(null);
@@ -201,44 +203,33 @@ export default function BookingsOperationsPage() {
     setDrawerOpen(true);
   }
 
-  function openApproveReject(booking) {
-    setSelected(booking);
-    setApproveModalOpen(true);
-  }
-
-  async function approve(booking) {
-    await svc.approveBooking(booking.id);
-    setApproveModalOpen(false);
-    await Promise.all([loadTable(), loadAnalytics()]);
-  }
-
-  async function reject(booking, reason) {
-    await svc.rejectBooking(booking.id, reason);
-    setApproveModalOpen(false);
-    await Promise.all([loadTable(), loadAnalytics()]);
-  }
-
   async function issueRefund(booking) {
     if (!booking) return;
+    // Only a paid booking has anything to refund. The button used to appear on every row.
+    if (!booking.isPaid) {
+      setActionError(
+        booking.refunded
+          ? "This booking has already been refunded."
+          : "This booking has not been paid, so there is nothing to refund.",
+      );
+      return;
+    }
 
-    const refundIssuedAt = new Date().toISOString();
-
-    await svc.updateBooking(booking.id, {
-      refunded: true,
-      refundIssuedAt,
-    });
-
-    await Promise.all([loadTable(), loadAnalytics()]);
-
-    setSelected((current) =>
-      current && current.id === booking.id
-        ? {
-            ...current,
-            refunded: true,
-            refundIssuedAt,
-          }
-        : current,
-    );
+    setActionError("");
+    setActionBusy(true);
+    try {
+      await svc.refundBooking(booking.id);
+      await Promise.all([loadTable(), loadAnalytics()]);
+      setSelected((current) =>
+        current && current.id === booking.id
+          ? { ...current, paymentStatus: "refunded", isPaid: false, refunded: true }
+          : current,
+      );
+    } catch (e) {
+      setActionError(e?.message || "The refund could not be issued.");
+    } finally {
+      setActionBusy(false);
+    }
   }
 
   function askCancel(booking, reason) {
@@ -254,17 +245,33 @@ export default function BookingsOperationsPage() {
   async function confirmCancel() {
     if (!toCancel) return;
 
-    await svc.cancelBooking(
-      toCancel.booking.id,
-      cancelReason,
-      cancelInternalNote,
-    );
+    setActionError("");
+    setActionBusy(true);
+    try {
+      // The internal note stays local to this screen — the server takes one reason, and it shows
+      // that reason to both the renter and the owner.
+      const { refundOutstanding } = await svc.cancelBooking(
+        toCancel.booking.id,
+        cancelReason,
+      );
 
-    setConfirmCancelOpen(false);
-    setToCancel(null);
-    setCancelInternalNote("");
+      setConfirmCancelOpen(false);
+      setToCancel(null);
+      setCancelInternalNote("");
+      await Promise.all([loadTable(), loadAnalytics()]);
 
-    await Promise.all([loadTable(), loadAnalytics()]);
+      if (refundOutstanding) {
+        // Cancelling does not move money, deliberately. Say so rather than leaving an admin to
+        // assume a paid renter has been made whole.
+        setActionError(
+          "Cancelled. This booking was paid — issue a refund separately if one is due.",
+        );
+      }
+    } catch (e) {
+      setActionError(e?.message || "The booking could not be cancelled.");
+    } finally {
+      setActionBusy(false);
+    }
   }
 
   return (
@@ -381,6 +388,21 @@ export default function BookingsOperationsPage() {
         </Card>
       ) : (
         <div className="relative mt-4 space-y-3">
+          {/* Cancel and refund both talk to the server now, so their failures have to be visible
+              rather than swallowed. Doubles as the notice after cancelling a paid booking. */}
+          {actionError ? (
+            <div className="flex items-start justify-between gap-3 rounded-2xl border border-amber-200 bg-amber-50 p-3">
+              <p className="text-sm text-amber-800">{actionError}</p>
+              <button
+                className="shrink-0 rounded-lg px-2 text-sm text-amber-700 hover:bg-amber-100"
+                onClick={() => setActionError("")}
+                aria-label="Dismiss"
+              >
+                Dismiss
+              </button>
+            </div>
+          ) : null}
+
           <div
             className={
               tableRefreshing ? "pointer-events-none opacity-60 transition" : ""
@@ -389,9 +411,9 @@ export default function BookingsOperationsPage() {
             <BookingsTable
               rows={rows}
               onView={view}
-              onApproveReject={openApproveReject}
               onCancel={askCancel}
               onRefund={issueRefund}
+              busy={actionBusy}
             />
 
             <div className="rounded-2xl border bg-white p-4">
@@ -419,14 +441,6 @@ export default function BookingsOperationsPage() {
         booking={selected}
         onClose={() => setDrawerOpen(false)}
         onRefund={issueRefund}
-      />
-
-      <ApproveRejectBookingModal
-        open={approveModalOpen}
-        booking={selected}
-        onClose={() => setApproveModalOpen(false)}
-        onApprove={approve}
-        onReject={reject}
       />
 
       <Modal
